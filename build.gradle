@@ -1,0 +1,172 @@
+import org.gradle.internal.os.OperatingSystem
+
+buildscript {
+	repositories {
+		jcenter()
+		mavenLocal()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath 'org.ysb33r.gradle:bintray:1.5'
+		classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.0'
+		classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
+
+		// See: https://github.com/hierynomus/license-gradle-plugin/issues/67
+		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0', {
+			exclude module : 'guava'
+		}
+	}
+}
+
+apply plugin : 'org.ysb33r.bintray'
+apply plugin : 'groovy'
+apply plugin : 'maven'
+apply plugin : 'com.jfrog.artifactory'
+apply plugin : 'com.gradle.plugin-publish'
+apply plugin : 'com.github.hierynomus.license'
+apply   from : 'gradle/integration-tests.gradle'
+apply   from : 'gradle/self-reference.gradle'
+
+group = 'org.ysb33r.gradle'
+archivesBaseName = 'gradletest'
+version = '0.9-SNAPSHOT'
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+ext {
+	bintrayOwner = 'ysb33r'
+	bintrayRepo = 'grysb33r'
+	moduleName = 'gradletest-gradle-plugin'
+}
+
+repositories {
+	jcenter()
+
+	ivy {
+		name 'Downloader for Gradle distributions'
+		url 'https://services.gradle.org/distributions'
+		resolve.dynamicMode = false
+//		transitive false
+		layout 'pattern', {
+			artifact '[artifact]-[revision]-[classifier].zip'
+//			ivy '/non-existent/ivy/workaround'
+		}
+	}
+}
+
+
+dependencies {
+	compile gradleApi()
+	compile localGroovy()
+	testCompile ('org.spockframework:spock-core:1.0-groovy-2.3') {
+		exclude module : 'groovy-all'
+	}
+	integrationTestDistro ':gradle:2.1:bin@zip'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+	description "An archive of the JavaDocs for Maven Central"
+	classifier "javadoc"
+	from Javadoc
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
+
+jar {
+	manifest {
+		attributes 'Implementation-Title': moduleName, 'Implementation-Version': version
+	}
+}
+
+test {
+	systemProperties TESTROOT : "${buildDir}/tmp/testroot"
+}
+
+integrationTest {
+	systemProperties TESTROOT : "${buildDir}/tmp/integrationtestroot"
+	systemProperties GRADLETESTDIST : configurations.integrationTestDistro.files[0]
+}
+
+
+artifactory {
+	publish {
+		contextUrl = 'http://oss.jfrog.org'
+		repository {
+			repoKey = 'oss-snapshot-local'
+			username = project.properties.bintrayUserName
+			password = project.properties.bintrayApiKey
+		}
+	}
+}
+
+artifactoryPublish {
+	onlyIf { version.endsWith("SNAPSHOT") }
+}
+
+uploadArchives  {
+	repositories {
+		bintrayMavenDeployer {
+			username    project.properties.bintrayUserName
+			apiKey      project.properties.bintrayApiKey
+			repoOwner   bintrayOwner
+			repoName    bintrayRepo
+			packageName moduleName
+			description 'This is a plugin for Gradle that allows working with the Coverity static analysis toolset'
+			tags        'testing','integrationTesting','compatibilityTesting','gradle'
+			licenses          'Apache-2.0'
+			vcsUrl            'https://github.com/ysb33r/gradleTest.git'
+			autoCreatePackage true
+			updatePackage     true
+			versionAttributes 'gradle-plugin' : "org.ysb33r.gradletest:${group}:${archivesBaseName}"
+		}
+	}
+
+	onlyIf { !version.endsWith("SNAPSHOT") }
+}
+
+pluginBundle {
+	description = 'A plugin that helps you test your plugin against a variety of Gradle versions'
+	website     = 'https://github.com/ysb33r/gradleTest'
+	vcsUrl      = 'https://github.com/ysb33r/gradleTest.git'
+
+	tags = ['testing','integrationTesting','compatibility']
+
+	plugins {
+		coverityPlugin {
+			id = 'org.ysb33r.gradletest'
+			displayName = 'Plugin for compatibility testing of Gradle plugins'
+		}
+	}
+
+	mavenCoordinates {
+		groupId = project.group
+		artifactId = 'gradletest'
+	}
+
+}
+
+publishPlugins {
+	onlyIf { !version.endsWith("SNAPSHOT") }
+}
+
+license {
+	header = rootProject.file('config/HEADER')
+	strictCheck = true
+	ignoreFailures = false
+	mapping {
+		groovy = 'gradleTest'
+	}
+	ext.year = '2015'
+	excludes(['**/*.ad', '**/*.asciidoc', '**/*.adoc', '**/*.md','**/*.properties'])
+}
