@@ -172,9 +172,15 @@ license {
 	header = rootProject.file('config/HEADER')
 	strictCheck = true
 	ignoreFailures = false
-	mapping {
-		groovy = 'gradleTest'
-	}
+//	mapping {
+//		groovy = 'gradleTest'
+//	}
 	ext.year = '2015'
 	excludes(['**/*.ad', '**/*.asciidoc', '**/*.adoc', '**/*.md','**/*.properties'])
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+	tasks.withType(Javadoc) {
+		options.addStringOption('Xdoclint:none', '-quiet')
+	}
 }
