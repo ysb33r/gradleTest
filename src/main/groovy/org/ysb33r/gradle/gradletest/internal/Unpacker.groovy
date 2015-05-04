@@ -1,5 +1,6 @@
 package org.ysb33r.gradle.gradletest.internal
 
+import groovy.transform.CompileStatic
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.wrapper.Download
@@ -86,4 +87,34 @@ class Unpacker {
     static void unpackToUserHome( Gradle gradle, File downloadedLocation ) {
         unpackTo(gradle.gradleUserHomeDir,downloadedLocation,gradle.rootProject.logger )
     }
+
+    /** Iterates through a set of URIs attempting to download a distribution.
+     *
+     * @param uriSet Iterable set of URIs
+     * @param Gradle instance to use
+     * @param outputDir Directory where to download to
+     * @param version Version to download
+     * @param variant Variant to download
+     *
+     * @return Returns the file if the disribution already exists or it has been downloaded successfully, otherwise null.
+     */
+    @CompileStatic
+    static File downloadFileFrom(Iterable<URI> uriSet,Gradle gradle, final File outputDir, final String version,final String variant) {
+        File target = new File( outputDir, "gradle-${version}-${variant}.zip" )
+        if(!target.exists()) {
+            uriSet.each { uri ->
+                if (!target.exists()) {
+                    try {
+                        Unpacker.downloadTo(gradle, uri, outputDir, version, variant)
+                    } catch (FileNotFoundException) {
+                        // Expected exception in case of URI not existent
+                    }
+                }
+            }
+            return target.exists() ? target : null
+        } else {
+            return target
+        }
+    }
+
 }

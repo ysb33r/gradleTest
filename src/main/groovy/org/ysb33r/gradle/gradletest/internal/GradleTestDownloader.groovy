@@ -1,11 +1,13 @@
 package org.ysb33r.gradle.gradletest.internal
 
+import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.StopActionException
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.util.CollectionUtils
 import org.ysb33r.gradle.gradletest.Distribution
 import org.ysb33r.gradle.gradletest.Names
@@ -109,38 +111,20 @@ class GradleTestDownloader extends DefaultTask {
         if(!uris.empty) {
             outputDir.mkdirs()
             versions.each { String version ->
-                File target = new File(outputDir, "gradle-${version}-bin.zip")
-                downloadFileFrom(uriSet,target)
-                if(!target.exists()) {
-                    throw new StopActionException("Could not find Gradle ${version}")
+
+                File target = Unpacker.downloadFileFrom(uriSet,project.gradle,outputDir,version,'bin')
+                if(target == null) {
+                    throw new TaskExecutionException(this,new StopActionException("Could not find Gradle ${version}"))
                 }
-                unpackFile(target)
-            }
-            populateDownloaded()
-        }
-    }
-
-    private void downloadFileFrom(final Set<URI> uriSet,final File target) {
-        uriSet.each { uri ->
-            if (!target.exists()) {
-                try {
-                    Unpacker.downloadTo(project.gradle, uri, outputDir, version, 'bin')
-                } catch (FileNotFoundException) {
-                    // Expected exception in case of URI not existent
+                Unpacker.unpackTo(new File(outputDir,'gradleDist'),target,logger)
+                if(project.extensions.getByName(Names.EXTENSION).downloadToGradleUserHome) {
+                    Unpacker.unpackToUserHome(project.gradle,target)
                 }
+
             }
-        }
-    }
 
-    private void unpackFile(final File target) {
-        Unpacker.unpackTo(new File(outputDir,'gradleDist'),target,logger)
-        if(project.extensions.getByName(Names.EXTENSION).downloadToGradleUserHome) {
-            Unpacker.unpackToUserHome(project.gradle,target)
+            downloaded = DistributionInternal.searchCacheFolder(outputDir,logger)
         }
-    }
-
-    private void populateDownloaded() {
-        downloaded = DistributionInternal.searchCacheFolder(outputDir,logger)
     }
 
     private Set<String> versions = []

@@ -2,6 +2,7 @@ package org.ysb33r.gradle.gradletest.internal
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.apache.maven.artifact.ant.shaded.FileUtils
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 
@@ -15,6 +16,7 @@ class IntegrationTestHelper {
     static final boolean OFFLINE = System.getProperty('OFFLINE')
     static final File CURRENT_GRADLEHOME = new File( System.getProperty('CURRENT_GRADLEHOME') )
     static final File TESTDIST = new File( System.getProperty('GRADLETESTDIST')  )
+    static final String REPOTESTFILES = System.getProperty('GRADLETESTREPO')
 
     static Project buildProject(final String testName) {
         File pDir = new File(TESTROOT,testName)
@@ -42,5 +44,11 @@ class IntegrationTestHelper {
         matcher[0][1]
     }
 
-
+    static void createTestRepo(final File repoDir) {
+        repoDir.mkdirs()
+        REPOTESTFILES.split(',').each { String it->
+            File src = new File(it)
+            FileUtils.copyFile(src,new File(repoDir,src.name))
+        }
+    }
 }

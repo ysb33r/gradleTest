@@ -2,6 +2,7 @@ package org.ysb33r.gradle.gradletest
 
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskExecutionException
 import org.ysb33r.gradle.gradletest.internal.IntegrationTestHelper
 import spock.lang.Specification
 
@@ -15,18 +16,20 @@ class GradleTestIntegrationSpec extends Specification {
     File simpleTestSrcDir = new File(IntegrationTestHelper.PROJECTROOT,'build/resources/integrationTest/gradleTest')
     File simpleTestDestDir = new File(project.projectDir,'src/'+Names.DEFAULT_TASK)
     File expectedOutputDir = new File(project.buildDir,Names.DEFAULT_TASK + '/' + project.gradle.gradleVersion )
+    File repoDir = new File(project.projectDir,'srcRepo').absoluteFile
 
     void setup() {
 
         assert  simpleTestSrcDir.exists()
         FileUtils.copyDirectory simpleTestSrcDir, simpleTestDestDir
+        IntegrationTestHelper.createTestRepo(repoDir)
 
         project.allprojects {
             apply plugin: 'org.ysb33r.gradletest'
 
             project.repositories {
                 flatDir {
-                    dirs repoTestFile.parentFile
+                    dirs repoDir
                 }
             }
 
@@ -43,6 +46,7 @@ class GradleTestIntegrationSpec extends Specification {
 
             dependencies {
                 gradleTest ':commons-cli:1.2'
+                gradleTest ':doxygen:0.2'
             }
 
             // Only use the current gradle version for testing
@@ -52,7 +56,7 @@ class GradleTestIntegrationSpec extends Specification {
         }
     }
 
-    def "A simple gradleTest that is expected to pass"() {
+    def "Two simple gradleTests; one will pass and one will fail"() {
 
         when: 'Evaluation has been completed'
         project.evaluate()
@@ -65,10 +69,27 @@ class GradleTestIntegrationSpec extends Specification {
         when: 'The tasks is executed'
         project.tasks.gradleTest.execute()
 
+        then: "We expect this ugly exception, but need to fix it to be more like the 'test' task "
+        thrown(TaskExecutionException)
+
+        when:
+        def results = project.tasks.gradleTest.testResults
+
         then:
-        new File(expectedOutputDir,'simpleTest').exists()
         project.tasks.gradleTest.didWork
-        false
+        results.size() == 2
+
+        and:
+        new File(expectedOutputDir,'simpleTest').exists()
+        results[1].passed
+        results[1].gradleVersion == project.gradle.gradleVersion
+        results[1].testName == 'simpleTest'
+
+        and:
+        new File(expectedOutputDir,'failureTest').exists()
+        !results[0].passed
+        results[0].gradleVersion == project.gradle.gradleVersion
+        results[0].testName == 'failureTest'
     }
 
 }

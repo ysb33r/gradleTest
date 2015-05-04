@@ -49,10 +49,8 @@ repositories {
 		name 'Downloader for Gradle distributions'
 		url 'https://services.gradle.org/distributions'
 		resolve.dynamicMode = false
-//		transitive false
 		layout 'pattern', {
 			artifact '[artifact]-[revision]-[classifier].zip'
-//			ivy '/non-existent/ivy/workaround'
 		}
 	}
 }
@@ -66,6 +64,7 @@ dependencies {
 	}
 	integrationTestDistro ':gradle:2.1:bin@zip'
 	integrationTestRepo 'commons-cli:commons-cli:1.2'
+	integrationTestRepo 'org.ysb33r.gradle:doxygen:0.2'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -98,7 +97,7 @@ integrationTest {
 	systemProperties TESTROOT : "${buildDir}/tmp/integrationtestroot"
 	systemProperties PROJECTROOT : projectDir
 	systemProperties GRADLETESTDIST : configurations.integrationTestDistro.files[0]
-    systemProperties GRADLETESTREPO : configurations.integrationTestRepo.files[0]
+    systemProperties GRADLETESTREPO : configurations.integrationTestRepo.files.join(',')
 	systemProperties CURRENT_GRADLEHOME : gradle.gradleHomeDir
 
 	if(gradle.startParameter.offline) {

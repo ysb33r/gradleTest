@@ -90,6 +90,23 @@ class GradleTest extends DefaultTask {
         } as Set<File>
     }
 
+    /** Returns a list of test results
+     *
+     * @return The list of results (or null if task has not yet executed).
+     */
+    def getTestResults() {
+        if(testRunners.empty) {
+            return null
+        }
+
+        testRunners.collect { TestRunner run ->
+            [ getTestName : {run.testName},
+              getGradleVersion : {run.version},
+              getPassed : {run.execResult.exitValue == 0}
+            ] as CompatibilityTestResult
+        }
+    }
+
     @TaskAction
     void exec() {
 
@@ -119,13 +136,22 @@ class GradleTest extends DefaultTask {
 
         testRunners.each {
             it.run()
+            logger.lifecycle "${it.testName}: ${it.execResult.exitValue?'FAILED':'PASSED'}"
         }
 
-        throw new NotImplementedException('Not implemented test gathering as yet')
+        int failed = testRunners.count { it.execResult.exitValue  }
 
+        logger.lifecycle "${name} Compatibility Test Executor finished execuring tests"
         // Now gather the results
-        if (testRunners.find { it.execResult.exitValue != 0 }) {
-            throw new TaskExecutionException(this, new StopActionException("One or more compatibility tests have failed: You can see the report at TODO"))
+        // TODO: Build HTML report into build/reports
+
+        if (failed) {
+            logger.lifecycle "${failed} compatibility tests failed"
+            testRunners.findAll {it.execResult.exitValue}.each {
+                println "${name}:${it.testName}: FAILED"
+            }
+// TODO:            throw new TaskExecutionException(this, new StopActionException("One or more compatibility tests have failed: You can see the report at TODO"))
+            throw new TaskExecutionException(this, new StopActionException("One or more compatibility tests have failed. Check the screen output for now."))
         }
     }
 
@@ -139,18 +165,9 @@ class GradleTest extends DefaultTask {
         } else {
             URI uri = enumResources.nextElement().toURI()
             initScript = uri
-//            String location = uri.getSchemeSpecificPart().replace('!/'+INIT_GRADLE_PATH,'')
-//            if(uri.scheme.startsWith('jar')) {
-//                location=location.replace('jar:file:','')
-//                initScript = project.zipTree(location).toURI()
-//            } else if(uri.scheme.startsWith('file')) {
-//                initScript = location.replace('file:','').toURI()
-//            } else {
-//                throw new GradleException("Cannot extract ${uri}")
-//            }
         }
-
     }
+
     private List<Object> versions = []
     private List<TestRunner> testRunners = []
     private URI initScript

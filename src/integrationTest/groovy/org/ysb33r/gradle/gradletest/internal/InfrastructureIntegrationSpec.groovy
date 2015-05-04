@@ -11,7 +11,6 @@ import spock.lang.Specification
  */
 class InfrastructureIntegrationSpec extends Specification {
     static final File simpleTestSrcDir = new File(IntegrationTestHelper.PROJECTROOT,'build/resources/integrationTest/gradleTest')
-    static final File repoTestFile = new File(System.getProperty('GRADLETESTREPO'))
     static final File gradleLocation  = IntegrationTestHelper.CURRENT_GRADLEHOME
 
     Project project = IntegrationTestHelper.buildProject('iis')
@@ -20,6 +19,7 @@ class InfrastructureIntegrationSpec extends Specification {
     File simpleTestDestDir = new File(project.projectDir,'src/' + Names.DEFAULT_TASK)
     File expectedOutputDir = new File(project.buildDir,Names.DEFAULT_TASK + '/' + project.gradle.gradleVersion )
     File initScript = new File(project.projectDir,'foo.gradle')
+    File repoDir = new File(project.projectDir,'srcRepo')
 
     boolean exists( final String path ) {
         new File("${project.buildDir}/${Names.DEFAULT_TASK}/${path}" ).exists()
@@ -27,13 +27,13 @@ class InfrastructureIntegrationSpec extends Specification {
 
     void setup() {
         assert  simpleTestSrcDir.exists()
-        assert repoTestFile.exists()
+        IntegrationTestHelper.createTestRepo(repoDir)
 
         FileUtils.copyDirectory simpleTestSrcDir, simpleTestDestDir
 
         project.repositories {
             flatDir {
-                dirs repoTestFile.parentFile
+                dirs repoDir
             }
         }
 
@@ -79,6 +79,7 @@ class InfrastructureIntegrationSpec extends Specification {
         exists 'init.gradle'
         exists "${gradleVersion}/SimpleTest/build.gradle"
         exists 'repo'
+        exists 'repo/commons-cli-1.2.jar'
 
         and: 'Runners chould be created'
         runners.size() == 1

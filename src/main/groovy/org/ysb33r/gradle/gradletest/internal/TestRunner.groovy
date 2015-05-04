@@ -30,6 +30,7 @@ class TestRunner {
         project.logger.info "Running ${testName} against Gradle ${version}"
 
         execResult = project.javaexec {
+            ignoreExitValue = true
             classpath "${gradleLocationDir}/lib/gradle-launcher-${version}.jar"
             workingDir testProjectDir.absoluteFile
 
@@ -50,9 +51,9 @@ class TestRunner {
             systemProperties 'org.gradle.appname' : this.class.name
 
             // Capture standardOutput and errorOutput
-
+            // errorOutput = new ByteArrayOutputStream()
+            // standardOutput = new ByteArrayOutputStream()
             // systemProperties & environment in a later release
-            // lib/gradle-launcher-2.0.jar
         }
     }
 }

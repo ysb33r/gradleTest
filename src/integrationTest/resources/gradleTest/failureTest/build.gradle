@@ -1,0 +1,5 @@
+
+
+task runGradleTest << {
+    throw new GradleException('We expect this test to fail')
+}

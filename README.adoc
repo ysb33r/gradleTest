@@ -82,6 +82,7 @@ gradleLocations {
   downloadToGradleUserHome = false // <5>
   useGradleSite = true             // <6>
   uris                             // <7>
+  search                           // <8>
 }
 ----
 <1> Search Gradle home for Gradle installations.
@@ -93,6 +94,9 @@ gradleLocations {
   Gradle wrapper will do.
 <6> Download distribution from the global Gradle distribution site.
 <7> List additional URLs to search for Gradle distributions.
+<8> Search these additional folders for Gradle installations. Search will be performed
+    both as if it a cache-style folder (aka `gradleUserHome`) or an installation-style folder
+    (aka `GVM_HOME`).
 
 == Task Configuration
 
@@ -215,4 +219,7 @@ on how this is done.
   possible.
 * The source sets for the Gradle tests cannot be renamed or added to. The subdirectory name is fixed to the task name.
 * No nice HTML report
-* Graceful failure required such as for `test` task.
+* No graceful failure as for `test` task. Currenlty throws a `TaskExecutionException` at the end, which is ugly.
+* No running counter of tests run and test failures (as for `test` task).
+* All test output is going to stdout instead of being captured and added to test report.
+* Does not run test in parallel, even though it theoretically could. Can do with a `maxParallelForks`.
