@@ -10,7 +10,11 @@ import org.gradle.testfixtures.ProjectBuilder
  */
 @CompileStatic
 class IntegrationTestHelper {
-    static final String TESTROOT = new File( System.getProperty('TESTROOT') ?: '.').absoluteFile
+    static final String TESTROOT = new File( System.getProperty('TESTROOT') ?: 'build/tmp/integrationtestroot').absoluteFile
+    static final String PROJECTROOT = new File( System.getProperty('PROJECTROOT') ?: '.' ).absoluteFile
+    static final boolean OFFLINE = System.getProperty('OFFLINE')
+    static final File CURRENT_GRADLEHOME = new File( System.getProperty('CURRENT_GRADLEHOME') )
+    static final File TESTDIST = new File( System.getProperty('GRADLETESTDIST')  )
 
     static Project buildProject(final String testName) {
         File pDir = new File(TESTROOT,testName)
@@ -24,7 +28,6 @@ class IntegrationTestHelper {
     static File findInstalledVersionDir( final File startDir,final String version ) {
         File found = null
         startDir.eachDir { File intermediateDir ->
-            println "*** ${intermediateDir}"
             intermediateDir.eachDirMatch ~/gradle-${version}/, { installDir ->
                 found = installDir
             }
@@ -38,7 +41,6 @@ class IntegrationTestHelper {
         assert matcher.matches()
         matcher[0][1]
     }
-
 
 
 }

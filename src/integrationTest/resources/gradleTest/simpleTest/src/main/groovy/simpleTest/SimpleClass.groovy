@@ -1,0 +1,3 @@
+class SimpleClass {
+    String simpleString
+}

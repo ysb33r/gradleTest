@@ -1,0 +1,20 @@
+
+
+// This is the default init script to be used.
+
+allprojects {
+    buildscript {
+        repositories {
+            flatDir {
+                dirs "${project.rootProject.projectDir}/../../repo"
+            }
+        }
+    }
+    repositories {
+        flatDir {
+            dirs "${project.rootProject.projectDir}/../../repo"
+        }
+    }
+
+    println "Loaded custom GradleTest init script"
+}

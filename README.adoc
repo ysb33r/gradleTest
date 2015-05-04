@@ -31,6 +31,7 @@ ${buildDir} / gradleTest / ver1 / project1 <1>
                          / repo            <3>
                          / home            <4>
             / classes / gradleTest         <5>
+            / gradleDist                   <6>
 ----
 <1> Projects are duplicated for each Gradle version. See below for a more detailed
   layout
@@ -38,6 +39,7 @@ ${buildDir} / gradleTest / ver1 / project1 <1>
 <3> This is flat repository that can be utilised by all tests.
 <4> Gradle home directory for all the tests
 <5> Temporary classes for bootstrapping the tests are kept here.
+<6> Distributions are downloaded here if necessary
 
 .Test layout for one test
 ----
@@ -73,12 +75,13 @@ apply plugin : 'org.ysb33r.gradleTest'
 [source,groovy]
 ----
 gradleLocations {
-  searchGradleHome = true   // <1>
-  includeGradleHome = true  // <2>
-  searchGvm = true          // <3>
-  download = true           // <4>
-
-  urls                      // <5>
+  searchGradleUserHome = true      // <1>
+  includeGradleHome = true         // <2>
+  searchGvm = true                 // <3>
+  download = true                  // <4>
+  downloadToGradleUserHome = false // <5>
+  useGradleSite = true             // <6>
+  uris                             // <7>
 }
 ----
 <1> Search Gradle home for Gradle installations.
@@ -86,7 +89,10 @@ gradleLocations {
 <3> Search the GVM folder for Gradle installations
 <4> Download uninstalled version if online. These distributions will be
   placed in the appropriate location in `gradle.gradleHome`.
-<5> List additional URLs to search for Gradle distributions.
+<5> Place downloaded distributions in `gradle.gradleUserHomeDir` in the same way
+  Gradle wrapper will do.
+<6> Download distribution from the global Gradle distribution site.
+<7> List additional URLs to search for Gradle distributions.
 
 == Task Configuration
 
@@ -124,7 +130,7 @@ or `builddpendsOn gradleTest`.
 == Dependencies
 
 Although gradle tests can download their own dependencies, this might consume unnecessary
-bandwidth and waste a lot of testing time. IN order to combat this,
+bandwidth and waste a lot of testing time. In order to combat this,
 any dependencies listed under `gradleTest` configuration will be will be downloaded and
 made available to the running gradle tests.
 
@@ -191,7 +197,7 @@ task furtherTest( type : org.ysb33r.gradle.gradletest.GradleTest ) {
 }
 ----
 
-Test files should be placed under `src/furtherTest` using the same layour as described earlier. Dependencies should be
+Test files should be placed under `src/furtherTest` using the same layout as described earlier. Dependencies should be
 listed under `furtherTest` configuration.
 
 Global configuration is still read from `gradleLocations` project extension.
@@ -200,3 +206,13 @@ Global configuration is still read from `gradleLocations` project extension.
 
 This plugin is so awesome, it applies to itself and then runs a collection of tests - See `gradle/elf-reference.gradle`
 on how this is done.
+
+== Known Limitations
+
+* The plugin assumes that no Gradle distributions in `gradle,gradleUserHomeDir` or `GVM_HOME` will be removed whilst it
+  is running.
+* Not designed to work Gradle < 2.0. If the community requires this functionality an effort will be made to see if it is
+  possible.
+* The source sets for the Gradle tests cannot be renamed or added to. The subdirectory name is fixed to the task name.
+* No nice HTML report
+* Graceful failure required such as for `test` task.

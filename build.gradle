@@ -65,6 +65,7 @@ dependencies {
 		exclude module : 'groovy-all'
 	}
 	integrationTestDistro ':gradle:2.1:bin@zip'
+	integrationTestRepo 'commons-cli:commons-cli:1.2'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -95,8 +96,16 @@ test {
 
 integrationTest {
 	systemProperties TESTROOT : "${buildDir}/tmp/integrationtestroot"
+	systemProperties PROJECTROOT : projectDir
 	systemProperties GRADLETESTDIST : configurations.integrationTestDistro.files[0]
+    systemProperties GRADLETESTREPO : configurations.integrationTestRepo.files[0]
+	systemProperties CURRENT_GRADLEHOME : gradle.gradleHomeDir
+
+	if(gradle.startParameter.offline) {
+		systemProperties OFFLINE:'1'
+	}
 }
+
 
 
 artifactory {

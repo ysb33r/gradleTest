@@ -10,11 +10,11 @@ class DistributionSpec extends Specification {
 
     def "Converting a list of Distribution to a Set"() {
         given:
-        List<Distribution> list = [
-            new Distribution('2.2',new File('loc1')),
-            new Distribution('2.2',new File('loc2'))
+        List<DistributionInternal> list = [
+            new DistributionInternal('2.2',new File('loc1')),
+            new DistributionInternal('2.2',new File('loc2'))
         ]
-        Set<Distribution> set = list as Set
+        Set<DistributionInternal> set = list as Set
 
         expect:
         set.size() == 1

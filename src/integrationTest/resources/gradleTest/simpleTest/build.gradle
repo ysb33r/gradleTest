@@ -1,0 +1,12 @@
+apply plugin: 'groovy'
+
+version = '0.1'
+
+dependencies {
+    compile localGroovy()
+    compile ':commons-cli:1.2'
+}
+
+task runGradleTest {
+    dependsOn jar
+}

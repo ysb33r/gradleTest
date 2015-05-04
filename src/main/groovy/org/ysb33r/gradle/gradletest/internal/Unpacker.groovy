@@ -7,6 +7,7 @@ import org.gradle.wrapper.IDownload
 import org.gradle.wrapper.Install
 import org.gradle.wrapper.PathAssembler
 import org.gradle.wrapper.WrapperConfiguration
+import org.ysb33r.gradle.gradletest.Names
 
 /** Unpacks a downloaded distributions to the gradle wrapper in {@code gradleUserHome}
  *
@@ -35,10 +36,10 @@ class Unpacker {
      * @param version Version to download
      * @param variant Variant to download ('bin' or 'all')
      */
-    static void downloadTo( Gradle gradle, final String rootURI, final File downloadLocation, final String version, final String variant ) {
+    static void downloadTo( Gradle gradle, final URI rootURI, final File downloadLocation, final String version, final String variant ) {
         IDownload downloader= createDownloader(gradle.rootProject.logger)
         String downloadURI = "${rootURI}/gradle-${version}-${variant}.zip"
-        downloader.download(downloadURI.toURI(),downloadLocation)
+        downloader.download(downloadURI.toURI(),new File(downloadLocation,"gradle-${version}-${variant}.zip"))
     }
 
     /** Downloads a remote Gradle distribution from the Gradle distribution site to local folder, but does not unpack it
@@ -49,7 +50,7 @@ class Unpacker {
      * @param variant Variant to download ('bin' or 'all')
      */
     static void downloadTo( Gradle gradle, final File downloadLocation, final String version, final String variant ) {
-        downloadTo(gradle,'https://services.gradle.org/distributions',downloadLocation,version,variant)
+        downloadTo(gradle, Names.GRADLE_SITE,downloadLocation,version,variant)
     }
 
     /** Unpacks a Gradle Distribution to a given root directory.
