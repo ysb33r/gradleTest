@@ -63,7 +63,7 @@ be generated in the test folder
 ----
 buildscript {
   dependencies {
-    classpath 'org.ysb33r.gradle:gradletest:0.2'
+    classpath 'org.ysb33r.gradle:gradletest:0.9'
   }
 }
 
@@ -142,12 +142,14 @@ made available to the running gradle tests.
 [source,groovy]
 ----
 dependencies {
-  gradleTest 'org.ysb33r.gradle:gnumake:1.0.1'
   gradleTest 'commons-cli:commons-cli:1.2'
 }
 ----
 
 These dependencies then appear as a `flatDir` repository in the gradle test.
+
+*NOTE*: It is not necessary to add your plugin to the dependencies. The output of the `jar` task
+is automatically added to the `gradleTest` configuration. 
 
 .Configure test build.gradle for dependency
 [source,groovy]
@@ -185,6 +187,22 @@ allprojects {
   }
 }
 ----
+
+== Dynamic dependencies
+
+Hard-coding the plugin version in to the `build.gradle` files of the `gradleTest` test fixtures is a maintenance pain.
+Therefore it is possible to write something like
+
+[source,groovy]
+----
+buildscript {
+  dependencies {
+    classpath ':gnumake:%%VERSION%%'
+  }
+}
+----
+
+and the plugin will substitute the `%%VERSION%%` token with the version of your project.
 
 == Adding additional test tasks
 

@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath 'org.ysb33r.gradletest:gradletest:%%VERSION%%'
+    }
+}
+
 apply plugin : 'org.ysb33r.gradletest'
 apply plugin : 'groovy'
 

@@ -1,20 +1,25 @@
-// We use this to load the GradleTest plugin to test itself.
-// Due to the fact that we could be breaking this plugin many times during development,
-// we rather use a rule to load the gradleTest task
+// We have a property to help in case of when the code is so broken that we cannot
+// even load it and as such prevents the rest of the code being built and tested.
+// If you pass -PDISABLE_GRADLETEST=1 on the command-line then the gradleTest task
+// will be disabled
 
-tasks.addRule('gradleTest: Test this plugin using itself') { taskName ->
-    def matcher = ( taskName =~ /gradleTest/ )
+if(!project.properties.DISABLE_GRADLETEST) {
+    apply plugin: new GroovyScriptEngine(
+        ['src/main/groovy', 'src/main/resources'].
+            collect { file(it).absolutePath }.toArray(new String[2]),
+        project.class.classLoader
+    ).loadScriptByName('org/ysb33r/gradle/gradletest/GradleTestPlugin.groovy')
 
-    if (matcher.matches()) {
-        apply plugin: new GroovyScriptEngine(
-            ['src/main/groovy','src/main/resources'].
-                collect{ file(it).absolutePath }.toArray(new String[2]),
-            this.class.classLoader
-        ).loadScriptByName('src/main/groovy/org/ysb33r/gradle/gradletest/GradleTestPlugin.groovy')
+    gradleLocations {
+        downloadToGradleUserHome = true
+    }
 
-        gradleTest {
-            versions '2.0','2.2','2.3'
-            dependsOn 'integrationTest','test'
-        }
+    gradleTest {
+        versions '2.0', '2.2', '2.3'
+        dependsOn 'integrationTest', 'test'
+    }
+
+    dependencies {
+        gradleTest jar.outputs.files
     }
 }

@@ -30,6 +30,11 @@ class GradleTestPlugin implements Plugin<Project> {
     void apply(Project project) {
 
         project.with {
+
+            // Force the JAVA plugin to be applied. You need at least it to build
+            // a plugin anyway
+            apply plugin : 'java'
+
             configurations.maybeCreate  Names.CONFIGURATION
             configurations.maybeCreate  Names.DEFAULT_TASK
 
@@ -49,8 +54,11 @@ class GradleTestPlugin implements Plugin<Project> {
                 Set<String> versions = GradleTest.findAllRequiredVersions(p)
 
                 // Add a dependency for all Gradle tasks on the downloader tasks
+                // Add a configuration on the jar task, so that it's output becomes
+                // part of the gradleTask configuration
                 tasks.withType(GradleTest) { t ->
                     t.dependsOn Names.DOWNLOADER_TASK
+                    p.dependencies.add(t.name,p.tasks.jar.outputs.files)
                 }
 
                 // Search for local distributions

@@ -9,6 +9,9 @@ allprojects {
                 dirs "${project.rootProject.projectDir}/../../repo"
             }
         }
+//        dependencies {
+//            classpath '%%GROUP%%:%%MODULE%%:%%VERSION%%'
+//        }
     }
     repositories {
         flatDir {

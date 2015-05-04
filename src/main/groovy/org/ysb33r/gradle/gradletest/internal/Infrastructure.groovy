@@ -41,7 +41,7 @@ class Infrastructure {
         final Map<String,File> locations = settings.locations
         final String name = settings.name
         final File src = settings.sourceDir
-        final URI initScript = settings.initScript
+        final Object initScript = settings.initScript
         final Set<String> versions = settings.versions
 
         assert project != null
@@ -64,6 +64,11 @@ class Infrastructure {
             from initScript
             into initGradle.parentFile
             rename { 'init.gradle' }
+//            filter { line ->
+//                line.replaceAll('%%GROUP%%',project.group).
+//                    replaceAll('%%MODULE%%',project.tasks.jar.baseName).
+//                    replaceAll('%%VERSION%%',project.version)
+//            }
         }
 
         versions.each { ver ->
@@ -74,6 +79,12 @@ class Infrastructure {
                     include '**'
                 }
                 into dest
+                filter { line ->
+                    line.replaceAll('%%GROUP%%',project.group).
+                    replaceAll('%%MODULE%%',project.tasks.jar.baseName).
+                    replaceAll('%%VERSION%%',project.version)
+                }
+
             }
 
             tests.each { test ->

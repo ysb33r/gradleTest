@@ -159,10 +159,13 @@ class GradleTest extends DefaultTask {
         // TODO: Build HTML report into build/reports
 
         if (failed) {
-            logger.lifecycle "${failed} compatibility tests failed"
+            String msg = "${failed} compatibility tests failed.\n"
+            msg+=        "-------------------------------------\n"
             testRunners.findAll {it.execResult.exitValue}.each {
-                println "${name}:${it.testName}: FAILED"
+                msg+= "${name}:${it.testName}:${it.version}: FAILED\n"
             }
+            msg+=        "-------------------------------------\n"
+            logger.lifecycle msg
 // TODO:            throw new TaskExecutionException(this, new StopActionException("One or more compatibility tests have failed: You can see the report at TODO"))
             throw new TaskExecutionException(this, new StopActionException("One or more compatibility tests have failed. Check the screen output for now."))
         }
@@ -177,13 +180,34 @@ class GradleTest extends DefaultTask {
             throw new GradleException ("Cannot find ${INIT_GRADLE_PATH} in classpath")
         } else {
             URI uri = enumResources.nextElement().toURI()
-            initScript = uri
+            String location = uri.getSchemeSpecificPart().replace('!/'+INIT_GRADLE_PATH,'')
+            if(uri.scheme.startsWith('jar')) {
+                location=location.replace('jar:file:','')
+                initScript= project.zipTree(location).filter { it.name == 'init.gradle'}
+            } else if(uri.scheme.startsWith('file')) {
+                initScript= location.replace('file:','')
+            } else {
+                throw new GradleException("Cannot extract ${uri}")
+            }
         }
+
+        /*
+                    String location = uri.getSchemeSpecificPart().replace('!/'+BOOTSTRAP_TEMPLATE_PATH,'')
+            if(uri.scheme.startsWith('jar')) {
+                location=location.replace('jar:file:','')
+                source= task.project.zipTree(location)
+            } else if(uri.scheme.startsWith('file')) {
+                source= location.replace('file:','')
+            } else {
+                throw new GradleException("Cannot extract ${uri}")
+            }
+
+         */
     }
 
     private List<Object> versions = []
     private List<TestRunner> testRunners = []
-    private URI initScript
+    private Object initScript
     private final static String  INIT_GRADLE_PATH = 'org.ysb33r.gradletest/init.gradle'
 
     /** Called by afterEvaluate to look for versions in all GradleTest tasks

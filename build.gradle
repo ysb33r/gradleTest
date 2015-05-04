@@ -17,6 +17,7 @@ buildscript {
 		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0', {
 			exclude module : 'guava'
 		}
+
 	}
 }
 
@@ -31,7 +32,7 @@ apply   from : 'gradle/self-reference.gradle'
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '0.9-SNAPSHOT'
+version = '0.9'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -88,6 +89,10 @@ jar {
 		attributes 'Implementation-Title': moduleName, 'Implementation-Version': version
 	}
 }
+
+// TODO: Fix Javadoc errors
+javadoc { enabled=false }
+javadocJar { enabled=false }
 
 test {
 	systemProperties TESTROOT : "${buildDir}/tmp/testroot"
@@ -172,6 +177,7 @@ license {
 	header = rootProject.file('config/HEADER')
 	strictCheck = true
 	ignoreFailures = false
+	// TODO: Fix Mappings
 //	mapping {
 //		groovy = 'gradleTest'
 //	}

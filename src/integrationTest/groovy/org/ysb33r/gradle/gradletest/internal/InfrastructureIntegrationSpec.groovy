@@ -84,7 +84,7 @@ class InfrastructureIntegrationSpec extends Specification {
             locations : locations,
             name : Names.DEFAULT_TASK,
             sourceDir : simpleTestDestDir,
-            initScript : initScript.toURI(),
+            initScript : initScript,
             versions : [ gradleVersion ]
         )
 
