@@ -135,7 +135,7 @@ uploadArchives  {
 			repoOwner   bintrayOwner
 			repoName    bintrayRepo
 			packageName moduleName
-			description 'This is a plugin for Gradle that allows working with the Coverity static analysis toolset'
+			description 'A plugin that helps you test your plugin against a variety of Gradle versions'
 			tags        'testing','integrationTesting','compatibilityTesting','gradle'
 			licenses          'Apache-2.0'
 			vcsUrl            'https://github.com/ysb33r/gradleTest.git'
@@ -156,7 +156,7 @@ pluginBundle {
 	tags = ['testing','integrationTesting','compatibility']
 
 	plugins {
-		coverityPlugin {
+		gradletestPlugin {
 			id = 'org.ysb33r.gradletest'
 			displayName = 'Plugin for compatibility testing of Gradle plugins'
 		}

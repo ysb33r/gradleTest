@@ -190,19 +190,6 @@ class GradleTest extends DefaultTask {
                 throw new GradleException("Cannot extract ${uri}")
             }
         }
-
-        /*
-                    String location = uri.getSchemeSpecificPart().replace('!/'+BOOTSTRAP_TEMPLATE_PATH,'')
-            if(uri.scheme.startsWith('jar')) {
-                location=location.replace('jar:file:','')
-                source= task.project.zipTree(location)
-            } else if(uri.scheme.startsWith('file')) {
-                source= location.replace('file:','')
-            } else {
-                throw new GradleException("Cannot extract ${uri}")
-            }
-
-         */
     }
 
     private List<Object> versions = []

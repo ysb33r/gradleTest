@@ -149,7 +149,7 @@ dependencies {
 These dependencies then appear as a `flatDir` repository in the gradle test.
 
 *NOTE*: It is not necessary to add your plugin to the dependencies. The output of the `jar` task
-is automatically added to the `gradleTest` configuration. 
+is automatically added to the `gradleTest` configuration.
 
 .Configure test build.gradle for dependency
 [source,groovy]
