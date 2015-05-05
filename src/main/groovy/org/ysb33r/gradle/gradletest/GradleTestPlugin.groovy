@@ -100,7 +100,7 @@ class GradleTestPlugin implements Plugin<Project> {
                     if(ext.distributions == null) {
                         ext.distributions = new AvailableDistributionsInternal()
                     }
-                    ext.distributions.add downloader.downloaded
+                    (ext.distributions as AvailableDistributionsInternal).addDistributions downloader.downloaded
                 }
             }
         }

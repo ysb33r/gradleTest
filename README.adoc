@@ -2,6 +2,11 @@
 
 Test your plugin against different versions of Gradle as part of your build.
 
+== Releases
+
+0.5.1 - Single bug fix related to downloading distributions
+0.5 - First release
+
 == Structure
 
 .Source directory layout
