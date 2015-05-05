@@ -1,3 +1,5 @@
+env:
+ - TRAVIS_CI=1
 language: groovy
 script: ./gradlew clean build gradleTest -PbintrayUserName= -PbintrayApiKey --info
 jdk:

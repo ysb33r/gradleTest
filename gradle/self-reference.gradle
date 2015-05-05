@@ -11,7 +11,7 @@ if(!project.properties.DISABLE_GRADLETEST) {
     ).loadScriptByName('org/ysb33r/gradle/gradletest/GradleTestPlugin.groovy')
 
     gradleLocations {
-        if( System.getenv('APPVEYOR') ) {
+        if( System.getenv('APPVEYOR') || System.getenv('TRAVIS_CI')) {
             downloadToGradleUserHome = false
             searchGradleUserHome = true
             searchGvm = false
@@ -21,7 +21,7 @@ if(!project.properties.DISABLE_GRADLETEST) {
     }
 
     gradleTest {
-        versions '2.0', '2.2', '2.3'
+        versions '2.0', '2.2', '2.3', '2.4'
         dependsOn 'integrationTest', 'test'
     }
 
