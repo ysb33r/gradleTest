@@ -1,6 +1,6 @@
 
 language: groovy
-script: ./gradlew -PTRAVIS_CI=1 clean build gradleTest -PbintrayUserName= -PbintrayApiKey --info
+script: ./gradlew -PTRAVIS_CI=1 -S clean build gradleTest -PbintrayUserName= -PbintrayApiKey --info
 jdk:
  - oraclejdk7
  - oraclejdk8
