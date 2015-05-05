@@ -32,12 +32,12 @@ class UnpackerIntegrationSpec extends Specification {
         assert TESTDIST.exists()
         File userDir = new File(project.projectDir,'distribution')
         assert !userDir.exists()
-        File outputTopDir = new File(userDir,"wrapper/dists/gradle-${VERSION}")
+        File outputTopDir = new File(userDir,"wrapper/dists/gradle-${VERSION}-bin")
 
         when: "I attempt to unpack to a fake Gradle User Home"
         Unpacker.unpackTo(userDir,TESTDIST,project.logger)
 
-        then: "I expect the output diretcory to have been created"
+        then: "I expect the output directory to have been created"
         outputTopDir.exists()
 
         when: "I check the output directory"
