@@ -129,7 +129,7 @@ class GradleTestDownloader extends DefaultTask {
                 if(target == null) {
                     throw new TaskExecutionException(this,new StopActionException("Could not find Gradle ${version}"))
                 }
-                Unpacker.unpackTo(new File(outputDir,'gradleDist'),target,logger)
+                Unpacker.unpackTo(outputDir,target,logger)
                 if(project.extensions.getByName(Names.EXTENSION).downloadToGradleUserHome) {
                     Unpacker.unpackToUserHome(project.gradle,target)
                 }
