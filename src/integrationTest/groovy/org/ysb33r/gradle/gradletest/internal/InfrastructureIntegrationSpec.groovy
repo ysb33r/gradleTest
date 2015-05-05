@@ -78,7 +78,7 @@ class InfrastructureIntegrationSpec extends Specification {
         locations[gradleVersion] = gradleLocation
         def runners = Infrastructure.create (
             project : project,
-            tests : ['SimpleTest'],
+            tests : ['simpleTest'],
             locations : locations,
             name : Names.DEFAULT_TASK,
             sourceDir : simpleTestDestDir,
@@ -90,18 +90,19 @@ class InfrastructureIntegrationSpec extends Specification {
         exists ''
         exists 'init.gradle'
         exists gradleVersion
-        exists "${gradleVersion}/SimpleTest/build.gradle"
+        exists "${gradleVersion}/simpleTest"
+        exists "${gradleVersion}/simpleTest/build.gradle"
         exists 'repo'
         exists 'repo/commons-cli-1.2.jar'
 
-        and: 'Runners chould be created'
+        and: 'Runners should be created'
         runners.size() == 1
         runners[0].project == project
         runners[0].gradleLocationDir == gradleLocation
-        runners[0].testProjectDir == new File(project.buildDir,Names.DEFAULT_TASK + '/' + gradleVersion + '/' + 'SimpleTest')
+        runners[0].testProjectDir == new File(project.buildDir,Names.DEFAULT_TASK + '/' + gradleVersion + '/' + 'simpleTest')
         runners[0].initScript == new File("${project.buildDir}/${Names.DEFAULT_TASK}/init.gradle")
         runners[0].version == gradleVersion
-        runners[0].testName == 'SimpleTest'
+        runners[0].testName == 'simpleTest'
     }
 }
 
