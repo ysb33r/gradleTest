@@ -7,7 +7,7 @@ build_script:
   - gradlew.bat assemble --info --no-daemon -PbintrayUserName -PbintrayApiKey
 
 test_script:
-  - gradlew.bat check --info --no-daemon -PbintrayUserName -PbintrayApiKey
+  - gradlew.bat check gradleTest --info --no-daemon -PbintrayUserName -PbintrayApiKey
 
 branches:
   only:
