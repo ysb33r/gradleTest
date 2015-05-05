@@ -63,10 +63,6 @@ class InfrastructureIntegrationSpec extends Specification {
             dependencies {
                 gradleTest 'commons-cli:commons-cli:1.2'
             }
-//            // Only use the current gradle version for testing
-//            gradleTest {
-//                versions gradle.gradleVersion
-//            }
 
         }
 
@@ -76,6 +72,8 @@ class InfrastructureIntegrationSpec extends Specification {
 
     def "Creating an infrastructure for compatibility testing"() {
         when:
+        assert new File(simpleTestDestDir,'simpleTest').exists()
+
         Map<String,File> locations = [:]
         locations[gradleVersion] = gradleLocation
         def runners = Infrastructure.create (
@@ -89,7 +87,9 @@ class InfrastructureIntegrationSpec extends Specification {
         )
 
         then: "These files must be created"
+        exists ''
         exists 'init.gradle'
+        exists gradleVersion
         exists "${gradleVersion}/SimpleTest/build.gradle"
         exists 'repo'
         exists 'repo/commons-cli-1.2.jar'

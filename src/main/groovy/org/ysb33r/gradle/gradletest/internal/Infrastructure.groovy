@@ -15,6 +15,7 @@ package org.ysb33r.gradle.gradletest.internal
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import org.gradle.api.tasks.WorkResult
 
 /** Utiity class to aid in building the files structure for compatibility testing
  *
@@ -58,12 +59,14 @@ class Infrastructure {
         final Logger logger = project.logger
 
         List<TestRunner> testRunners = []
+        WorkResult wr
 
         logger.debug "Infrastructure: Copying initscript from '${initScript}'"
-        project.copy {
+        wr = project.copy {
             from initScript
             into initGradle.parentFile
             rename { 'init.gradle' }
+            // TODO: Fix this replacement
 //            filter { line ->
 //                line.replaceAll('%%GROUP%%',project.group).
 //                    replaceAll('%%MODULE%%',project.tasks.jar.baseName).
@@ -71,10 +74,12 @@ class Infrastructure {
 //            }
         }
 
+        assert wr.didWork
+
         versions.each { ver ->
             File dest = new File(baseDir,ver)
             logger.debug "Infrastructure: Copying project files from '${src}' to '${dest}'"
-            project.copy {
+            wr = project.copy {
                 from src, {
                     include '**'
                 }
@@ -86,6 +91,7 @@ class Infrastructure {
                 }
 
             }
+            assert wr.didWork
 
             tests.each { test ->
                 testRunners+= new TestRunner(
