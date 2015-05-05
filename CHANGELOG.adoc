@@ -1,0 +1,22 @@
+= CHANGELOG
+
+== Roadmap - v1.0
+
+=== Features
+* https://github.com/ysb33r/gradleTest/issues/1[#1] - Graceful failure when tests have not passed
+* https://github.com/ysb33r/gradleTest/issues/2[#2] - HTML test report
+* https://github.com/ysb33r/gradleTest/issues/3[#3] - Running counter of tests being executed
+* https://github.com/ysb33r/gradleTest/issues/4[#4] - Capture test output and add to test report
+* https://github.com/ysb33r/gradleTest/issues/5[#5] - Allow tests to be executed in parallel
+
+=== Bugs
+* https://github.com/ysb33r/gradleTest/issues/9[#9] - Unpacking dropped `-bin` off the folder name
+* https://github.com/ysb33r/gradleTest/issues/10[#10] - Distributions were incorrectly unpacked to a `gradleDist/gradleDist` folder.
+
+== v0.5.1
+* https://github.com/ysb33r/gradleTest/issues/8[#8] - Fixed intermittent download issue
+
+== v0.5
+* Initial release
+* Can test against various Gradle 2.x versions
+* Very basic reporting
