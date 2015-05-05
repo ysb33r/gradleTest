@@ -1,0 +1,36 @@
+= Hacking & Contributing
+
+In order to contribute to this plugin it is useful to understand something about the structure
+
+== Source File layout
+
+[source]
+----
+src / main             <1>
+    / test             <2>
+    / integrationTest  <3>
+    / gradleTest       <4>
+----
+<1> Plugin source code as usual
+<2> Unittests
+<3> Integration tests - might go online
+<4> Self test - yes, we test this plugin against itself
+
+== Integration Tests
+
+This is setup in `gradle/integration-tests.gradle`.
+
+If a tests needs to go online, then please add the `@IgnoreIf({IntegrationTestHelper.OFFLINE})` to your Spock test, so
+that testing can happen offline if need be.
+
+Dependencies that need to be accessed via a repository during integration tests can be added against the `integrationTestRepo`
+configuration. This will get pushed down to the `GRADLETESTREPO` system property
+
+There is also a special `integrationTestDistro` configuration which is only used to store one distribution as a dependency.
+
+== Compatibility Tests
+
+This is handled via `gradle/self-reference.gradle`. Note that we need to take special care of building under Appveyor
+and Travis CI too.
+
+Dependencies required for compatibility testing shoudl be added against the `gradleTest` configuration.

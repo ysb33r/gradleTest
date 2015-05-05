@@ -81,7 +81,7 @@ task javadocJar(type: Jar) {
 
 artifacts {
 	archives sourcesJar
-	// TODO: FIx Javadoc errors
+	// TODO: Fix Javadoc errors
 //	archives javadocJar
 }
 

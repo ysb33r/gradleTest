@@ -13,6 +13,9 @@
 * https://github.com/ysb33r/gradleTest/issues/9[#9] - Unpacking dropped `-bin` off the folder name
 * https://github.com/ysb33r/gradleTest/issues/10[#10] - Distributions were incorrectly unpacked to a `gradleDist/gradleDist` folder.
 
+=== Other
+* https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors
+
 == v0.5.1
 * https://github.com/ysb33r/gradleTest/issues/8[#8] - Fixed intermittent download issue
 
