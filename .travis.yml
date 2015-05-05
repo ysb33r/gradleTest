@@ -1,12 +1,23 @@
 
 language: groovy
-script: ./gradlew -PTRAVIS_CI=1 -S clean build gradleTest -PbintrayUserName= -PbintrayApiKey --info
+
+install:
+ - ./gradlew -PTRAVIS_CI=1 -S clean -PbintrayUserName= -PbintrayApiKey --info
+
+script:
+ - ./gradlew -PTRAVIS_CI=1 -S clean build gradleTest -PbintrayUserName= -PbintrayApiKey --info
+
 jdk:
  - oraclejdk7
  - oraclejdk8
  - openjdk7
+ - openjdk6
+
 os:
  - linux
  - osx
-env: TERM=dumb
+
+env:
+ - TERM=dumb
+
 #after_success: ./gradlew coveralls -PbintrayUser= -PbintrayApiKey
