@@ -48,6 +48,10 @@ class GradleTestPluginSpec extends Specification {
         project.with {
             apply plugin : 'org.ysb33r.gradletest'
 
+            gradleLocations {
+                searchGvm = false
+            }
+
             gradleTest {
                 versions '1.999','1.998'
             }

@@ -82,15 +82,17 @@ class DistributionInternal implements Distribution {
     static searchInstallFolder(final File searchFolder,Logger logger) {
         List<DistributionInternal> gvm = []
         logger.debug "Searching ${searchFolder} for gradle distributions"
-        searchFolder.eachDir { File dir ->
-            if(dir.name != 'current') {
-                if( new File(dir,'bin/gradle').exists()) {
-                    logger.debug "Found gradle (via install) version ${dir.name} in ${dir}"
-                    String version = dir.name
-                    if(version.startsWith('gradle-')) {
-                        version= version.replace('gradle-','')
+        if(searchFolder.exists()) {
+            searchFolder.eachDir { File dir ->
+                if (dir.name != 'current') {
+                    if (new File(dir, 'bin/gradle').exists()) {
+                        logger.debug "Found gradle (via install) version ${dir.name} in ${dir}"
+                        String version = dir.name
+                        if (version.startsWith('gradle-')) {
+                            version = version.replace('gradle-', '')
+                        }
+                        gvm += new DistributionInternal(version, dir)
                     }
-                    gvm+= new DistributionInternal(version,dir)
                 }
             }
         }

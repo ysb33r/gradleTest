@@ -11,7 +11,7 @@ if(!project.properties.DISABLE_GRADLETEST) {
     ).loadScriptByName('org/ysb33r/gradle/gradletest/GradleTestPlugin.groovy')
 
     gradleLocations {
-        if( System.getenv('APPVEYOR') || project.properties.TRAVIS_CI) {
+        if( System.getenv('APPVEYOR') || project.properties.TRAVIS_CI?.size()) {
             downloadToGradleUserHome = false
             searchGradleUserHome = true
             searchGvm = false
