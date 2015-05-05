@@ -226,7 +226,7 @@ Global configuration is still read from `gradleLocations` project extension.
 
 == Awesomeness
 
-This plugin is so awesome, it applies to itself and then runs a collection of tests - See `gradle/elf-reference.gradle`
+This plugin is so awesome, it applies to itself and then runs a collection of tests - See `gradle/self-reference.gradle`
 on how this is done.
 
 == Known Limitations
