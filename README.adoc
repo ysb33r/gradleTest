@@ -236,8 +236,8 @@ on how this is done.
 * Not designed to work Gradle < 2.0. If the community requires this functionality an effort will be made to see if it is
   possible.
 * The source sets for the Gradle tests cannot be renamed or added to. The subdirectory name is fixed to the task name.
-* No nice HTML report
-* No graceful failure as for `test` task. Currenlty throws a `TaskExecutionException` at the end, which is ugly.
-* No running counter of tests run and test failures (as for `test` task).
-* All test output is going to stdout instead of being captured and added to test report.
-* Does not run test in parallel, even though it theoretically could. Can do with a `maxParallelForks`.
+* No nice HTML report (https://github.com/ysb33r/gradleTest/issues/2)
+* No graceful failure as for `test` task. Currenlty throws a `TaskExecutionException` at the end, which is ugly. (https://github.com/ysb33r/gradleTest/issues/1)
+* No running counter of tests run and test failures (as for `test` task). (https://github.com/ysb33r/gradleTest/issues/3)
+* All test output is going to stdout instead of being captured and added to test report. (https://github.com/ysb33r/gradleTest/issues/4)
+* Does not run test in parallel, even though it theoretically could. Can do with a `maxParallelForks`. (https://github.com/ysb33r/gradleTest/issues/5)
