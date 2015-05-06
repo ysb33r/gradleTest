@@ -32,7 +32,7 @@ apply   from : 'gradle/self-reference.gradle'
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '0.5.2'
+version = '0.5.3'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6

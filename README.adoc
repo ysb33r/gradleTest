@@ -4,6 +4,7 @@ Test your plugin against different versions of Gradle as part of your build.
 
 == Previous versions of this document
 
+* https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_2/README.adoc[0.5.2]
 * https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_1/README.adoc[0.5.1]
 * https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_0/README.adoc[0.5]
 
