@@ -35,10 +35,11 @@ class Unpacker {
      * @return An instance of a downloader
      */
     static IDownload createDownloader(Logger logger) {
-        try {
-            new Download(logger,'GradleTestPlugin','1.0')
-        } catch(GroovyRuntimeException e) {
-            new Download('GradleTestPlugin','1.0')
+        // Thank you Dinko Srkoč for this solutiom
+        Download.constructors.findResult { ctor ->
+            ctor.parameterTypes == [Logger, String, String] as Class[] ?
+                ctor.newInstance(logger, 'GradleTestPlugin','1.0') :
+                ctor.newInstance('GradleTestPlugin','1.0')
         }
     }
 
@@ -79,11 +80,11 @@ class Unpacker {
     static void unpackTo( File unpackLocation, File downloadedLocation, Logger logger ) {
 
         PathAssembler pa = new PathAssembler(unpackLocation)
-        Install installer
-        try {
-            installer = new Install(logger,createDownloader(logger),pa)
-        } catch (GroovyRuntimeException e) {
-            installer = new Install(createDownloader(logger),pa)
+        // Thank you Dinko Srkoč for this solutiom
+        Install installer = Install.constructors.findResult { ctor ->
+            ctor.parameterTypes == [Logger, IDownload, PathAssembler] as Class[] ?
+                ctor.newInstance(logger, createDownloader(logger),pa) :
+                ctor.newInstance(createDownloader(logger),pa)
         }
 
         WrapperConfiguration config = new WrapperConfiguration()
