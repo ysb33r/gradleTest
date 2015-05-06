@@ -2,10 +2,10 @@
 
 Test your plugin against different versions of Gradle as part of your build.
 
-== Releases
+== Previous versions of this document
 
-0.5.1 - Single bug fix related to downloading distributions
-0.5 - First release
+* https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_1/README.adoc[0.5.1]
+* https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_0/README.adoc[0.5]
 
 == Structure
 
