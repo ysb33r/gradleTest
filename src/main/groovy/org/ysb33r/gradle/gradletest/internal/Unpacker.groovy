@@ -35,11 +35,24 @@ class Unpacker {
      * @return An instance of a downloader
      */
     static IDownload createDownloader(Logger logger) {
+		Class<?> wrapperLoggerClass = null;
+		try {
+			wrapperLoggerClass = Class.forName("org.gradle.wrapper.Logger")
+		} catch( ClassNotFoundException ) {
+		}
+		
         // Thank you Dinko Srkoč for this solutiom
         Download.constructors.findResult { ctor ->
-            ctor.parameterTypes == [Logger, String, String] as Class[] ?
-                ctor.newInstance(logger, 'GradleTestPlugin','1.0') :
-                ctor.newInstance('GradleTestPlugin','1.0')
+			if( ctor.parameterTypes == [Logger, String, String] as Class[] ) {
+				ctor.newInstance(logger, 'GradleTestPlugin','1.0')
+			} else if( ctor.parameterTypes == [String, String] as Class[] ) {
+				ctor.newInstance('GradleTestPlugin','1.0')
+			} else if( ctor.parameterTypes == [wrapperLoggerClass, String, String] as Class[] ) {
+				Object wrapperLogger = wrapperLoggerClass.constructors.findResult { loggerCtor ->
+					loggerCtor.newInstance(true)
+				}
+				ctor.newInstance(wrapperLogger, 'GradleTestPlugin','1.0')
+			}
         }
     }
 
@@ -80,11 +93,25 @@ class Unpacker {
     static void unpackTo( File unpackLocation, File downloadedLocation, Logger logger ) {
 
         PathAssembler pa = new PathAssembler(unpackLocation)
+
+		Class<?> wrapperLoggerClass = null;
+		try {
+			wrapperLoggerClass = Class.forName("org.gradle.wrapper.Logger")
+		} catch( ClassNotFoundException ) {
+		}
+		
         // Thank you Dinko Srkoč for this solutiom
         Install installer = Install.constructors.findResult { ctor ->
-            ctor.parameterTypes == [Logger, IDownload, PathAssembler] as Class[] ?
-                ctor.newInstance(logger, createDownloader(logger),pa) :
-                ctor.newInstance(createDownloader(logger),pa)
+			if( ctor.parameterTypes == [Logger, IDownload, PathAssembler] as Class[] ) {
+				ctor.newInstance(logger, createDownloader(logger),pa)
+			} else if( ctor.parameterTypes == [IDownload, PathAssembler] as Class[] ) {
+				ctor.newInstance(createDownloader(logger),pa)
+			} else if( ctor.parameterTypes == [wrapperLoggerClass, IDownload, PathAssembler] as Class[] ) {
+				Object wrapperLogger = wrapperLoggerClass.constructors.findResult { loggerCtor ->
+					loggerCtor.newInstance(true)
+				}
+				ctor.newInstance(wrapperLogger, createDownloader(logger),pa)
+			}
         }
 
         WrapperConfiguration config = new WrapperConfiguration()
