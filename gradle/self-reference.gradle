@@ -21,7 +21,7 @@ if(!project.properties.DISABLE_GRADLETEST) {
     }
 
     gradleTest {
-        versions '2.0', '2.1', '2.2', '2.3', '2.4'
+        versions '2.0', '2.1', '2.2', '2.3', '2.4', '2.5'
         dependsOn 'integrationTest', 'test'
     }
 
