@@ -247,3 +247,8 @@ on how this is done.
 * No running counter of tests run and test failures (as for `test` task). (https://github.com/ysb33r/gradleTest/issues/3)
 * All test output is going to stdout instead of being captured and added to test report. (https://github.com/ysb33r/gradleTest/issues/4)
 * Does not run test in parallel, even though it theoretically could. Can do with a `maxParallelForks`. (https://github.com/ysb33r/gradleTest/issues/5)
+
+== Contributors
+
+* [Daniel Beland](https://github.com/dcendents) - Gradle 2.5 fixes.
+

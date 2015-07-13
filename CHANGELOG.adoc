@@ -15,6 +15,9 @@
 === Other
 * https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors
 
+== v0.5.4
+* Updates for Gradle 2.5 
+
 == v0.5.3
 * https://github.com/ysb33r/gradleTest/issues/13[#13] - Failure running against JDk6 or JDK7.
 
