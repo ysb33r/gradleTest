@@ -65,16 +65,28 @@ be generated in the test folder
 
 == Bootstrap
 
+GradleTest is available in the https://plugins.gradle.org/[Gradle Plugins] repository.
+To use it, add the following snippet into your build script.
+
 [source,groovy]
 ----
 buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"         // <1>
+    }
+  }
+
   dependencies {
-    classpath 'org.ysb33r.gradle:gradletest:0.9'
+    classpath 'org.ysb33r.gradle:gradletest:0.5.4' // <2>
   }
 }
 
-apply plugin : 'org.ysb33r.gradleTest'
+apply plugin: 'org.ysb33r.gradletest'             // <3>
 ----
+<1> Add the Gradle Plugins repository.
+<2> Add the last version as a buildscript dependency.
+<3> Apply the plugin.
 
 == Global Configuration
 
