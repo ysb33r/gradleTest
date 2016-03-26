@@ -19,6 +19,7 @@
 * https://github.com/ysb33r/gradleTest/issues/30[#30] - Specify init scripts
 * https://github.com/ysb33r/gradleTest/issues/28[#28], https://github.com/ysb33r/gradleTest/pull/29[#29] - Better error message when ZIP archive is broken
 (https://github.com/szpak[Marcin Zajączkowski])
+* https://github.com/ysb33r/gradleTest/pull/22[#22], https://github.com/ysb33r/gradleTest/pull/23[#23] - Documentation corrections (https://github.com/matthiasbalke[Matthias Balke])
 
 == v0.5.4
 * Updates for Gradle 2.5 
