@@ -16,7 +16,9 @@
 * https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors
 
 == Roadmap v0.5.5
-* https://github.com/ysb33r/gradleTest/issues/12[#30] - Specify init scripts
+* https://github.com/ysb33r/gradleTest/issues/30[#30] - Specify init scripts
+* https://github.com/ysb33r/gradleTest/issues/28[#28], https://github.com/ysb33r/gradleTest/pull/29[#29] - Better error message when ZIP archive is broken
+(https://github.com/szpak[Marcin Zajączkowski])
 
 == v0.5.4
 * Updates for Gradle 2.5 
