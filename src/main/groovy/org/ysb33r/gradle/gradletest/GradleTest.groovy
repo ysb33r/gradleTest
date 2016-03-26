@@ -70,7 +70,28 @@ class GradleTest extends DefaultTask {
         tests
     }
 
+    /** Sets the lcoation of an alternative init script.
+     *
+     * @param script Location of alternative Gradle init script.
+     * Anything that can be passed to {@code project.file} is allowed.
+     * @since 0.5.5
+     */
+    void initScript(Object script) {
+        this.initScript = script
+    }
 
+    /** Returns the location of the initialisation script.
+     * If it was not set it will be located from within the embedded resources.
+     *
+     * @return Location of the script.
+     */
+    @Input
+    File getInitScript() {
+        if(this.initScript == null) {
+            setInitScriptFromResource()
+        }
+        project.file(this.initScript)
+    }
 
     /** Adds Gradle versions to be tested against.
      *
@@ -123,9 +144,6 @@ class GradleTest extends DefaultTask {
     @TaskAction
     void exec() {
 
-        if(initScript == null) {
-            setInitScriptFromResource()
-        }
 
         Map<String,File> locations = [:]
         GradleTestExtension config = project.extensions.findByName(Names.EXTENSION) as GradleTestExtension
@@ -143,7 +161,7 @@ class GradleTest extends DefaultTask {
             locations : locations,
             name : name,
             sourceDir : sourceDir,
-            initScript : initScript,
+            initScript : getInitScript(),
             versions : versions
         )
 
@@ -183,9 +201,9 @@ class GradleTest extends DefaultTask {
             String location = uri.getSchemeSpecificPart().replace('!/'+INIT_GRADLE_PATH,'')
             if(uri.scheme.startsWith('jar')) {
                 location=location.replace('jar:file:','')
-                initScript= project.zipTree(location).filter { it.name == 'init.gradle'}
+                this.initScript= project.zipTree(location).filter { it.name == 'init.gradle'}
             } else if(uri.scheme.startsWith('file')) {
-                initScript= location.replace('file:','')
+                this.initScript= location.replace('file:','')
             } else {
                 throw new GradleException("Cannot extract ${uri}")
             }

@@ -1,0 +1,15 @@
+
+allprojects {
+    buildscript {
+        repositories {
+            flatDir {
+                dirs "${project.rootProject.projectDir}/../../repo"
+            }
+        }
+    }
+
+    task simpleTest << {
+        println 'simpleTest is here'
+    }
+}
+

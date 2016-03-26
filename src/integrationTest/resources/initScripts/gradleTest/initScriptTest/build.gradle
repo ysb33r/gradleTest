@@ -1,0 +1,4 @@
+
+task runGradleTest << {
+    println tasks.getByName('simpleTest')
+}
