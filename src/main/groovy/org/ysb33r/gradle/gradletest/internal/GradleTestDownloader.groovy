@@ -142,7 +142,7 @@ class GradleTestDownloader extends DefaultTask {
 
     private Set<String> versions = []
     private File outputDir = new File(project.buildDir,Names.DOWNLOAD_FOLDER)
-    private List<Distribution> downloaded = null
+    private List<Distribution> downloaded = []
 
     /** Updates the versions for a given downloader task. Intended to be called in
      * {@code afterEvaluate} phase.

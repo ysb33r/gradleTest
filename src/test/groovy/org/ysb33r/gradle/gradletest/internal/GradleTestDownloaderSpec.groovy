@@ -45,7 +45,7 @@ class GradleTestDownloaderSpec extends Specification {
         downloader.outputDir == new File(project.buildDir,Names.DOWNLOAD_FOLDER)
 
         and: "No items have been downloaded"
-        downloader.downloaded == null
+        downloader.downloaded == [] as Set
     }
 
     def "An instantiated task must be able to set basic parameters"() {
