@@ -15,6 +15,10 @@
 === Other
 * https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors
 
+== v0.5.6 - Roadmap
+
+* https://github.com/ysb33r/gradleTest/issues/26[#26] - Unable to build gradleTest project with Gradle 2.1+
+
 == v0.5.5
 * https://github.com/ysb33r/gradleTest/issues/30[#30] - Specify init scripts
 * https://github.com/ysb33r/gradleTest/issues/28[#28], https://github.com/ysb33r/gradleTest/pull/29[#29] - Better error message when ZIP archive is broken
