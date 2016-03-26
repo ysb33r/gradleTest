@@ -144,7 +144,7 @@ Currently the `gradleTest` task is not linked to any other tasks. Run this as
 explicit task on the command-line or add your own task dependencies in your
 gradle script.
 
-The reason for this is that it can be a quite time-consuming testset to run. The typical
+The reason for this is that it can be quite time-consuming testset to run. The typical
 case will be that the tests are only run close to release time. Some people might
 prefer to set `install.dependsOn gradleTest` rather than `check.dependsOn gradleTest`
 or `build.dependsOn gradleTest`.
