@@ -262,5 +262,9 @@ on how this is done.
 
 == Contributors
 
-* [Daniel Beland](https://github.com/dcendents) - Gradle 2.5 fixes.
+* https://github.com/dcendents[Daniel Beland] - Gradle 2.5 fixes.
+* https://github.com/szpak[Marcin Zajączkowski] - Fix for Zip errors
+* https://github.com/matthiasbalke[Matthias Balke] - Documentation
+
+If you would like to contribute fixes, please see `HACKING.adoc`
 

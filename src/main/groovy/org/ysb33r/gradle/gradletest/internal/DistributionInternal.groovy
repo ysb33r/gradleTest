@@ -36,6 +36,10 @@ import java.util.regex.Matcher
 @ToString
 class DistributionInternal implements Distribution {
 
+    int compareTo(Object o) {
+        compareTo(o as DistributionInternal)
+    }
+
     String version
     File location
 
