@@ -29,7 +29,7 @@ class Infrastructure {
      *  @li tests - A list of tests to be executed
      *  @li locations - A map containing gradle versions (as key) and their locations (as value).
      *  @li sourceDir - Source dreictory where tests are copied from
-     *  @li initScript - URI of the initscript that will be used
+     *  @li initscript - URI of the initscript that will be used
      *  @li versions - A list of versions that the compatibility tests will be execurted against
      *
      * @param settings Property map

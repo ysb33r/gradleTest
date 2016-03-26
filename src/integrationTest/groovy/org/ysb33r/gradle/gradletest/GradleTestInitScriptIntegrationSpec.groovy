@@ -66,7 +66,7 @@ class GradleTestInitScriptIntegrationSpec extends Specification {
             // Only use the current gradle version for testing
             gradleTest {
                 versions gradle.gradleVersion
-                initScript new File(simpleTestSrcDir,'initScriptTest/initscript.gradle')
+                initscript new File(simpleTestSrcDir,'initScriptTest/initscript.gradle')
             }
         }
     }

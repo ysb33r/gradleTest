@@ -111,7 +111,7 @@ class InfrastructureIntegrationSpec extends Specification {
     Project project
     File gradleLocationDir
     File testProjectDir
-    File initScript
+    File initscript
     String version
     String testName
 
@@ -122,7 +122,7 @@ class InfrastructureIntegrationSpec extends Specification {
                     testProjectDir : new File(dest,test),
                     testName : test,
                     version : ver,
-                    initScript : initGradle
+                    initscript : initGradle
                 )
             }
         }

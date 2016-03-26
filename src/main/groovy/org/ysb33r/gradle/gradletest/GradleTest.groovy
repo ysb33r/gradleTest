@@ -15,17 +15,14 @@ package org.ysb33r.gradle.gradletest
 
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
-import org.apache.commons.lang.NotImplementedException
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectories
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.StopActionException
-import org.gradle.api.tasks.StopExecutionException
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.util.CollectionUtils
@@ -76,21 +73,22 @@ class GradleTest extends DefaultTask {
      * Anything that can be passed to {@code project.file} is allowed.
      * @since 0.5.5
      */
-    void initScript(Object script) {
-        this.initScript = script
+    void initscript(Object script) {
+        this.initscript = script
     }
 
     /** Returns the location of the initialisation script.
      * If it was not set it will be located from within the embedded resources.
      *
      * @return Location of the script.
+     * @since 0.5.5
      */
     @Input
-    File getInitScript() {
-        if(this.initScript == null) {
+    Object getInitscript() {
+        if(this.initscript == null) {
             setInitScriptFromResource()
         }
-        project.file(this.initScript)
+        this.initscript
     }
 
     /** Adds Gradle versions to be tested against.
@@ -161,7 +159,7 @@ class GradleTest extends DefaultTask {
             locations : locations,
             name : name,
             sourceDir : sourceDir,
-            initScript : getInitScript(),
+            initScript : getInitscript(),
             versions : versions
         )
 
@@ -201,9 +199,9 @@ class GradleTest extends DefaultTask {
             String location = uri.getSchemeSpecificPart().replace('!/'+INIT_GRADLE_PATH,'')
             if(uri.scheme.startsWith('jar')) {
                 location=location.replace('jar:file:','')
-                this.initScript= project.zipTree(location).filter { it.name == 'init.gradle'}
+                this.initscript= project.zipTree(location).filter { it.name == 'init.gradle'}
             } else if(uri.scheme.startsWith('file')) {
-                this.initScript= location.replace('file:','')
+                this.initscript= location.replace('file:','')
             } else {
                 throw new GradleException("Cannot extract ${uri}")
             }
@@ -212,7 +210,7 @@ class GradleTest extends DefaultTask {
 
     private List<Object> versions = []
     private List<TestRunner> testRunners = []
-    private Object initScript
+    private Object initscript
     private final static String  INIT_GRADLE_PATH = 'org.ysb33r.gradletest/init.gradle'
 
     /** Called by afterEvaluate to look for versions in all GradleTest tasks
