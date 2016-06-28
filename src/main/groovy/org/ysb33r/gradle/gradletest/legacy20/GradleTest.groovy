@@ -211,7 +211,7 @@ class GradleTest extends DefaultTask {
     private List<Object> versions = []
     private List<TestRunner> testRunners = []
     private Object initscript
-    private final static String  INIT_GRADLE_PATH = 'org.ysb33r.gradletest/init.gradle'
+    private final static String  INIT_GRADLE_PATH = 'org/ysb33r/gradletest/init.gradle'
 
     /** Called by afterEvaluate to look for versions in all GradleTest tasks
      *

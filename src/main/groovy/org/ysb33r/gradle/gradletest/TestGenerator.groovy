@@ -196,5 +196,5 @@ class TestGenerator extends DefaultTask {
     }
 
     private def templateFile
-    static final String TEST_TEMPLATE_PATH = 'org.ysb33r.gradletest/GradleTestTemplate.groovy.template'
+    static final String TEST_TEMPLATE_PATH = 'org/ysb33r/gradletest/GradleTestTemplate.groovy.template'
 }
