@@ -11,9 +11,8 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest.internal
+package org.ysb33r.gradle.gradletest.legacy20.internal
 
-import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
@@ -22,7 +21,7 @@ import org.gradle.api.tasks.StopActionException
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.util.CollectionUtils
-import org.ysb33r.gradle.gradletest.Distribution
+import org.ysb33r.gradle.gradletest.legacy20.Distribution
 import org.ysb33r.gradle.gradletest.Names
 
 /** The downloader is a background task which will download Gradle distributions to a local

@@ -14,56 +14,60 @@
 package org.ysb33r.gradle.gradletest
 
 import org.gradle.api.Project
-import org.gradle.api.tasks.Delete
-import org.ysb33r.gradle.gradletest.internal.GradleTestDownloader
-import org.ysb33r.gradle.gradletest.internal.TestHelper
+import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.compile.GroovyCompile
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
+import org.ysb33r.gradle.gradletest.legacy20.DeprecatingGradleTestExtension
+import org.ysb33r.gradle.gradletest.internal.GradleTestSpecification
 import spock.lang.Specification
 
 
 /**
  * @author Schalk W. Cronjé
  */
-class GradleTestPluginSpec extends Specification {
-    Project project = TestHelper.buildProject('gtp')
+class GradleTestPluginSpec extends GradleTestSpecification {
 
     def "Applying the plugin"() {
-        given:
-        project.with {
+        when: "The plugin is applied"
+        configure(project) {
             apply plugin : 'org.ysb33r.gradletest'
-        }
-
-        expect:
-        project.tasks.getByName(Names.DEFAULT_TASK) instanceof GradleTest
-        project.extensions.getByName(Names.EXTENSION) instanceof GradleTestExtension
-        project.configurations.findByName(Names.CONFIGURATION) != null
-        project.configurations.findByName(Names.DEFAULT_TASK) != null
-        project.tasks.getByName(Names.DOWNLOADER_TASK) instanceof GradleTestDownloader
-        project.tasks.getByName(Names.CLEAN_DOWNLOADER_TASK) instanceof Delete
-        project.tasks.getByName(Names.CLEAN_DOWNLOADER_TASK).description?.size()
-
-    }
-
-    def 'Effect of plugin on afterEvaluate'() {
-        given:
-        project.with {
-            apply plugin : 'org.ysb33r.gradletest'
-
-            gradleLocations {
-                searchGvm = false
-            }
-
-            gradleTest {
-                versions '1.999','1.998'
-            }
             evaluate()
         }
-        def defaultTask = project.tasks.getByName(Names.DEFAULT_TASK)
-        def downloaderTask = project.tasks.getByName(Names.DOWNLOADER_TASK)
+
+        then: "The test task is created"
+        tasks.getByName('gradleTest') instanceof GradleTest
+
+        and: "The generator task is created"
+        tasks.getByName('gradleTestGenerator') instanceof TestGenerator
+
+        and: "A compile task is created"
+        tasks.getByName('compileGradleTestGroovy') instanceof GroovyCompile
+
+        and: "A compile configuration is added"
+        configurations.findByName('gradleTestCompile') != null
+
+        and: "A compile task depends on generator task"
+        tasks.getByName('compileGradleTestGroovy').dependsOn.contains 'gradleTestGenerator'
+
+        and: "A runtime configuration is added"
+        configurations.findByName('gradleTestRuntime') != null
+
+        and: "A (deprecated) extension is added"
+        extensions.getByName(Names.EXTENSION) instanceof DeprecatingGradleTestExtension
+
+        when: "The sourceset is evaluated"
+        SourceSet sourceSet = project.sourceSets.getByName('gradleTest')
+        SourceDirectorySet sourceDirSet = sourceSet.getGroovy()
+
+        then: "A test sourceset containing a single source directory is created"
+        sourceDirSet.srcDirs.size() == 1
+        sourceDirSet.srcDirs[0].canonicalPath == file("${buildDir}/gradleTest/src").canonicalPath
 
 
-        expect:
-        defaultTask.dependsOn.contains Names.DOWNLOADER_TASK
-        downloaderTask.versions == ['1.999','1.998'] as Set<String>
+//        and:
     }
+
 }
 

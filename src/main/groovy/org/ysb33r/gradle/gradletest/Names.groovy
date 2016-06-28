@@ -25,43 +25,56 @@ class Names {
      */
     static final String DEFAULT_TASK    = 'gradleTest'
 
-    /** The name of the extension that is to used to configure location and
-     * downloadability of Gradle distributions
-     */
-    static final String EXTENSION       = 'gradleLocations'
-
-    /** A configuration for managing downloading of Gradle distributions
-     *
-     */
-    static final String CONFIGURATION   = 'gradleDistributions'
-
-    /** Name of task that is responsible for downloading Gradle distributions
-     *
-     */
-    static final String DOWNLOADER_TASK = 'gradleDistributionDownloader'
-
-    /** Name of tasks that is reponsible for cleaning downloaded distributions from the
-     * build tree
-     */
-    static final String CLEAN_DOWNLOADER_TASK = 'cleanGradleDistributionDownloader'
-
-    /** A regex for matchign Gradle distribution packages
-     *
-     */
-    static final Pattern GRADLE_PATTERN = ~/gradle-(.+)(-(bin|all))?/
-
-    /** Subdirectory where distributions are downloaded to and unpacked if necessary
-     *
-     */
-    static final String DOWNLOAD_FOLDER = 'gradleDist'
-
     /** Default group for all tasks
      *
      */
     static final String TASK_GROUP = 'Gradle Compatibility Testing'
 
+    /** The string that is added to generator task names by default
+     *
+     */
+    static final String GENERATOR_TASK_POSTFIX = 'Generator'
+
+    /** The name of the extension that is to used to configure location and
+     * downloadability of Gradle distributions
+     */
+    @Deprecated
+    static final String EXTENSION       = 'gradleLocations'
+
+    /** A configuration for managing downloading of Gradle distributions
+     *
+     */
+    @Deprecated
+    static final String CONFIGURATION   = 'gradleDistributions'
+
+    /** Name of task that is responsible for downloading Gradle distributions
+     *
+     */
+    @Deprecated
+    static final String DOWNLOADER_TASK = 'gradleDistributionDownloader'
+
+    /** Name of tasks that is reponsible for cleaning downloaded distributions from the
+     * build tree
+     */
+    @Deprecated
+    static final String CLEAN_DOWNLOADER_TASK = 'cleanGradleDistributionDownloader'
+
+    /** A regex for matchign Gradle distribution packages
+     *
+     */
+    @Deprecated
+    static final Pattern GRADLE_PATTERN = ~/gradle-(.+)(-(bin|all))?/
+
+    /** Subdirectory where distributions are downloaded to and unpacked if necessary
+     *
+     */
+    @Deprecated
+    static final String DOWNLOAD_FOLDER = 'gradleDist'
+
     /** URI for Gradle distributions
      *
      */
+    @Deprecated
     static final URI GRADLE_SITE = 'https://services.gradle.org/distributions'.toURI()
+
 }

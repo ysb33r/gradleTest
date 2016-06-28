@@ -11,22 +11,16 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest.internal
+package org.ysb33r.gradle.gradletest.legacy20.internal
 
 import org.gradle.api.Project
-import org.ysb33r.gradle.gradletest.GradleTestExtension
+import org.ysb33r.gradle.gradletest.internal.GradleTestSpecification
+import org.ysb33r.gradle.gradletest.legacy20.GradleTestExtension
 import org.ysb33r.gradle.gradletest.Names
-import org.ysb33r.gradle.gradletest.internal.GradleTestDownloader
-import org.ysb33r.gradle.gradletest.internal.TestHelper
 import spock.lang.Specification
 
+class GradleTestDownloaderSpec extends GradleTestSpecification {
 
-/**
- * @author Schalk W. Cronjé
- */
-class GradleTestDownloaderSpec extends Specification {
-
-    Project project = TestHelper.buildProject('gtds')
 
     def "Default group and description"() {
         given:

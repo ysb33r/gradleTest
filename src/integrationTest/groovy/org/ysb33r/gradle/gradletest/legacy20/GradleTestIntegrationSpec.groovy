@@ -11,23 +11,22 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest
+package org.ysb33r.gradle.gradletest.legacy20
 
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskExecutionException
-import org.ysb33r.gradle.gradletest.internal.IntegrationTestHelper
-import spock.lang.Issue
+import org.ysb33r.gradle.gradletest.Names
+import org.ysb33r.gradle.gradletest.legacy20.internal.IntegrationTestHelper
 import spock.lang.Specification
-
 
 /**
  * @author Schalk W. Cronjé
  */
-class GradleTestInitScriptIntegrationSpec extends Specification {
+class GradleTestIntegrationSpec extends Specification {
     static final File repoTestFile = new File(System.getProperty('GRADLETESTREPO'))
-    Project project = IntegrationTestHelper.buildProject('gtisis')
-    File simpleTestSrcDir = new File(IntegrationTestHelper.PROJECTROOT,'build/resources/integrationTest/initScripts/gradleTest')
+    Project project = IntegrationTestHelper.buildProject('gtis')
+    File simpleTestSrcDir = new File(IntegrationTestHelper.PROJECTROOT,'build/resources/integrationTest/gradleTest')
     File simpleTestDestDir = new File(project.projectDir,'src/'+Names.DEFAULT_TASK)
     File expectedOutputDir = new File(project.buildDir,Names.DEFAULT_TASK + '/' + project.gradle.gradleVersion )
     File repoDir = new File(project.projectDir,'srcRepo').absoluteFile
@@ -66,21 +65,44 @@ class GradleTestInitScriptIntegrationSpec extends Specification {
             // Only use the current gradle version for testing
             gradleTest {
                 versions gradle.gradleVersion
-                initscript new File(simpleTestSrcDir,'initScriptTest/initscript.gradle')
             }
         }
     }
 
-    @Issue('https://github.com/ysb33r/gradleTest/issues/30')
-    def "Run a gradletest with a custom initscript" () {
-        given: "The project is evaluated"
+    def "Two simple gradleTests; one will pass and one will fail"() {
+
+        when: 'Evaluation has been completed'
         project.evaluate()
 
-        when: "The task is evaluated"
+        then:
+        project.tasks.gradleTest.versions.size()
+        project.tasks.gradleTest.sourceDir == simpleTestDestDir
+        project.tasks.gradleTest.outputDirs.contains( expectedOutputDir )
+
+        when: 'The tasks is executed'
         project.tasks.gradleTest.execute()
+
+        then: "We expect this ugly exception, but need to fix it to be more like the 'test' task "
+        thrown(TaskExecutionException)
+
+        when:
         def results = project.tasks.gradleTest.testResults
 
-        then: "Expect the initscript to have been loaded"
-        results[0].passed
+        then:
+        project.tasks.gradleTest.didWork
+        results.size() == 2
+
+        and:
+        new File(expectedOutputDir,'simpleTest').exists()
+        results[1].passed
+        results[1].gradleVersion == project.gradle.gradleVersion
+        results[1].testName == 'simpleTest'
+
+        and:
+        new File(expectedOutputDir,'failureTest').exists()
+        !results[0].passed
+        results[0].gradleVersion == project.gradle.gradleVersion
+        results[0].testName == 'failureTest'
     }
+
 }

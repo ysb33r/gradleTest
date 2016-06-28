@@ -11,7 +11,7 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest.internal
+package org.ysb33r.gradle.gradletest.legacy20.internal
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.Sortable
@@ -21,8 +21,8 @@ import groovy.transform.CompileDynamic
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
-import org.ysb33r.gradle.gradletest.GradleTestExtension
-import org.ysb33r.gradle.gradletest.Distribution
+import org.ysb33r.gradle.gradletest.legacy20.GradleTestExtension
+import org.ysb33r.gradle.gradletest.legacy20.Distribution
 import org.ysb33r.gradle.gradletest.Names
 
 import java.util.regex.Matcher

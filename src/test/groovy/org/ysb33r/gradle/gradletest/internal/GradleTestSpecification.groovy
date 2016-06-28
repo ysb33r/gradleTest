@@ -15,23 +15,22 @@ package org.ysb33r.gradle.gradletest.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.gradle.internal.os.OperatingSystem
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
+import spock.lang.Specification
 
 /**
  * @author Schalk W. Cronjé
  */
 @CompileStatic
-class TestHelper {
-    static final String TESTROOT = new File( System.getProperty('TESTROOT') ?: '.').absoluteFile
+class GradleTestSpecification extends Specification {
 
-    static Project buildProject(final String testName) {
-        File pDir = new File(TESTROOT,testName)
-        if(pDir.exists()) {
-            pDir.deleteDir()
-        }
-        pDir.mkdirs()
-        ProjectBuilder.builder().withName(testName).withProjectDir(pDir).build()
+    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
+    @Delegate Project project
+
+    void setup() {
+        project = ProjectBuilder.builder().withProjectDir(testProjectDir.root).build()
     }
 
 }

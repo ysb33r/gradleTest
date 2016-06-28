@@ -11,7 +11,7 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest.internal
+package org.ysb33r.gradle.gradletest.legacy20.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.invocation.Gradle

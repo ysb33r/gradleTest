@@ -11,75 +11,42 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest.internal
-
-import groovy.transform.CompileStatic
-import org.gradle.api.Task
-import org.gradle.api.execution.TaskExecutionListener
-import org.gradle.api.tasks.TaskState
-import org.ysb33r.gradle.gradletest.AvailableDistributions
-import org.ysb33r.gradle.gradletest.Distribution
-import org.ysb33r.gradle.gradletest.GradleTestExtension
-import org.ysb33r.gradle.gradletest.Names
-
+package org.ysb33r.gradle.gradletest.legacy20
 /**
  * @author Schalk W. Cronjé
  */
-@CompileStatic
-class AvailableDistributionsInternal implements AvailableDistributions {
+interface AvailableDistributions {
 
 //    /** Gets a list of versions that are available locally
 //     *
 //     * @return List of versions
 //     */
-//    @Override
-//    Set<String> getLocalVersions() {
-//        return null
-//    }
+//    Set<String> getLocalVersions()
 
     /** Returns all distributions that either found locally or downloaded and unpacked
      *
      * @return A map with the version as key and the location as value.
      */
-    @Override
-    Map<String, File> getAllDistributionsAsMap() {
-        distributions
-    }
+    Map<String,File> getAllDistributionsAsMap()
 
     /** Adds one or more distribution to the collection
      *
      * @param dist Distribution to be added
      */
-    @Override
-    void addDistributions(Distribution... dist) {
-        addDistributions dist as List
-    }
+    void addDistributions(Distribution... dist )
 
     /** Adds one or more distribution to the collection
-     * If versions already exist in the list they are not updated. (First add wins)
      *
      * @param dist Distribution to be added
      */
-    @Override
-    void addDistributions(Iterable<Distribution> dists) {
-        dists.each { Distribution dist ->
-            if(!distributions.containsKey(dist.version))    {
-                distributions[ "${dist.version}".toString() ] = dist.location
-            }
-        }
-    }
+    void addDistributions( Iterable<Distribution> dist )
 
     /** Returns the location for a specific version.
      *
      * @param version Version that is required
      * @return Location (or null if version is not available)
      */
-    @Override
-    File location(final String version) {
-        distributions[version]
-    }
+    File location( String version )
 
-    private final Map<String,File> distributions = [:]
 
 }
-

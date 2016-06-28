@@ -2,8 +2,11 @@
 
 Test your plugin against different versions of Gradle as part of your build.
 
+NOTE: *If you are using a Gradle version < 2.13, you need to use version 0.5.x version of this plugin*.
+
 == Previous versions of this document
 
+* https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_5/README.adoc[0.5.5]
 * https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_2/README.adoc[0.5.2]
 * https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_1/README.adoc[0.5.1]
 * https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_0/README.adoc[0.5]
@@ -232,7 +235,7 @@ configurations {
   furtherTest
 }
 
-task furtherTest( type : org.ysb33r.gradle.gradletest.GradleTest ) {
+task furtherTest( type : org.ysb33r.gradle.gradletest.legacy20.GradleTest ) {
   versions '2.2'
 }
 ----

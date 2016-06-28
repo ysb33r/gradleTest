@@ -11,12 +11,13 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest
+package org.ysb33r.gradle.gradletest.legacy20
 
 /**
  * @author Schalk W. Cronjé
  */
-interface Distribution extends Comparable {
-    String getVersion()
-    File getLocation()
+interface CompatibilityTestResult {
+    String getTestName()
+    String getGradleVersion()
+    boolean getPassed()
 }

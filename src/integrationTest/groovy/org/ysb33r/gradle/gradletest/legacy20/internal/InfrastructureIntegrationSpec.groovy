@@ -11,7 +11,7 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest.internal
+package org.ysb33r.gradle.gradletest.legacy20.internal
 
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
@@ -111,7 +111,7 @@ class InfrastructureIntegrationSpec extends Specification {
     Project project
     File gradleLocationDir
     File testProjectDir
-    File initscript
+    File templateFile
     String version
     String testName
 
@@ -122,7 +122,7 @@ class InfrastructureIntegrationSpec extends Specification {
                     testProjectDir : new File(dest,test),
                     testName : test,
                     version : ver,
-                    initscript : initGradle
+                    templateFile : initGradle
                 )
             }
         }

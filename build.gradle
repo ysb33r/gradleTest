@@ -32,7 +32,7 @@ apply   from : 'gradle/self-reference.gradle'
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '0.5.6-SNAPSHOT'
+version = '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -73,9 +73,13 @@ repositories {
 dependencies {
 	compile gradleApi()
 	compile localGroovy()
-	testCompile ('org.spockframework:spock-core:1.0-groovy-2.3') {
+	compile 'commons-io:commons-io:2.5'
+
+	testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
 		exclude module : 'groovy-all'
 	}
+	integrationTestCompile gradleTestKit()
+
 	integrationTestDistro ':gradle:2.1:bin@zip'
 	integrationTestRepo 'commons-cli:commons-cli:1.2'
 	integrationTestRepo 'org.ysb33r.gradle:doxygen:0.2'

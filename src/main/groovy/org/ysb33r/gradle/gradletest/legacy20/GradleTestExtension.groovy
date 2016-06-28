@@ -11,10 +11,10 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest
+package org.ysb33r.gradle.gradletest.legacy20
 
 import org.gradle.api.Project
-import org.ysb33r.gradle.gradletest.internal.AvailableDistributionsInternal
+import org.ysb33r.gradle.gradletest.legacy20.internal.AvailableDistributionsInternal
 
 /** Extension for global configuration of handling distributions used for
  * testing.

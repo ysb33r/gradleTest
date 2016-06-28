@@ -11,43 +11,70 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest
+package org.ysb33r.gradle.gradletest.legacy20.internal
+
+import groovy.transform.CompileStatic
+import org.ysb33r.gradle.gradletest.legacy20.AvailableDistributions
+import org.ysb33r.gradle.gradletest.legacy20.Distribution
 
 /**
  * @author Schalk W. Cronjé
  */
-interface AvailableDistributions {
+@CompileStatic
+class AvailableDistributionsInternal implements AvailableDistributions {
 
 //    /** Gets a list of versions that are available locally
 //     *
 //     * @return List of versions
 //     */
-//    Set<String> getLocalVersions()
+//    @Override
+//    Set<String> getLocalVersions() {
+//        return null
+//    }
 
     /** Returns all distributions that either found locally or downloaded and unpacked
      *
      * @return A map with the version as key and the location as value.
      */
-    Map<String,File> getAllDistributionsAsMap()
+    @Override
+    Map<String, File> getAllDistributionsAsMap() {
+        distributions
+    }
 
     /** Adds one or more distribution to the collection
      *
      * @param dist Distribution to be added
      */
-    void addDistributions( Distribution... dist )
+    @Override
+    void addDistributions(Distribution... dist) {
+        addDistributions dist as List
+    }
 
     /** Adds one or more distribution to the collection
+     * If versions already exist in the list they are not updated. (First add wins)
      *
      * @param dist Distribution to be added
      */
-    void addDistributions( Iterable<Distribution> dist )
+    @Override
+    void addDistributions(Iterable<Distribution> dists) {
+        dists.each { Distribution dist ->
+            if(!distributions.containsKey(dist.version))    {
+                distributions[ "${dist.version}".toString() ] = dist.location
+            }
+        }
+    }
 
     /** Returns the location for a specific version.
      *
      * @param version Version that is required
      * @return Location (or null if version is not available)
      */
-    File location( String version )
+    @Override
+    File location(final String version) {
+        distributions[version]
+    }
 
+    private final Map<String,File> distributions = [:]
 
 }
+
