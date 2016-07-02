@@ -2,36 +2,50 @@ package ${TESTPACKAGE}
 
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import spock.lang.Specification
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.TaskOutcome
+import spock.lang.Specification
 import spock.lang.Unroll
 
 class ${TESTNAME}CompatibilitySpec extends Specification {
     static final File SOURCEDIR = new File('${SOURCEDIR}')
-
+    static final String DISTRIBUTION_URI = System.getProperty('org.ysb33r.gradletest.distribution.uri') ?: '${DISTRIBUTION_URI}'
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
     File buildFile
+    GradleRunner gradleRunner
 
     def setup() {
         FileUtils.copyDirectory(SOURCEDIR,testProjectDir.root)
+        final File settings = new File(testProjectDir.root,'settings.gradle')
+        if(!settings.exist()) {
+            settings.text = ''
+        }
+        gradleRunner = GradleRunner.create()
+                       .withProjectDir(testProjectDir.root)
+                       .withArguments(${ARGUMENTS})
+                       .forwardOutput()
+                       .withPluginClasspath()
+
     }
 
     @Unroll
     def "${TESTNAME} : #version"() {
+        setup:
+        if( DISTRIBUTION_URL.empty ) {
+            gradleRunner.withGradleVersion(version)
+        } else {
+            final String uri = DISTRIBUTION_URI + '/gradle-' + version + '-bin.zip'
+            gradleRunner.withGradleVersion(uri.toURI())
+        }
+
         when:
-        def result = GradleRunner.create()
-            .withProjectDir(testProjectDir.root)
-            .withArguments(${ARGUMENTS})
-            .withPluginClasspath()
-            .withGradleVersion(version)
-            .build()
+        def result = gradleRunner.build()
 
         then:
-        result.task('${DEFAULTTASK}').outcome == SUCCESS
+        result.task('${DEFAULTTASK}').outcome == TaskOutcome.SUCCESS
 
         where:
         version << [${VERSIONS}]
-
     }
 }
