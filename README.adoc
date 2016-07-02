@@ -102,7 +102,7 @@ gradleLocations {
   download = true                  // <4>
   downloadToGradleUserHome = false // <5>
   useGradleSite = true             // <6>
-  uris                             // <7>
+  uri                              // <7>
   search                           // <8>
 }
 ----

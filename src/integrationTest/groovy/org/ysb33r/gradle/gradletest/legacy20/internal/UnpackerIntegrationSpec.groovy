@@ -13,7 +13,11 @@
  */
 package org.ysb33r.gradle.gradletest.legacy20.internal
 
+import groovy.transform.CompileDynamic
 import org.gradle.api.Project
+import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 
@@ -23,9 +27,32 @@ import spock.lang.Specification
 class UnpackerIntegrationSpec extends Specification {
 
     static final File TESTDIST = new File( System.getProperty('GRADLETESTDIST')  )
-    static final String VERSION = IntegrationTestHelper.versionFromFile(TESTDIST)
+    static final String VERSION = versionFromFile(TESTDIST)
 
-    Project project = IntegrationTestHelper.buildProject('uis')
+
+    static String versionFromFile(File dist) {
+        def matcher = dist.name =~ /gradle-(.+?)(?:-(all|bin))?\.zip/
+        assert matcher.matches()
+        matcher[0][1]
+    }
+
+    static File findInstalledVersionDir( final File startDir,final String version ) {
+        File found = null
+        startDir.eachDir { File intermediateDir ->
+            intermediateDir.eachDirMatch ~/gradle-${version}/, { installDir ->
+                found = installDir
+            }
+        }
+        found
+    }
+
+    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
+    Project project
+
+    void setup() {
+        project = ProjectBuilder.builder().withName('uis').withProjectDir(testProjectDir.root).build()
+
+    }
 
     def "Unpack a downloaded distribution"() {
         given: "That I have a downloaded distribution"
@@ -41,7 +68,7 @@ class UnpackerIntegrationSpec extends Specification {
         outputTopDir.exists()
 
         when: "I check the output directory"
-        File installed = IntegrationTestHelper.findInstalledVersionDir(outputTopDir,VERSION)
+        File installed = findInstalledVersionDir(outputTopDir,VERSION)
 
         then: "The distribution must be unpacked in to the appropriate version folder"
         installed != null

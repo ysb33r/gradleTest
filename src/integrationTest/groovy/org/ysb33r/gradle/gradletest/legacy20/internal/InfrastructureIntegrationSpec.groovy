@@ -15,7 +15,11 @@ package org.ysb33r.gradle.gradletest.legacy20.internal
 
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
+import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import org.ysb33r.gradle.gradletest.Names
+import org.ysb33r.gradle.gradletest.legacy20.LegacyGradleTestPlugin
 import spock.lang.Specification
 
 
@@ -23,35 +27,42 @@ import spock.lang.Specification
  * @author Schalk W. Cronjé
  */
 class InfrastructureIntegrationSpec extends Specification {
-    static final File simpleTestSrcDir = new File(IntegrationTestHelper.PROJECTROOT,'build/resources/integrationTest/gradleTest')
-    static final File gradleLocation  = IntegrationTestHelper.CURRENT_GRADLEHOME
+    static final File PROJECTROOT= new File( System.getProperty('PROJECTROOT') ?: '.' ).absoluteFile
+    static final File SIMPLETEST_SRCDIR = new File(PROJECTROOT,'build/resources/integrationTest/gradleTest')
+    static final File GRADLETESTREPO = new File( System.getProperty('GRADLETESTREPO') ?: 'build/integrationTest/repo' )
 
-    Project project = IntegrationTestHelper.buildProject('iis')
-    String gradleVersion = project.gradle.gradleVersion
+    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
 
-    File simpleTestDestDir = new File(project.projectDir,'src/' + Names.DEFAULT_TASK)
-    File expectedOutputDir = new File(project.buildDir,Names.DEFAULT_TASK + '/' + project.gradle.gradleVersion )
-    File initScript = new File(project.projectDir,'foo.gradle')
-    File repoDir = new File(project.projectDir,'srcRepo')
+    Project project
+    String gradleVersion
+    File simpleTestDestDir
+    File expectedOutputDir
+    File initScript
+    File gradleLocation
 
     boolean exists( final String path ) {
         new File("${project.buildDir}/${Names.DEFAULT_TASK}/${path}" ).exists()
     }
 
     void setup() {
-        assert  simpleTestSrcDir.exists()
-        IntegrationTestHelper.createTestRepo(repoDir)
+        assert  SIMPLETEST_SRCDIR.exists()
+        project = ProjectBuilder.builder().withName('iis').withProjectDir(testProjectDir.root).build()
+        gradleLocation = testProjectDir.newFolder('gradlehome')
+        gradleVersion = project.gradle.gradleVersion
+        simpleTestDestDir = new File(project.projectDir,'src/' + Names.DEFAULT_TASK)
+        expectedOutputDir = new File(project.buildDir,Names.DEFAULT_TASK + '/' + project.gradle.gradleVersion )
+        initScript = new File(project.projectDir,'foo.gradle')
 
-        FileUtils.copyDirectory simpleTestSrcDir, simpleTestDestDir
+        FileUtils.copyDirectory SIMPLETEST_SRCDIR, simpleTestDestDir
 
         project.repositories {
             flatDir {
-                dirs repoDir
+                dirs GRADLETESTREPO
             }
         }
 
         project.allprojects {
-            apply plugin: 'org.ysb33r.gradletest'
+            apply plugin: LegacyGradleTestPlugin
 
             // Restrict the test to no downloading
             gradleLocations {
@@ -105,31 +116,3 @@ class InfrastructureIntegrationSpec extends Specification {
         runners[0].testName == 'simpleTest'
     }
 }
-
-/*
-
-    Project project
-    File gradleLocationDir
-    File testProjectDir
-    File templateFile
-    String version
-    String testName
-
-            tests.each { test ->
-                testRunners+= new TestRunner(
-                    project : project,
-                    gradleLocationDir : locations[ver],
-                    testProjectDir : new File(dest,test),
-                    testName : test,
-                    version : ver,
-                    templateFile : initGradle
-                )
-            }
-        }
-
-        project.copy {
-            from project.configurations.getByName(name).files
-            into repo
-        }.assertNormalExitValue()
-
- */

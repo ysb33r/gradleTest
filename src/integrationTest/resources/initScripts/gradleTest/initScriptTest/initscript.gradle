@@ -11,5 +11,11 @@ allprojects {
     task simpleTest << {
         println 'simpleTest is here'
     }
+
+    tasks.whenTaskAdded { t ->
+        if(t.name == 'runGradleTest') {
+            t.dependsOn 'simpleTest'
+        }
+    }
 }
 

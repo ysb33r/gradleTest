@@ -21,9 +21,10 @@ buildscript {
 	}
 }
 
-apply plugin : 'org.ysb33r.bintray'
 apply plugin : 'groovy'
 apply plugin : 'maven'
+apply plugin : 'java-gradle-plugin'
+apply plugin : 'org.ysb33r.bintray'
 apply plugin : 'com.jfrog.artifactory'
 apply plugin : 'com.gradle.plugin-publish'
 apply plugin : 'com.github.hierynomus.license'
@@ -80,7 +81,10 @@ dependencies {
 	}
 	integrationTestCompile gradleTestKit()
 
-	integrationTestDistro ':gradle:2.1:bin@zip'
+	integrationTestDistro21 ':gradle:2.1:bin@zip'
+    integrationTestDistro25 ':gradle:2.5:bin@zip'
+    integrationTestDistro28 ':gradle:2.8:bin@zip'
+    integrationTestDistro29 ':gradle:2.9:bin@zip'
 	integrationTestRepo 'commons-cli:commons-cli:1.2'
 	integrationTestRepo 'org.ysb33r.gradle:doxygen:0.2'
 }
@@ -116,19 +120,54 @@ test {
 	systemProperties TESTROOT : "${buildDir}/tmp/testroot"
 }
 
+task integrationTestRepo( type : Copy ) {
+    from {configurations.integrationTestRepo.files}
+    from {configurations.integrationTestDistro21.files}
+    from {configurations.integrationTestDistro25.files}
+    from {configurations.integrationTestDistro28.files}
+    from {configurations.integrationTestDistro29.files}
+    into "${buildDir}/integrationTest/repo"
+}
+
+//task createIntegrationTestClasspathManifest {
+//    def outputDir = file("$buildDir/integrationTest/${name}")
+//
+//    inputs.files sourceSets.main.runtimeClasspath
+//    outputs.dir outputDir
+//
+//    doLast {
+//        outputDir.mkdirs()
+//        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+//    }
+//
+//    dependsOn integrationTestClasses
+//}
+
+//dependencies {
+//    integrationTestRuntime files(createIntegrationTestClasspathManifest)
+//}
+
 integrationTest {
-	systemProperties TESTROOT : "${buildDir}/tmp/integrationtestroot"
-	systemProperties PROJECTROOT : projectDir
-	systemProperties GRADLETESTDIST : configurations.integrationTestDistro.files[0]
-    systemProperties GRADLETESTREPO : configurations.integrationTestRepo.files.join(',')
-	systemProperties CURRENT_GRADLEHOME : gradle.gradleHomeDir
+
+    dependsOn integrationTestRepo
+
+    systemProperties TESTPROJECTSRCDIR : "${buildDir}/resources/integrationTest/gradleTest"
+    systemProperties GRADLETESTDIST : configurations.integrationTestDistro21.files[0]
+    systemProperties GRADLETESTREPO : file("${buildDir}/integrationTest/repo")
+    systemProperties PLUGIN_METADATA_FILE : file("${buildDir}/pluginUnderTestMetadata/plugin-under-test-metadata.properties")
+//	systemProperties CURRENT_GRADLEHOME : gradle.gradleHomeDir
+//	systemProperties TESTROOT : "${buildDir}/tmp/integrationtestroot"
+//	systemProperties PROJECTROOT : projectDir
+//	systemProperties CURRENT_GRADLEHOME : gradle.gradleHomeDir
 
 	if(gradle.startParameter.offline) {
 		systemProperties OFFLINE:'1'
 	}
 }
 
-
+gradlePlugin {
+    testSourceSets sourceSets.integrationTest
+}
 
 artifactory {
 	publish {
@@ -195,10 +234,6 @@ license {
 	header = rootProject.file('config/HEADER')
 	strictCheck = true
 	ignoreFailures = false
-	// TODO: Fix Mappings
-//	mapping {
-//		groovy = 'gradleTest'
-//	}
 	ext.year = '2015'
 	excludes(['**/*.ad', '**/*.asciidoc', '**/*.adoc', '**/*.md','**/*.properties'])
 }

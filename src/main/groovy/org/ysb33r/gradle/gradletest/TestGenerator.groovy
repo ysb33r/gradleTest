@@ -169,7 +169,7 @@ class TestGenerator extends DefaultTask {
      * @param c Any container
      * @return Comma-separated list
      */
-    private String quoteAndJoin(Collection c) {
+    private String quoteAndJoin(Iterable c) {
         c.collect { "'${it}'" }.join(',')
     }
 

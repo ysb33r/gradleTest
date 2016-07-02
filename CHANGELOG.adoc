@@ -3,6 +3,9 @@
 == Roadmap - v1.0
 
 === Features
+* From Gradle 2.13+ GradleTestKit is used to run compatibility tests
+* For Gradle 2.12 and earlier, legacy mode (from v0.5.5) is used for running tests.
+
 * https://github.com/ysb33r/gradleTest/issues/1[#1] - Graceful failure when tests have not passed
 * https://github.com/ysb33r/gradleTest/issues/2[#2] - HTML test report
 * https://github.com/ysb33r/gradleTest/issues/3[#3] - Running counter of tests being executed

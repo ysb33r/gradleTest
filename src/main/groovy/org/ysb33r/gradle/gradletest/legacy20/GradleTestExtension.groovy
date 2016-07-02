@@ -13,6 +13,7 @@
  */
 package org.ysb33r.gradle.gradletest.legacy20
 
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.ysb33r.gradle.gradletest.legacy20.internal.AvailableDistributionsInternal
 
@@ -21,6 +22,7 @@ import org.ysb33r.gradle.gradletest.legacy20.internal.AvailableDistributionsInte
  *
  * @author Schalk W. Cronjé
  */
+@CompileStatic
 class GradleTestExtension {
 
     GradleTestExtension(Project p) {
@@ -70,7 +72,7 @@ class GradleTestExtension {
      * @return
      */
     List<URI> getUris() {
-        this.uris
+        distributionURIs
     }
 
     /** Provide one or more URIs to be tried for downloading Gradle distributions.
@@ -78,21 +80,21 @@ class GradleTestExtension {
      * @param u One or more objects convertible to URIs
      */
     void uri(Object... u) {
-        URI uri
-        u.each {
+        URI evaluatedURI
+        u.each ({ List<URI> listURIs,Object it ->
             switch(it) {
                 case URI:
-                    uri= it
+                    evaluatedURI= (URI)it
+                    break
+                case File:
+                    evaluatedURI= ((File)it).toURI()
                     break
                 case String:
-                case File:
-                    uri= it.toURI()
-                    break
                 default:
-                    uri= it.toString().toURI()
+                    evaluatedURI= it.toString().toURI()
             }
-            this.uris+= uri
-        }
+            listURIs.add(evaluatedURI)
+        }.curry(distributionURIs))
     }
 
     /** A list of additional folders to search. These will be search in both {@code gradleUserHome} and
@@ -117,7 +119,7 @@ class GradleTestExtension {
     AvailableDistributions distributions = null
 
     private Project project
-    private List<URI> uris = []
+    private List<URI> distributionURIs = []
     private Set<File> searchFolders = []
 
     static void addAvailableDistributions( GradleTestExtension ext ) {

@@ -48,6 +48,7 @@ class GradleTestPluginSpec extends GradleTestSpecification {
 
             gradleLocations {
                 searchGvm = false
+                uri 'file:/a/b/c'
             }
 
             gradleTest {

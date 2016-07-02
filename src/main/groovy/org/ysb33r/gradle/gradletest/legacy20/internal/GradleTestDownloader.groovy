@@ -58,23 +58,6 @@ class GradleTestDownloader extends DefaultTask {
         this.outputDir
     }
 
-    // TODO: Decide whether this is needed. Probably not in the first version though.
-//    /** Overrides te output directory
-//     *
-//     * @param dir
-//     */
-//    void setOutputDir(Object dir) {
-//        this.outputDir=project.file(dir)
-//    }
-//
-//    /** Overrides te output directory
-//     *
-//     * @param dir
-//     */
-//    void outputDir(Object dir) {
-//        setOutputDir(dir)
-//    }
-
     /** Adds one or more versions that need to be downloaded.
      *
      * @param v List of version that needs downloading.

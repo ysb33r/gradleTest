@@ -13,6 +13,7 @@
  */
 package org.ysb33r.gradle.gradletest.legacy20
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 import org.gradle.api.DefaultTask
@@ -33,11 +34,16 @@ import org.ysb33r.gradle.gradletest.legacy20.internal.TestRunner
 /**
  * @author Schalk W. Cronjé
  */
+@CompileStatic
 class GradleTest extends DefaultTask {
 
     GradleTest() {
         group = Names.TASK_GROUP
         description = "Runs all the compatibility tests for '${name}'"
+
+//        onlyIf {
+//            !getVersions().empty && !getTestNames().empty
+//        }
     }
 
     /** Returns the set of Gradle versions to tests against
@@ -45,10 +51,23 @@ class GradleTest extends DefaultTask {
      * @return Set of unique versions
      */
     @Input
-    @SkipWhenEmpty
-    @TypeChecked
+    @CompileDynamic // We do this as the signature has changed between Gradle Versions
     Set<String> getVersions() {
         CollectionUtils.stringize(this.versions) as Set<String>
+    }
+
+//    No signature of method:
+//    static org.gradle.util.CollectionUtils.stringize()
+//    is applicable for argument types: (java.util.ArrayList) values: [[2.1]]
+//    Possible solutions: stringize(java.util.List), stringize(java.lang.Iterable, java.util.Collection)
+
+    /** Adds Gradle versions to be tested against.
+     *
+     * @param v One or more versions. Must be convertible to strings.
+     */
+    @CompileDynamic
+    void versions(Object... v) {
+        this.versions += (v as List).flatten()
     }
 
     /** Returns the list of tests to be executed
@@ -56,13 +75,12 @@ class GradleTest extends DefaultTask {
      * @return Set of test names
      */
     @Input
-    @SkipWhenEmpty
     @CompileStatic
     List<String> getTestNames() {
         List<String> tests = []
         sourceDir.eachDir { File dir->
             if(new File(dir,'build.gradle').exists()) {
-                tests+= dir.name
+                tests.add(dir.name)
             }
         }
         tests
@@ -90,15 +108,6 @@ class GradleTest extends DefaultTask {
             setInitScriptFromResource()
         }
         this.initscript
-    }
-
-    /** Adds Gradle versions to be tested against.
-     *
-     * @param v One or more versions. Must be convertible to strings.
-     */
-    @CompileStatic
-    void versions(Object... v) {
-        this.versions += (v as List).flatten()
     }
 
     /** Returns the source directory for finding tests.
@@ -143,15 +152,7 @@ class GradleTest extends DefaultTask {
     @TaskAction
     void exec() {
 
-
-        Map<String,File> locations = [:]
-        GradleTestExtension config = project.extensions.findByName(Names.EXTENSION) as GradleTestExtension
-        getVersions().each { String it ->
-            locations[it] = config.distributions?.location(it)
-            if(locations[it] == null) {
-                throw new TaskExecutionException(this,new FileNotFoundException("No distribution is available for version '${it}'"))
-            }
-        }
+        TreeMap<String,File> locations = allLocations
 
         logger.info "${name}: Preparing infrastructure for compatibility testing"
         testRunners = Infrastructure.create(
@@ -164,17 +165,16 @@ class GradleTest extends DefaultTask {
             versions : versions
         )
 
-        testRunners.each {
+        for(TestRunner it in testRunners) {
             it.run()
             logger.lifecycle "${it.testName}: ${it.execResult.exitValue?'FAILED':'PASSED'}"
         }
 
-        int failed = testRunners.count { it.execResult.exitValue  }
+        int failed = (int)testRunners.count { it.execResult.exitValue  }
 
         logger.lifecycle "${name} Compatibility Test Executor finished execuring tests"
-        // Now gather the results
-        // TODO: Build HTML report into build/reports
 
+        // Now gather the results
         if (failed) {
             String msg = "${failed} compatibility tests failed.\n"
             msg+=        "-------------------------------------\n"
@@ -187,8 +187,20 @@ class GradleTest extends DefaultTask {
         }
     }
 
+    @CompileDynamic
+    private TreeMap<String,File> getAllLocations() {
+        TreeMap<String,File> locations = [:] as TreeMap
+        GradleTestExtension config = project.extensions.findByName(Names.EXTENSION) as GradleTestExtension
+        for( String it in getVersions()) {
+            locations[it] = config.distributions?.location(it)
+            if(locations[it] == null) {
+                throw new TaskExecutionException(this,new FileNotFoundException("No distribution is available for version '${it}'"))
+            }
+        }
+        locations
+    }
 
-
+    @CompileDynamic
     private void setInitScriptFromResource() {
         Enumeration<URL> enumResources
         enumResources = this.class.classLoader.getResources( INIT_GRADLE_PATH)
@@ -218,12 +230,11 @@ class GradleTest extends DefaultTask {
      * @param project Project that tasks are configured within.
      * @return A set of versions strings.
      */
-    @CompileStatic
     static Set<String> findAllRequiredVersions(Project project) {
         // Get list of required versions
         Set<String> foundVersions = []
         project.tasks.withType(GradleTest) { GradleTest t ->
-            foundVersions+= t.versions as Set<String>
+            foundVersions.addAll(t.getVersions())
         }
         foundVersions
     }
