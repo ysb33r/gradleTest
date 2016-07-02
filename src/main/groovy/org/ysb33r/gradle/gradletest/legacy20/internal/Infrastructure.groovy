@@ -66,12 +66,6 @@ class Infrastructure {
             from initScript
             into initGradle.parentFile
             rename { 'init.gradle' }
-            // TODO: Fix this replacement
-//            filter { line ->
-//                line.replaceAll('%%GROUP%%',project.group).
-//                    replaceAll('%%MODULE%%',project.tasks.jar.baseName).
-//                    replaceAll('%%VERSION%%',project.version)
-//            }
         }
 
         assert wr.didWork
