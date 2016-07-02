@@ -118,16 +118,7 @@ class DistributionInternal implements Distribution {
      * @return
      */
     static List<DistributionInternal> searchGvm(Logger logger) {
-        // TODO: Check directories for WIndows & Cygwin. Also check behaviour of posh-gvm
         File searchFolder = new File(System.getProperty('user.home') + '/.gvm/gradle').absoluteFile
-
-//        def os = OperatingSystem.current()
-//        if(os.isWindows()) {
-//
-//        } else {
-//
-//        }
-
         searchInstallFolder(searchFolder,logger)
     }
 
