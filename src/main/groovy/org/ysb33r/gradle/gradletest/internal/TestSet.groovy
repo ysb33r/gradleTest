@@ -5,7 +5,6 @@ import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.ysb33r.gradle.gradletest.GradleTest
 import org.ysb33r.gradle.gradletest.Names
@@ -117,6 +116,8 @@ class TestSet {
         project.dependencies.with {
             add configurationName,spockDependency(project)
             add configurationName,gradleTestKit()
+            add configurationName,COMMONS_IO_VERSION
+            add configurationName,JUNIT_VERSION
         }
     }
 
@@ -173,10 +174,12 @@ class TestSet {
     @PackageScope
     @CompileDynamic
     static Dependency spockDependency(Project project) {
-        project.dependencies.create("org.spockframework:spock-core:${SPOCKVERSION}") {
+        project.dependencies.create("org.spockframework:spock-core:${SPOCK_VERSION}") {
             exclude module : 'groovy-all'
         }
     }
 
-    final static String SPOCKVERSION = "1.0-${GroovySystem.version.replaceAll(/\.\d+$/,'')}"
+    final static String SPOCK_VERSION = "1.0-groovy-${GroovySystem.version.replaceAll(/\.\d+$/,'')}"
+    final static String COMMONS_IO_VERSION = 'commons-io:commons-io:2.5'
+    final static String JUNIT_VERSION = 'junit:junit:4.12'
 }

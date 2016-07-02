@@ -13,7 +13,7 @@ buildscript {
 		classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.0'
 		classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
 
-		// See: https://github.com/hierynomus/license-gradle-plugin/issues/67
+		// TODO: See: https://github.com/hierynomus/license-gradle-plugin/issues/67
 		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0', {
 			exclude module : 'guava'
 		}
@@ -70,13 +70,17 @@ repositories {
 	}
 }
 
+ext {
+    depCommonsIO = 'commons-io:commons-io:2.5'
+    depSpock = "org.spockframework:spock-core:1.0-groovy-${GroovySystem.version.replaceAll(/\.\d+$/,'')}"
+}
 
 dependencies {
 	compile gradleApi()
 	compile localGroovy()
-	compile 'commons-io:commons-io:2.5'
+	compile depCommonsIO
 
-	testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
+	testCompile (depSpock) {
 		exclude module : 'groovy-all'
 	}
 	integrationTestCompile gradleTestKit()
@@ -87,6 +91,12 @@ dependencies {
     integrationTestDistro29 ':gradle:2.9:bin@zip'
 	integrationTestRepo 'commons-cli:commons-cli:1.2'
 	integrationTestRepo 'org.ysb33r.gradle:doxygen:0.2'
+
+    integrationTestRepo depCommonsIO
+    // This dependency must match the one in src/main/groovy/org/ysb33r/gradle/gradletest/internal/TestSet.groovy
+    integrationTestRepo (depSpock) {
+        exclude module : 'groovy-all'
+    }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -155,10 +165,7 @@ integrationTest {
     systemProperties GRADLETESTDIST : configurations.integrationTestDistro21.files[0]
     systemProperties GRADLETESTREPO : file("${buildDir}/integrationTest/repo")
     systemProperties PLUGIN_METADATA_FILE : file("${buildDir}/pluginUnderTestMetadata/plugin-under-test-metadata.properties")
-//	systemProperties CURRENT_GRADLEHOME : gradle.gradleHomeDir
-//	systemProperties TESTROOT : "${buildDir}/tmp/integrationtestroot"
-//	systemProperties PROJECTROOT : projectDir
-//	systemProperties CURRENT_GRADLEHOME : gradle.gradleHomeDir
+	systemProperties PROJECTROOT : projectDir
 
 	if(gradle.startParameter.offline) {
 		systemProperties OFFLINE:'1'
