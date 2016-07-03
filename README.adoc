@@ -1,8 +1,12 @@
 = GradleTest Gradle Plugin
+:toc:
 
-Test your plugin against different versions of Gradle as part of your build.
+Test your plugin against different versions of Gradle as part of your build. This plugin extends the power that the new
+`GradleTestKit` brings without having to actually author code. It rather allows plugins authors to write functional tests
+that looks like normal Gradle projects (multi-project is supported). This also makes it easier to create sample projects
+that can directly be used in documentation.
 
-NOTE: *If you are using a Gradle version < 2.13, you need to use version 0.5.x version of this plugin*.
+NOTE: *If you are using a Gradle version < 2.13, it will run in legacy mode and behave like the 0.5.5 version of the plugin*.
 
 == Previous versions of this document
 
@@ -15,9 +19,9 @@ NOTE: *If you are using a Gradle version < 2.13, you need to use version 0.5.x v
 
 .Source directory layout
 ----
-${projectDir} / src / gradleTest /  project1 / build.gradle
-                                    project2 /
-                                    project3 /
+${projectDir} / src / gradleTest /  project1  / build.gradle
+                                    project2  /
+                                    project3  /
 ----
 
 Each directory below `gradleTest` becomes a test. Tests are executed in-folder
@@ -68,8 +72,17 @@ be generated in the test folder
 
 == Bootstrap
 
-GradleTest is available in the https://plugins.gradle.org/[Gradle Plugins] repository.
+GradleTest is available in the https://plugins.gradle.org/plugin/org.ysb33r.gradletest[Gradle Plugins] repository.
 To use it, add the following snippet into your build script.
+
+[source,groovy]
+----
+plugins {
+  id 'org.ysb33r.gradletest' version '1.0'
+}
+----
+
+When your setup is more complex and the plugins block does not work OR if you are using Gradle 2.0 use the following instead
 
 [source,groovy]
 ----
@@ -91,34 +104,6 @@ apply plugin: 'org.ysb33r.gradletest'             // <3>
 <2> Add the last version as a buildscript dependency.
 <3> Apply the plugin.
 
-== Global Configuration
-
-[source,groovy]
-----
-gradleLocations {
-  searchGradleUserHome = true      // <1>
-  includeGradleHome = true         // <2>
-  searchGvm = true                 // <3>
-  download = true                  // <4>
-  downloadToGradleUserHome = false // <5>
-  useGradleSite = true             // <6>
-  uri                              // <7>
-  search                           // <8>
-}
-----
-<1> Search Gradle home for Gradle installations.
-<2> Include the current `GRADLE_HOME` folder.
-<3> Search the GVM folder for Gradle installations
-<4> Download uninstalled version if online. These distributions will be
-  placed in the appropriate location in `gradle.gradleHome`.
-<5> Place downloaded distributions in `gradle.gradleUserHomeDir` in the same way
-  Gradle wrapper will do.
-<6> Download distribution from the global Gradle distribution site.
-<7> List additional URLs to search for Gradle distributions.
-<8> Search these additional folders for Gradle installations. Search will be performed
-    both as if it a cache-style folder (aka `gradleUserHome`) or an installation-style folder
-    (aka `GVM_HOME`).
-
 == Task Configuration
 
 [source,groovy]
@@ -127,6 +112,7 @@ gradleTest {
   versions '2.2','2.4-beta1'   // <1>
 
   initscript '/path/to/script' // <2>
+
 }
 ----
 <1> Test against the listed versions
@@ -134,23 +120,37 @@ gradleTest {
   can be changed by setting your own init script. This path is evaluated
   with `project.file`.
 
+== Overriding Gradle Distribution Location
+
+With the 1.0 release the location for distributions are determined by `GradleTestKit`. However it is possible to
+override that and set a base location to find distributions by two possible means.
+
+.Configure distribution location by task
+[source,groovy]
+----
+gradleTest {
+  distributionUri 'file://local/area' // <1>
+}
+----
+<1> Set local area to find Gradle distributions instead of default Gradle location. When this is set Gradle will only look
+  here for distributions.
+
+.Configure distribution location by system property
+----
+-Dorg.ysb33r.gradletest.distribution.uri=file://local/area
+----
+
+NOTE: When the system property is set it will override all `distributionUri` settings in task configurations
+
 == Start Parameters
 
 * If gradle is run with `--offline`, it will be passed to the Gradle.
 * `--project-cache-dir` is always set to at the start of the project in `buildDir`
-* `--no-daemon` is set, as we don;t want to clash with existing running daemons.
 * `--full-stacktrace` is set and output is captured to test report.
 
 == Task dependencies
 
-Currently the `gradleTest` task is not linked to any other tasks. Run this as
-explicit task on the command-line or add your own task dependencies in your
-gradle script.
-
-The reason for this is that it can be quite time-consuming testset to run. The typical
-case will be that the tests are only run close to release time. Some people might
-prefer to set `install.dependsOn gradleTest` rather than `check.dependsOn gradleTest`
-or `build.dependsOn gradleTest`.
+`gradleTest` is now linked into the `check` lifecycle task.
 
 == Dependencies
 
@@ -209,23 +209,7 @@ allprojects {
 }
 ----
 
-== Dynamic dependencies
-
-Hard-coding the plugin version in to the `build.gradle` files of the `gradleTest` test fixtures is a maintenance pain.
-Therefore it is possible to write something like
-
-[source,groovy]
-----
-buildscript {
-  dependencies {
-    classpath ':gnumake:%%VERSION%%'
-  }
-}
-----
-
-and the plugin will substitute the `%%VERSION%%` token with the version of your project.
-
-== Adding additional test tasks
+== Adding additional GradleTest tasks
 
 It is possible to add additional test tasks beyond `gradleTest`, by doing
 
@@ -245,6 +229,11 @@ listed under `furtherTest` configuration.
 
 Global configuration is still read from `gradleLocations` project extension.
 
+== Dynamic dependencies
+
+Hard-coding the plugin version in to the `build.gradle` files of the `gradleTest` test fixtures is a maintenance pain.
+However the plugin is injected automatically into the build via `GradleTestKit`.
+
 == Awesomeness
 
 This plugin is so awesome, it applies to itself and then runs a collection of tests - See `gradle/self-reference.gradle`
@@ -252,16 +241,90 @@ on how this is done.
 
 == Known Limitations
 
+* Not designed to work Gradle < 2.0. If the community requires this functionality an effort will be made to see if it is
+  possible. (It will actually try to runs tests against a Gradle version < 2.0, if configured in `gradleTest`)
+* Does not run test in parallel, even though it theoretically could. Can do with a `maxParallelForks`. (https://github.com/ysb33r/gradleTest/issues/5)
+* Runs in legacy mode when the project is built with Gradle 2.0 - 2.12.
+
+== Advanced Features (Gradle 2.13+)
+
+=== Overriding dependencies
+
+GradleTest uses Spock Framework, JUnit & Apache Commons IO underneath. If, for some reason you need to override the
+versions of these dependencies it can be done in the `gradleTestCompile` configuration. If you created a new `GradleTest`
+task called `foobar` then the appropriate configuration will be callled `foobarCompile`.
+
+
+== Legacy mode (Gradle 2.0-2.12)
+
+If you are building your plugin project with any Gradle version 2.0 - 2.12 it automatically invoked legacy mode and
+behaves like the v0.5.5 version of this plugin.
+
+=== Global Configuration
+
+[source,groovy]
+----
+gradleLocations {
+  searchGradleUserHome = true      // <1>
+  includeGradleHome = true         // <2>
+  searchGvm = true                 // <3>
+  download = true                  // <4>
+  downloadToGradleUserHome = false // <5>
+  useGradleSite = true             // <6>
+  uri                              // <7>
+  search                           // <8>
+}
+----
+<1> Search Gradle home for Gradle installations.
+<2> Include the current `GRADLE_HOME` folder.
+<3> Search the GVM folder for Gradle installations
+<4> Download uninstalled version if online. These distributions will be
+  placed in the appropriate location in `gradle.gradleHome`.
+<5> Place downloaded distributions in `gradle.gradleUserHomeDir` in the same way
+  Gradle wrapper will do.
+<6> Download distribution from the global Gradle distribution site.
+<7> List additional URLs to search for Gradle distributions.
+<8> Search these additional folders for Gradle installations. Search will be performed
+    both as if it a cache-style folder (aka `gradleUserHome`) or an installation-style folder
+    (aka `GVM_HOME`).
+
+NOTE: If the above is used with Gradle 2.13+ it will be accepted and ignored. Deprecation warnings will also be printed.
+
+=== Dynamic dependencies
+
+Hard-coding the plugin version in to the `build.gradle` files of the `gradleTest` test fixtures is a maintenance pain.
+Therefore it is possible to write something like
+
+[source,groovy]
+----
+buildscript {
+  dependencies {
+    classpath ':gnumake:%%VERSION%%'
+  }
+}
+----
+
+and the plugin will substitute the `%%VERSION%%` token with the version of your project.
+
+=== Task dependencies
+
+The `gradleTest` task is not linked to any other tasks. Run this as
+explicit task on the command-line or add your own task dependencies in your
+gradle script. The reason for this is that  in legacy mode it can be quite a time-consuming testset to run. The typical
+case will be that the tests are only run close to release time. If you prefer you might want to set
+`install.dependsOn gradleTest` rather than `check.dependsOn gradleTest` or `build.dependsOn gradleTest`.
+
+=== Known Limitations
+
 * The plugin assumes that no Gradle distributions in `gradle,gradleUserHomeDir` or `GVM_HOME` will be removed whilst it
   is running.
-* Not designed to work Gradle < 2.0. If the community requires this functionality an effort will be made to see if it is
-  possible.
 * The source sets for the Gradle tests cannot be renamed or added to. The subdirectory name is fixed to the task name.
 * No nice HTML report (https://github.com/ysb33r/gradleTest/issues/2)
-* No graceful failure as for `test` task. Currenlty throws a `TaskExecutionException` at the end, which is ugly. (https://github.com/ysb33r/gradleTest/issues/1)
+* No graceful failure as for `test` task. Currently throws a `TaskExecutionException` at the end, which is ugly. (https://github.com/ysb33r/gradleTest/issues/1)
 * No running counter of tests run and test failures (as for `test` task). (https://github.com/ysb33r/gradleTest/issues/3)
 * All test output is going to stdout instead of being captured and added to test report. (https://github.com/ysb33r/gradleTest/issues/4)
-* Does not run test in parallel, even though it theoretically could. Can do with a `maxParallelForks`. (https://github.com/ysb33r/gradleTest/issues/5)
+* `--no-daemon` is set, as we don't want to clash with existing running daemons.
+
 
 == Contributors
 

@@ -60,7 +60,7 @@ class TestGeneratorSpec extends GradleTestSpecification {
 
         then:
         source.contains "package ${genTask.testPackageName}"
-        source.contains "result.task('${genTask.defaultTask}')"
+        source.contains "result.task(':runGradleTest')" 
         source.contains "def \"Alpha : #version\"()"
         source.contains "version << ['1.999','1.998','1.997']"
 

@@ -41,7 +41,7 @@ class LegacyGradleTestIntegrationSpec extends GradleTestIntegrationSpecification
 
 
     @Unroll
-    def "Gradle #version (<2.13): Two simple gradleTests; one will pass and one will fail"() {
+    def "Gradle #version (<2.13): Simepl project that will pass"() {
 
         setup:
         copyTestDir('simpleTest')
@@ -122,6 +122,7 @@ class LegacyGradleTestIntegrationSpec extends GradleTestIntegrationSpecification
             }
 """
     }
+
 
     private void copyTestDir(final String name) {
         FileUtils.copyDirectory new File(simpleTestSrcDir,name), simpleTestDestDir

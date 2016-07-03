@@ -8,6 +8,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
@@ -93,6 +94,16 @@ class TestGenerator extends DefaultTask {
         sourceDirectorySet.srcDirs.first()
     }
 
+    /** Distribution URI to use when looking for Gradle distributions
+     *
+     * @return Distribution URI or null (indicating to use official GRadle repository).
+     */
+    @Input
+    @Optional
+    URI getGradleDistributionUri() {
+        linkedTask.gradleDistributionUri
+    }
+
     /** Task action will generate as per testnames returned by @Link #etTestMap().
      *
      */
@@ -102,11 +113,17 @@ class TestGenerator extends DefaultTask {
             setTemplateLocationFromResource()
         }
 
+        final ClasspathManifest manifestTask = project.tasks.getByName(TestSet.getManifestTaskName(linkedTestTaskName)) as ClasspathManifest
+        File manifestDir = manifestTask.outputDir
+        final String manifestFile = new File("${manifestDir}/${manifestTask.outputFilename}").absolutePath
+
         testMap.each { String testName,File testLocation ->
+
             copy(
                 outputDir,
                 testName,
                 defaultTask,
+                manifestFile,
                 testLocation,
                 gradleArguments
             )
@@ -143,6 +160,7 @@ class TestGenerator extends DefaultTask {
         final File targetDir,
         final String testName,
         final String defaultTask,
+        final String manifestName,
         final File testProjectSrcDir,
         final List<String> arguments
     ) {
@@ -157,9 +175,11 @@ class TestGenerator extends DefaultTask {
             rename ~/.+/,"${testName.capitalize()}CompatibilitySpec.groovy"
             expand TESTPACKAGE : testPackageName,
                 TESTNAME : testName.capitalize(),
+                MANIFEST : manifestName,
                 ARGUMENTS : argsText,
                 DEFAULTTASK : defaultTask,
                 VERSIONS : verText,
+                DISTRIBUTION_URI : gradleDistributionUri ?: '',
                 SOURCEDIR : testProjectSrcDir.absolutePath
         }
     }
@@ -169,6 +189,7 @@ class TestGenerator extends DefaultTask {
      * @param c Any container
      * @return Comma-separated list
      */
+    @CompileDynamic
     private String quoteAndJoin(Iterable c) {
         c.collect { "'${it}'" }.join(',')
     }

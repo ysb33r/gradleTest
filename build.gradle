@@ -23,7 +23,6 @@ buildscript {
 
 apply plugin : 'groovy'
 apply plugin : 'maven'
-apply plugin : 'java-gradle-plugin'
 apply plugin : 'org.ysb33r.bintray'
 apply plugin : 'com.jfrog.artifactory'
 apply plugin : 'com.gradle.plugin-publish'
@@ -85,10 +84,11 @@ dependencies {
 	}
 	integrationTestCompile gradleTestKit()
 
-	integrationTestDistro21 ':gradle:2.1:bin@zip'
-    integrationTestDistro25 ':gradle:2.5:bin@zip'
-    integrationTestDistro28 ':gradle:2.8:bin@zip'
-    integrationTestDistro29 ':gradle:2.9:bin@zip'
+	integrationTestDistro2_1 ':gradle:2.1:bin@zip'
+    integrationTestDistro2_5 ':gradle:2.5:bin@zip'
+    integrationTestDistro2_8 ':gradle:2.8:bin@zip'
+    integrationTestDistro2_9 ':gradle:2.9:bin@zip'
+    integrationTestDistro2_13 ':gradle:2.13:bin@zip'
 	integrationTestRepo 'commons-cli:commons-cli:1.2'
 	integrationTestRepo 'org.ysb33r.gradle:doxygen:0.2'
 
@@ -132,48 +132,55 @@ test {
 
 task integrationTestRepo( type : Copy ) {
     from {configurations.integrationTestRepo.files}
-    from {configurations.integrationTestDistro21.files}
-    from {configurations.integrationTestDistro25.files}
-    from {configurations.integrationTestDistro28.files}
-    from {configurations.integrationTestDistro29.files}
+    from {configurations.integrationTestDistro2_1.files}
+    from {configurations.integrationTestDistro2_5.files}
+    from {configurations.integrationTestDistro2_8.files}
+    from {configurations.integrationTestDistro2_9.files}
+    from {configurations.integrationTestDistro2_13.files}
     into "${buildDir}/integrationTest/repo"
 }
 
-//task createIntegrationTestClasspathManifest {
-//    def outputDir = file("$buildDir/integrationTest/${name}")
-//
-//    inputs.files sourceSets.main.runtimeClasspath
-//    outputs.dir outputDir
-//
-//    doLast {
-//        outputDir.mkdirs()
-//        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
-//    }
-//
-//    dependsOn integrationTestClasses
-//}
+task createIntegrationTestClasspathManifest {
+
+
+    ext {
+        outputDir = file("$buildDir/integrationTest/manifest")
+    }
+
+    inputs.files sourceSets.main.runtimeClasspath
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+        file("${outputDir}/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+    }
+
+    dependsOn integrationTestClasses
+}
 
 //dependencies {
 //    integrationTestRuntime files(createIntegrationTestClasspathManifest)
 //}
 
+test {
+    dependsOn integrationTestRepo
+    systemProperties GRADLETESTREPO : file("${buildDir}/integrationTest/repo")
+}
+
 integrationTest {
 
-    dependsOn integrationTestRepo
+    dependsOn integrationTestRepo, createIntegrationTestClasspathManifest
 
     systemProperties TESTPROJECTSRCDIR : "${buildDir}/resources/integrationTest/gradleTest"
-    systemProperties GRADLETESTDIST : configurations.integrationTestDistro21.files[0]
+    systemProperties GRADLETESTDIST : configurations.integrationTestDistro2_1.files[0]
     systemProperties GRADLETESTREPO : file("${buildDir}/integrationTest/repo")
-    systemProperties PLUGIN_METADATA_FILE : file("${buildDir}/pluginUnderTestMetadata/plugin-under-test-metadata.properties")
+    systemProperties PLUGIN_METADATA_FILE : file("${createIntegrationTestClasspathManifest.outputDir}/plugin-classpath.txt")
 	systemProperties PROJECTROOT : projectDir
 
 	if(gradle.startParameter.offline) {
 		systemProperties OFFLINE:'1'
 	}
-}
 
-gradlePlugin {
-    testSourceSets sourceSets.integrationTest
 }
 
 artifactory {

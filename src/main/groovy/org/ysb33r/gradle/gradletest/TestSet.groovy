@@ -1,4 +1,4 @@
-package org.ysb33r.gradle.gradletest.internal
+package org.ysb33r.gradle.gradletest
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -6,6 +6,8 @@ import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
+import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
+import org.ysb33r.gradle.gradletest.ClasspathManifest
 import org.ysb33r.gradle.gradletest.GradleTest
 import org.ysb33r.gradle.gradletest.Names
 import org.ysb33r.gradle.gradletest.TestGenerator
@@ -28,6 +30,7 @@ class TestSet {
 
         addConfigurations(project,configNames)
         addTestTasks(project,setname)
+        addManifestTask(project,setname,configNames['runtime'])
         addTestDependencies(project,configNames['compile'])
         addSourceSets(project,setname,configNames)
     }
@@ -66,6 +69,18 @@ class TestSet {
         } .curry(project,testSetBaseName)
     }
 
+    /** Gets the directory where manifest file will be generated into.
+     *
+     * @param project
+     * @param testSetBaseName A basename as returned by @link #baseName
+     * @return A closure that can be lazy-evaluated.
+     */
+    static Closure getManifestDir(Project project,final String testSetBaseName) {
+        { Project p,String setname ->
+            "${p.buildDir}/${setname}/manifest"
+        } .curry(project,testSetBaseName)
+    }
+
     /** Gets the resource directory where test resources will be generated into.
      *
      * @param project
@@ -94,6 +109,10 @@ class TestSet {
         testSetBaseName
     }
 
+    static String getManifestTaskName(final String testSetBaseName) {
+        "${testSetBaseName}${Names.MANIFEST_TASK_POSTFIX}"
+    }
+
     /** Adds the requires configurations
      *
      * @param Project
@@ -116,8 +135,9 @@ class TestSet {
         project.dependencies.with {
             add configurationName,spockDependency(project)
             add configurationName,gradleTestKit()
-            add configurationName,COMMONS_IO_VERSION
-            add configurationName,JUNIT_VERSION
+            add configurationName,"commons-io:commons-io:${COMMONS_IO_VERSION}"
+            add configurationName,"junit:junit:${JUNIT_VERSION}"
+            add configurationName,"org.hamcrest:hamcrest-core:${HAMCREST_VERSION}"
         }
     }
 
@@ -127,6 +147,7 @@ class TestSet {
 
         final String genTaskName = getGeneratorTaskName(testSetBaseName)
         final String compileTaskName = getCompileTaskName(testSetBaseName)
+        final String testTaskName = getTestTaskName(testSetBaseName)
 
         project.afterEvaluate {
             project.sourceSets.create testSetBaseName, {
@@ -138,6 +159,23 @@ class TestSet {
             }
 
             project.tasks.getByName(compileTaskName).dependsOn(genTaskName)
+
+            project.tasks.getByName(testTaskName).configure {
+                testClassesDir = project.sourceSets.getByName(testSetBaseName).output.classesDir
+                classpath = project.sourceSets.getByName(testSetBaseName).runtimeClasspath
+
+                inputs.source project.sourceSets.getByName(testSetBaseName).output.classesDir
+            }
+        }
+    }
+
+    @PackageScope
+    static void addManifestTask(Project project,final String testSetBaseName,final String configurationName) {
+        ClasspathManifest task = project.tasks.create( getManifestTaskName(testSetBaseName),ClasspathManifest)
+
+        task.with {
+            group = Names.TASK_GROUP
+            description = 'Creates manifest file for ' + testSetBaseName
         }
     }
 
@@ -147,6 +185,7 @@ class TestSet {
         final String genTaskName = getGeneratorTaskName(testSetBaseName)
         final String compileTaskName = getCompileTaskName(testSetBaseName)
         final String testTaskName = getTestTaskName(testSetBaseName)
+        final String manifestTaskName = getManifestTaskName(testSetBaseName)
 
         Task genTask = project.tasks.create(genTaskName,TestGenerator)
         Task testTask = project.tasks.create(testTaskName, GradleTest)
@@ -159,9 +198,10 @@ class TestSet {
         testTask.with {
             group = Names.TASK_GROUP
             description = 'Runs Gradle compatibility tests'
-            dependsOn genTask, compileTaskName
+            dependsOn genTask, compileTaskName, manifestTaskName
             mustRunAfter 'test'
         }
+
 
         project.tasks.getByName('check').dependsOn testTaskName
     }
@@ -179,7 +219,8 @@ class TestSet {
         }
     }
 
-    final static String SPOCK_VERSION = "1.0-groovy-${GroovySystem.version.replaceAll(/\.\d+$/,'')}"
-    final static String COMMONS_IO_VERSION = 'commons-io:commons-io:2.5'
-    final static String JUNIT_VERSION = 'junit:junit:4.12'
+    final static String SPOCK_VERSION      = "1.0-groovy-${GroovySystem.version.replaceAll(/\.\d+$/,'')}"
+    final static String COMMONS_IO_VERSION = '2.5'
+    final static String JUNIT_VERSION      = '4.12'
+    final static String HAMCREST_VERSION   = '1.3'
 }

@@ -35,6 +35,11 @@ class Names {
      */
     static final String GENERATOR_TASK_POSTFIX = 'Generator'
 
+    /** The string that is added to classpath manifest task names by default
+     *
+     */
+    static final String MANIFEST_TASK_POSTFIX = 'ClasspathManifest'
+
     /** The name of the extension that is to used to configure location and
      * downloadability of Gradle distributions
      */

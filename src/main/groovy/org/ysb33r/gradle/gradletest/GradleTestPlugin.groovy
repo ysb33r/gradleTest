@@ -17,19 +17,9 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.execution.TaskExecutionListener
-import org.gradle.api.tasks.Delete
-import org.gradle.api.tasks.TaskState
 import org.gradle.util.GradleVersion
-import org.ysb33r.gradle.gradletest.internal.TestSet
 import org.ysb33r.gradle.gradletest.legacy20.LegacyGradleTestPlugin
-import org.ysb33r.gradle.gradletest.legacy20.internal.AvailableDistributionsInternal
-import org.ysb33r.gradle.gradletest.legacy20.internal.DistributionInternal
-import org.ysb33r.gradle.gradletest.legacy20.internal.GradleTestDownloader
 import org.ysb33r.gradle.gradletest.legacy20.DeprecatingGradleTestExtension
-import org.ysb33r.gradle.gradletest.legacy20.Distribution
-import org.ysb33r.gradle.gradletest.legacy20.GradleTestExtension
 
 /**
  * @author Schalk W. Cronjé
@@ -54,7 +44,6 @@ class GradleTestPlugin implements Plugin<Project> {
      */
     private void applyTestKit(Project project) {
         project.with {
-//            apply plugin : 'java-gradle-plugin'
             apply plugin : 'groovy'
             extensions.create Names.EXTENSION, DeprecatingGradleTestExtension, project
         }

@@ -4,46 +4,86 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.util.GradleVersion
 import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class ${TESTNAME}CompatibilitySpec extends Specification {
+
     static final File SOURCEDIR = new File('${SOURCEDIR}')
+    static final File MANIFEST = new File('${MANIFEST}')
     static final String DISTRIBUTION_URI = System.getProperty('org.ysb33r.gradletest.distribution.uri') ?: '${DISTRIBUTION_URI}'
+    static final List<String> gradleArguments = [${ARGUMENTS}]
+    static List<File> pluginClasspath
+    static String buildscriptClasspath
+
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
     File buildFile
     GradleRunner gradleRunner
 
-    def setup() {
+    void setupSpec() {
+        pluginClasspath = MANIFEST.readLines().collect {
+            new File(it)
+        }
+
+        buildscriptClasspath = 'buildscript { dependencies { classpath files(' +
+            MANIFEST.readLines().collect { "'" + it + "'" }.join(',') +
+            ') } }' + "\\n\\n"
+    }
+
+    void setup() {
         FileUtils.copyDirectory(SOURCEDIR,testProjectDir.root)
         final File settings = new File(testProjectDir.root,'settings.gradle')
-        if(!settings.exist()) {
+        if(!settings.exists()) {
             settings.text = ''
         }
         gradleRunner = GradleRunner.create()
                        .withProjectDir(testProjectDir.root)
-                       .withArguments(${ARGUMENTS})
                        .forwardOutput()
-                       .withPluginClasspath()
 
+    }
+
+    List<String> getArguments(final GradleVersion gradleVersionUnderTest,final String version) {
+        List<String> args = gradleArguments + []
+        args.add( (gradleVersionUnderTest > GradleVersion.version('2.1')) ? '--console=plain' : '--no-color')
+        args
+    }
+
+    void addClasspath(final GradleVersion gradleVersionUnderTest,final String version) {
+        if( gradleVersionUnderTest >= GradleVersion.version('2.8') ) {
+            gradleRunner.withPluginClasspath(pluginClasspath)
+        } else {
+            File buildScript = new File(testProjectDir.root,'build.gradle')
+            String newScript = buildscriptClasspath.replaceAll(/1.0-groovy-2.4/,'1.0-groovy-2.3') + buildScript.text
+            buildScript.text = newScript
+        }
     }
 
     @Unroll
     def "${TESTNAME} : #version"() {
         setup:
-        if( DISTRIBUTION_URL.empty ) {
+        final GradleVersion gradleVersionUnderTest = GradleVersion.version(version)
+
+        if( DISTRIBUTION_URI.empty ) {
             gradleRunner.withGradleVersion(version)
         } else {
             final String uri = DISTRIBUTION_URI + '/gradle-' + version + '-bin.zip'
-            gradleRunner.withGradleVersion(uri.toURI())
+            gradleRunner.withGradleDistribution(uri.toURI())
         }
+        gradleRunner.withArguments(getArguments(gradleVersionUnderTest,version))
+        addClasspath(gradleVersionUnderTest,version)
 
         when:
+        println 'I am about to run the test project with Gradle ' + version + ' and I am ' + GradleVersion.current()
         def result = gradleRunner.build()
 
         then:
-        result.task('${DEFAULTTASK}').outcome == TaskOutcome.SUCCESS
+        if(gradleVersionUnderTest >= GradleVersion.version('2.5')) {
+            result.task(':${DEFAULTTASK}')?.outcome == TaskOutcome.SUCCESS
+        } else {
+            !result.output.matches(':${DEFAULTTASK} (SKIPPED|UP-TO-DATE|FAILED)')
+        }
 
         where:
         version << [${VERSIONS}]

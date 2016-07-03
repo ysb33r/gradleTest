@@ -54,6 +54,7 @@ class CompileIntegrationSpec extends Specification {
         when: "The generated source is compiled"
         Task generatorTask = tasks.getByName('gradleTestGenerator')
         Task compileTask = tasks.getByName('compileGradleTestGroovy')
+        Task testTask = tasks.getByName('gradleTest')
         SourceSet sourceSet = project.sourceSets.getByName('gradleTest')
         File classesDir = sourceSet.output.classesDir
         generatorTask.execute()
@@ -65,6 +66,5 @@ class CompileIntegrationSpec extends Specification {
 
         and: "Expected classes in output directory"
         new File(classesDir,"gradleTest/tests/AlphaCompatibilitySpec.class").exists()
-
     }
 }

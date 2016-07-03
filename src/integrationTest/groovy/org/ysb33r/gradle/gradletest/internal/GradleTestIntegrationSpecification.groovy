@@ -13,21 +13,17 @@
  */
 package org.ysb33r.gradle.gradletest.internal
 
-import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.util.GradleVersion
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 /**
- * @author Schalk W. Cronjé
+ * Before running anything from here, ensure that `gradle createIntegrationTestClasspathManifest` has been run.
  */
-@CompileStatic
 class GradleTestIntegrationSpecification extends Specification {
 
-    static final File PLUGIN_METADATA_FILE = new File( System.getProperty('PLUGIN_METADATA_FILE') ?: 'build/pluginUnderTestMetadata/plugin-under-test-metadata.properties')
+    static final File PLUGIN_METADATA_FILE = new File( System.getProperty('PLUGIN_METADATA_FILE') ?: 'build/integrationTest/manifest/plugin-classpath.txt')
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
     File buildFile
 
@@ -61,13 +57,10 @@ class GradleTestIntegrationSpecification extends Specification {
         }
 
     }
-    // reads a TestKit metadata file
+
+
     List<File> readMetadataFile() {
-        Properties props = new Properties()
-        PLUGIN_METADATA_FILE.withReader { r ->
-            props.load(r)
-        }
-        props.getProperty('implementation-classpath').split(File.pathSeparator).collect { String it ->
+        PLUGIN_METADATA_FILE.readLines().collect {
             new File(it)
         }
     }

@@ -31,10 +31,12 @@ class GradleTestSpec extends GradleTestSpecification {
             gradleTest {
                 versions '1.999','1.998'
                 versions '1.997'
+
+
             }
             evaluate()
         }
-        def defaultTestTask    = project.tasks.getByName('gradleTest')
+        GradleTest defaultTestTask    = project.tasks.getByName('gradleTest')
         def defaultGenTask     = project.tasks.getByName('gradleTestGenerator')
 
         then: "The test task will contain a list of these versions"
@@ -43,48 +45,48 @@ class GradleTestSpec extends GradleTestSpecification {
         and: "The generator task will contain a list of these versions"
         defaultGenTask.versions == ['1.999','1.998','1.997'] as Set<String>
 
-        // TODO: arguments, defaultTask
+        and: "Distribution URI will be null (indicating default behaviour)"
+        defaultTestTask.gradleDistributionUri == null
+
+        and: 'Default task is runGradleTest'
+        defaultTestTask.defaultTask == 'runGradleTest'
+
+        // TODO: arguments
     }
 
-//    def "Compile"() {
-//        given: "A project that contains a src/gradleTest layout"
-//        def tests = ['alpha','beta','gamma','delta']
-//        File srcDir = new File(projectDir,'src/gradleTest')
-//        srcDir.mkdirs()
-//        tests.each {
-//            File testDir = new File(srcDir,it)
-//            testDir.mkdirs()
-//            if(it != 'delta') {
-//                new File(testDir,'build.gradle').text = ''
-//            }
-//        }
-//
-//    }
-//    def "Unconfigured task"() {
-//        given:
-//        def task = project.tasks.create('Foo',GradleTest)
-//
-//        expect:
-//        task.group == Names.TASK_GROUP
-//        task.description == "Runs all the compatibility tests for 'Foo'"
-//        task.versions.empty
-//        task.sourceDir == project.file("${project.projectDir}/src/Foo")
-//        task.outputDirs.empty
-//
-//    }
-//
-//    def "Basic Configured task"() {
-//        given:
-//        def task = project.tasks.create('Foo',GradleTest)
-//        def output = new File(project.buildDir,'Foo')
-//
-//        task.versions '2.2','2.3'
-//        task.versions '2.4','2.4'
-//
-//        expect:
-//        task.versions == (['2.2','2.3','2.4'] as Set<String>)
-//        task.outputDirs == [ new File(output,'2.2'),new File(output,'2.3'),new File(output,'2.4')] as Set
-//
-//    }
+    def 'Accept Distribution URI as String'() {
+        when: "Distribution URI is configured"
+        project.with {
+            apply plugin: 'org.ysb33r.gradletest'
+
+            gradleTest {
+                gradleDistributionUri 'file://foo/bar'
+            }
+            evaluate()
+        }
+
+        GradleTest defaultTestTask = project.tasks.getByName('gradleTest')
+
+        then:
+        defaultTestTask.gradleDistributionUri == 'file://foo/bar'.toURI()
+    }
+
+    def 'Accept Distribution URI as File'() {
+        when: "Distribution URI is configured"
+        project.with {
+            apply plugin: 'org.ysb33r.gradletest'
+
+            gradleTest {
+                gradleDistributionUri file('foo')
+            }
+            evaluate()
+        }
+
+        GradleTest defaultTestTask = project.tasks.getByName('gradleTest')
+
+        then:
+        defaultTestTask.gradleDistributionUri == ('file://' + file('foo')).toURI()
+    }
+
 }
 
