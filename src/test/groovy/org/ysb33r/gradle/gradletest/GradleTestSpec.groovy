@@ -54,6 +54,23 @@ class GradleTestSpec extends GradleTestSpecification {
         // TODO: arguments
     }
 
+    def "Adding additional arguments"() {
+        when: "Arguments are configured "
+        project.with {
+            apply plugin : 'org.ysb33r.gradletest'
+
+            gradleTest {
+                versions '1.997'
+                gradleArguments '--max-workers',4
+            }
+            evaluate()
+        }
+        GradleTest defaultTestTask    = project.tasks.getByName('gradleTest')
+
+        then: "The arguments will also contain the extras"
+        defaultTestTask.gradleArguments.containsAll '4','--max-workers'
+    }
+
     def 'Accept Distribution URI as String'() {
         when: "Distribution URI is configured"
         project.with {
