@@ -1,0 +1,21 @@
+
+
+// This is the default init script to be used.
+
+allprojects {
+    buildscript {
+        repositories {
+            flatDir {
+                dirs "\${project.rootProject.projectDir}/../../repo"
+            }
+        }
+        dependencies {
+            classpath fileTree('${PLUGINDIR}') { include "*.jar"}
+        }
+    }
+    repositories {
+        flatDir {
+            dirs "\${project.rootProject.projectDir}/../../repo"
+        }
+    }
+}

@@ -1,23 +1,17 @@
-
-
-// This is the default init script to be used.
-
 allprojects {
     buildscript {
-        repositories {
-            flatDir {
-                dirs "${project.rootProject.projectDir}/../../repo"
+        dependencies {
+            classpath fileTree ('${PLUGINJARPATH}') {
+                include '*.jar'
             }
         }
-//        dependencies {
-//            classpath '%%GROUP%%:%%MODULE%%:%%VERSION%%'
-//        }
     }
-    repositories {
-        flatDir {
-            dirs "${project.rootProject.projectDir}/../../repo"
-        }
-    }
-
-    println "Loaded custom GradleTest init script"
 }
+
+//buildscript {
+//    dependencies {
+//        classpath fileTree('/Users/schalkc/Projects/GradleTest/compatibility/build/gradleTest/EatYourDogFood/2.13/build/libs') {
+//            include '*.jar'
+//        }
+//    }
+//}

@@ -1,3 +1,16 @@
+/*
+ * ============================================================================
+ * (C) Copyright Schalk W. Cronje 2015
+ *
+ * This software is licensed under the Apache License 2.0
+ * See http://www.apache.org/licenses/LICENSE-2.0 for license details
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ *
+ * ============================================================================
+ */
 package org.ysb33r.gradle.gradletest
 
 import groovy.io.FileType
@@ -10,8 +23,10 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.bundling.Jar
 
 /**
  * @author Schalk W. Cronjé
@@ -94,9 +109,26 @@ class TestGenerator extends DefaultTask {
         sourceDirectorySet.srcDirs.first()
     }
 
+    /** The directory where the plugin JAR is to be found. By default it will be {@code jar.destinationDir}
+     *
+     * @return Plugin directory.
+     */
+    File getPluginJarDirectory() {
+        project.file(pluginJarDir)
+    }
+
+    /** Overrides the directory where the plugin JAR is to be found in.
+     *
+     * @param dir Sets a new location
+     * @return
+     */
+    void setPluginJarDirectory(Object dir) {
+        pluginJarDir = dir
+    }
+
     /** Distribution URI to use when looking for Gradle distributions
      *
-     * @return Distribution URI or null (indicating to use official GRadle repository).
+     * @return Distribution URI or null (indicating to use official Gradle repository).
      */
     @Input
     @Optional
@@ -113,9 +145,16 @@ class TestGenerator extends DefaultTask {
             setTemplateLocationFromResource()
         }
 
+        if(!templateInitScript) {
+            setInitScriptLocationFromResource()
+        }
+
         final ClasspathManifest manifestTask = project.tasks.getByName(TestSet.getManifestTaskName(linkedTestTaskName)) as ClasspathManifest
         File manifestDir = manifestTask.outputDir
         final String manifestFile = new File("${manifestDir}/${manifestTask.outputFilename}").absolutePath
+        final File workDir = project.file("${project.buildDir}/${linkedTestTaskName}")
+
+        createInitScript(workDir,pluginJarDirectory)
 
         testMap.each { String testName,File testLocation ->
 
@@ -124,9 +163,26 @@ class TestGenerator extends DefaultTask {
                 testName,
                 defaultTask,
                 manifestFile,
+                workDir,
                 testLocation,
                 gradleArguments
             )
+        }
+    }
+
+    /** Creates a init script to be used for running tests
+     *
+     * @param targetDir
+     * @param jarDir
+     */
+    @CompileDynamic
+    private void createInitScript(final File targetDir,final File jarDir) {
+        final def fromSource = templateInitScript
+
+        project.copy {
+            from fromSource
+            into targetDir
+            expand PLUGINJARPATH: jarDir.absolutePath
         }
     }
 
@@ -161,6 +217,7 @@ class TestGenerator extends DefaultTask {
         final String testName,
         final String defaultTask,
         final String manifestName,
+        final File workDir,
         final File testProjectSrcDir,
         final List<String> arguments
     ) {
@@ -180,6 +237,7 @@ class TestGenerator extends DefaultTask {
                 DEFAULTTASK : defaultTask,
                 VERSIONS : verText,
                 DISTRIBUTION_URI : gradleDistributionUri ?: '',
+                WORKDIR : workDir.absolutePath,
                 SOURCEDIR : testProjectSrcDir.absolutePath
         }
     }
@@ -198,24 +256,43 @@ class TestGenerator extends DefaultTask {
      *
      */
     private void setTemplateLocationFromResource() {
+        this.templateFile = getLocationFromResource(TEST_TEMPLATE_PATH)
+    }
+
+    /** Finds the init script template in the classpath.
+     *
+     */
+    private void setInitScriptLocationFromResource() {
+        this.templateInitScript = getLocationFromResource(INIT_TEMPLATE_PATH)
+    }
+
+    private def getLocationFromResource(final String resourcePath) {
         Enumeration<URL> enumResources
-        enumResources = this.class.classLoader.getResources( TEST_TEMPLATE_PATH )
+        String resourceName = new File(resourcePath).name
+        enumResources = this.class.classLoader.getResources( resourcePath )
         if(!enumResources.hasMoreElements()) {
-            throw new GradleException ("Cannot find ${TEST_TEMPLATE_PATH} in classpath")
-        } else {
-            URI uri = enumResources.nextElement().toURI()
-            String location = uri.getSchemeSpecificPart().replace('!/'+TEST_TEMPLATE_PATH,'')
-            if(uri.scheme.startsWith('jar')) {
-                location=location.replace('jar:file:','')
-                this.templateFile= project.zipTree(location).filter { File it -> it.name == 'GradleTestTemplate.groovy.template'}
-            } else if(uri.scheme.startsWith('file')) {
-                this.templateFile= location.replace('file:','')
-            } else {
-                throw new GradleException("Cannot extract ${uri}")
-            }
+            throw new GradleException ("Cannot find ${resourcePath} in classpath")
         }
+
+        URI uri = enumResources.nextElement().toURI()
+        String location = uri.getSchemeSpecificPart().replace('!/'+resourcePath,'')
+        if(uri.scheme.startsWith('jar')) {
+            location=location.replace('jar:file:','')
+            return project.zipTree(location).filter { File it -> it.name == resourceName }
+        } else if(uri.scheme.startsWith('file')) {
+            return  location.replace('file:','')
+        }
+
+        throw new GradleException("Cannot extract ${uri}")
+    }
+
+    private def pluginJarDir = {
+        Jar task = project.tasks.getByName('jar') as Jar
+        task.destinationDir
     }
 
     private def templateFile
+    private def templateInitScript
     static final String TEST_TEMPLATE_PATH = 'org/ysb33r/gradletest/GradleTestTemplate.groovy.template'
+    static final String INIT_TEMPLATE_PATH = 'org/ysb33r/gradletest/init.gradle'
 }

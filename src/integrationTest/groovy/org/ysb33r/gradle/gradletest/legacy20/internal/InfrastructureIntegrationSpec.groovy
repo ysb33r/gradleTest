@@ -99,7 +99,7 @@ class InfrastructureIntegrationSpec extends Specification {
 
         then: "These files must be created"
         exists ''
-        exists 'init.gradle'
+        exists 'init20.gradle'
         exists gradleVersion
         exists "${gradleVersion}/simpleTest"
         exists "${gradleVersion}/simpleTest/build.gradle"
@@ -111,7 +111,7 @@ class InfrastructureIntegrationSpec extends Specification {
         runners[0].project == project
         runners[0].gradleLocationDir == gradleLocation
         runners[0].testProjectDir == new File(project.buildDir,Names.DEFAULT_TASK + '/' + gradleVersion + '/' + 'simpleTest')
-        runners[0].initScript == new File("${project.buildDir}/${Names.DEFAULT_TASK}/init.gradle")
+        runners[0].initScript == new File("${project.buildDir}/${Names.DEFAULT_TASK}/init20.gradle")
         runners[0].version == gradleVersion
         runners[0].testName == 'simpleTest'
     }

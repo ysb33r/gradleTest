@@ -1,3 +1,16 @@
+/*
+ * ============================================================================
+ * (C) Copyright Schalk W. Cronje 2015
+ *
+ * This software is licensed under the Apache License 2.0
+ * See http://www.apache.org/licenses/LICENSE-2.0 for license details
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ *
+ * ============================================================================
+ */
 package org.ysb33r.gradle.gradletest
 
 import groovy.transform.CompileDynamic
@@ -28,12 +41,17 @@ class GradleTest extends Test {
         }
     }
 
+    // TODO: Override version settings by checking for -DgradleTest.versions=2.1,2.2
     /** Returns the set of Gradle versions to tests against
      *
      * @return Set of unique versions
      */
     @Input
     Set<String> getVersions() {
+        String override = System.getProperty("${name}.versions")
+        if(override?.size()) {
+            return override.split(',') as Set<String>
+        }
         CollectionUtils.stringize(this.versions) as Set<String>
     }
 
@@ -49,7 +67,7 @@ class GradleTest extends Test {
      *
      * @param args Additional arguments
      */
-     void setGradleArguments(Object... args ) {
+     void gradleArguments(Object... args ) {
         arguments.addAll(args as List)
     }
 
@@ -113,11 +131,11 @@ class GradleTest extends Test {
      */
     @Input
     List<String> getGradleArguments() {
+        ([ '--init-script',initScript ] as List<String>) +
         CollectionUtils.stringize(this.arguments) as List<String>
         /* Do we need any of these?
             args '--project-cache-dir',"${testProjectDir}/.gradle"
             args '--gradle-user-home',  "${testProjectDir}/../home"
-            args '--init-script',initScript.absolutePath
             * If gradle is run with `--offline`, it will be passed to the Gradle.
 * `--project-cache-dir` is always set to at the start of the project in `buildDir`
 * `--full-stacktrace` is set and output is captured to test report.
@@ -143,6 +161,14 @@ class GradleTest extends Test {
     @Override
     void useTestNG(Closure testFrameworkConfigure) {
         notSupported('useTestNG()')
+    }
+
+    /** Returns path to initscript that will be used for tests
+     *
+     * @return Path to init.gradle script
+     */
+    String getInitScript() {
+        project.file("${project.buildDir}/${name}/init.gradle").absolutePath
     }
 
     private List<Object> arguments = [/*'--no-daemon',*/ '--full-stacktrace', '--info'] as List<Object>

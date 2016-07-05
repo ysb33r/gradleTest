@@ -54,9 +54,10 @@ class Infrastructure {
         assert versions != null
 
         final File baseDir = new File(project.buildDir,name)
-        final File initGradle = new File(baseDir,"init.gradle" )
+        final File initGradle = new File(baseDir,"init20.gradle" )
         final File repo = new File( baseDir,"repo" )
         final Logger logger = project.logger
+        final File pluginDir = project.tasks.getByName('jar').destinationDir
 
         List<TestRunner> testRunners = []
         WorkResult wr
@@ -65,7 +66,8 @@ class Infrastructure {
         wr = project.copy {
             from initScript
             into initGradle.parentFile
-            rename { 'init.gradle' }
+            rename { 'init20.gradle' }
+            expand PLUGINDIR : pluginDir.absolutePath
         }
 
         assert wr.didWork

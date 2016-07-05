@@ -34,41 +34,31 @@ within a separate JVM.
 
 .Test directory layout
 ----
-${buildDir} / gradleTest / ver1 / project1 <1>
-                                / project2
-                                / project3
-                         / ver2 / project1
-                                / project2
-                                / project3
-                         / init.gradle     <2>
-                         / repo            <3>
-                         / home            <4>
-            / classes / gradleTest         <5>
-            / gradleDist                   <6>
+${buildDir} / gradleTest / project1  / ver1   <1>
+                                     / ver2   <2>
+                         / project2  / ver1
+                         / manifest  <3>
+                         / src       <4>
+                         / init.gradle <5>
 ----
-<1> Projects are duplicated for each Gradle version. See below for a more detailed
-  layout
-<2> This is a generated `initscript` used to start all tests.
-<3> This is flat repository that can be utilised by all tests.
-<4> Gradle home directory for all the tests
-<5> Temporary classes for bootstrapping the tests are kept here.
-<6> Distributions are downloaded here if necessary
+<1> A folder is created for each project
+<2> A folder for each Gradle version is created underneath the project folder
+<3> Classpath manifest used when running tests
+<4> Folder where geenrated source code ends up in
+<5> Initscript used by GradleTest
 
 .Test layout for one test
 ----
 ... / project1 / .gradle         <1>
-               / src             <2>
-               / build           <3>
-               / build.gradle    <4>
-               / settings.gradle <5>
+               / build           <2>
+               / build.gradle    <3>
+               / settings.gradle <4>
 ----
 <1> Project cachedir is sent here
-<2> If the test project has any folders they will be copied here
-<3> It is recommended that the build directory not be changed and left as per default
-<4> `build.gradle` is required for the test to be executed. It must contain a task called `runGradleTest`.
-<5> If a test project does not have a `settings.gradle file` an empty one will
+<2> It is recommended that the build directory not be changed and left as per default
+<3> `build.gradle` is required for the test to be executed. It must contain a task called `runGradleTest`.
+<4> If a test project does not have a `settings.gradle file` an empty one will
 be generated in the test folder
-
 
 == Bootstrap
 
@@ -147,6 +137,19 @@ NOTE: When the system property is set it will override all `distributionUri` set
 * If gradle is run with `--offline`, it will be passed to the Gradle.
 * `--project-cache-dir` is always set to at the start of the project in `buildDir`
 * `--full-stacktrace` is set and output is captured to test report.
+
+== Temporarily overriding Gradle versions
+
+It is very convenient to sometimes to runs the test with a subset of the versions specified in the configuration. This is
+achievable by passing a system property to Gradle
+
+[source,bash]
+----
+-DgradleTest.versions=2.2,2.3 <1> <2>
+----
+<1> If more than one GradleTest task is defined, replace `gradleTest` with the name of the appropriate GradleTest task.
+<2> List the versions in a commma-separated list. No validation is done on the string. If it leads to invalid Gradle
+  versions the build will fail.
 
 == Task dependencies
 
@@ -293,7 +296,7 @@ NOTE: If the above is used with Gradle 2.13+ it will be accepted and ignored. De
 === Dynamic dependencies
 
 Hard-coding the plugin version in to the `build.gradle` files of the `gradleTest` test fixtures is a maintenance pain.
-Therefore it is possible to write something like
+In previous versions of the plugin one had to dp to write something like
 
 [source,groovy]
 ----
@@ -304,7 +307,9 @@ buildscript {
 }
 ----
 
-and the plugin will substitute the `%%VERSION%%` token with the version of your project.
+and the plugin would substitute the `%%VERSION%%` token with the version of your project. This is *no longer necessary
+with this release* even when running in legacy mode. The plugin will inject the path to the plugin automatically
+eliminating the need to use a block like the above at all.
 
 === Task dependencies
 
@@ -313,6 +318,49 @@ explicit task on the command-line or add your own task dependencies in your
 gradle script. The reason for this is that  in legacy mode it can be quite a time-consuming testset to run. The typical
 case will be that the tests are only run close to release time. If you prefer you might want to set
 `install.dependsOn gradleTest` rather than `check.dependsOn gradleTest` or `build.dependsOn gradleTest`.
+
+=== Test directory layout
+
+For testing, a folder is created for each gradle version to be tested and the
+projects are duplicated below the verson folder. Each version's testsuite is executed
+within a separate JVM.
+
+.Test directory layout
+----
+${buildDir} / gradleTest / ver1 / project1 <1>
+                                / project2
+                                / project3
+                         / ver2 / project1
+                                / project2
+                                / project3
+                         / init20.gradle   <2>
+                         / repo            <3>
+                         / home            <4>
+            / classes / gradleTest         <5>
+            / gradleDist                   <6>
+----
+<1> Projects are duplicated for each Gradle version. See below for a more detailed
+  layout
+<2> This is a generated `initscript` used to start all tests.
+<3> This is flat repository that can be utilised by all tests.
+<4> Gradle home directory for all the tests
+<5> Temporary classes for bootstrapping the tests are kept here.
+<6> Distributions are downloaded here if necessary
+
+.Test layout for one test
+----
+... / project1 / .gradle         <1>
+               / src             <2>
+               / build           <3>
+               / build.gradle    <4>
+               / settings.gradle <5>
+----
+<1> Project cachedir is sent here
+<2> If the test project has any folders they will be copied here
+<3> It is recommended that the build directory not be changed and left as per default
+<4> `build.gradle` is required for the test to be executed. It must contain a task called `runGradleTest`.
+<5> If a test project does not have a `settings.gradle file` an empty one will
+be generated in the test folder
 
 === Known Limitations
 

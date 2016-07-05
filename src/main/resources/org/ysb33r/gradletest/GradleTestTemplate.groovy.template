@@ -13,16 +13,23 @@ class ${TESTNAME}CompatibilitySpec extends Specification {
 
     static final File SOURCEDIR = new File('${SOURCEDIR}')
     static final File MANIFEST = new File('${MANIFEST}')
+    static final File WORKDIR = new File('${WORKDIR}')
+
     static final String DISTRIBUTION_URI = System.getProperty('org.ysb33r.gradletest.distribution.uri') ?: '${DISTRIBUTION_URI}'
     static final List<String> gradleArguments = [${ARGUMENTS}]
     static List<File> pluginClasspath
     static String buildscriptClasspath
 
-    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
+//    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
+    File testProjectDir
     File buildFile
     GradleRunner gradleRunner
 
     void setupSpec() {
+        if(!WORKDIR.exists()) {
+            WORKDIR.mkdirs()
+        }
+
         pluginClasspath = MANIFEST.readLines().collect {
             new File(it)
         }
@@ -32,21 +39,35 @@ class ${TESTNAME}CompatibilitySpec extends Specification {
             ') } }' + "\\n\\n"
     }
 
-    void setup() {
-        FileUtils.copyDirectory(SOURCEDIR,testProjectDir.root)
-        final File settings = new File(testProjectDir.root,'settings.gradle')
+    void setupForVersion(final String version) {
+        final GradleVersion gradleVersionUnderTest = GradleVersion.version(version)
+        testProjectDir = new File(WORKDIR,'${TESTNAME}/' + version)
+        if(testProjectDir.exists()) {
+          testProjectDir.deleteDir()
+        }
+        testProjectDir.mkdirs()
+        FileUtils.copyDirectory(SOURCEDIR,testProjectDir)
+        final File settings = new File(testProjectDir,'settings.gradle')
         if(!settings.exists()) {
             settings.text = ''
         }
         gradleRunner = GradleRunner.create()
-                       .withProjectDir(testProjectDir.root)
+                       .withProjectDir(testProjectDir)
                        .forwardOutput()
 
+       if( DISTRIBUTION_URI.empty ) {
+           gradleRunner.withGradleVersion(version)
+       } else {
+           final String uri = DISTRIBUTION_URI + '/gradle-' + version + '-bin.zip'
+           gradleRunner.withGradleDistribution(uri.toURI())
+       }
+       gradleRunner.withArguments(getArguments(gradleVersionUnderTest,version))
+       addClasspath(gradleVersionUnderTest,version)
     }
 
     List<String> getArguments(final GradleVersion gradleVersionUnderTest,final String version) {
         List<String> args = gradleArguments + []
-        args.add( (gradleVersionUnderTest > GradleVersion.version('2.1')) ? '--console=plain' : '--no-color')
+        args.add( (gradleVersionUnderTest > GradleVersion.version('2.2')) ? '--console=plain' : '--no-color')
         args
     }
 
@@ -54,7 +75,7 @@ class ${TESTNAME}CompatibilitySpec extends Specification {
         if( gradleVersionUnderTest >= GradleVersion.version('2.8') ) {
             gradleRunner.withPluginClasspath(pluginClasspath)
         } else {
-            File buildScript = new File(testProjectDir.root,'build.gradle')
+            File buildScript = new File(testProjectDir,'build.gradle')
             String newScript = buildscriptClasspath.replaceAll(/1.0-groovy-2.4/,'1.0-groovy-2.3') + buildScript.text
             buildScript.text = newScript
         }
@@ -64,15 +85,7 @@ class ${TESTNAME}CompatibilitySpec extends Specification {
     def "${TESTNAME} : #version"() {
         setup:
         final GradleVersion gradleVersionUnderTest = GradleVersion.version(version)
-
-        if( DISTRIBUTION_URI.empty ) {
-            gradleRunner.withGradleVersion(version)
-        } else {
-            final String uri = DISTRIBUTION_URI + '/gradle-' + version + '-bin.zip'
-            gradleRunner.withGradleDistribution(uri.toURI())
-        }
-        gradleRunner.withArguments(getArguments(gradleVersionUnderTest,version))
-        addClasspath(gradleVersionUnderTest,version)
+        setupForVersion(version)
 
         when:
         println 'I am about to run the test project with Gradle ' + version + ' and I am ' + GradleVersion.current()

@@ -1,34 +1,15 @@
-import org.gradle.internal.os.OperatingSystem
 
-buildscript {
-	repositories {
-		jcenter()
-		mavenLocal()
-		maven {
-			url "https://plugins.gradle.org/m2/"
-		}
-	}
-	dependencies {
-		classpath 'org.ysb33r.gradle:bintray:1.5'
-		classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.0'
-		classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
-
-		// TODO: See: https://github.com/hierynomus/license-gradle-plugin/issues/67
-		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0', {
-			exclude module : 'guava'
-		}
-
-	}
+plugins {
+    id 'groovy'
+    id 'maven'
+    id 'org.ysb33r.bintray' version '1.5'
+    id 'com.jfrog.artifactory' version '3.1.0'
+    id 'com.gradle.plugin-publish' version '0.9.0'
+    id 'com.github.hierynomus.license' version '0.13.1'
 }
 
-apply plugin : 'groovy'
-apply plugin : 'maven'
-apply plugin : 'org.ysb33r.bintray'
-apply plugin : 'com.jfrog.artifactory'
-apply plugin : 'com.gradle.plugin-publish'
-apply plugin : 'com.github.hierynomus.license'
-apply   from : 'gradle/integration-tests.gradle'
-apply   from : 'gradle/self-reference.gradle'
+apply from : 'gradle/integration-tests.gradle'
+apply from : 'gradle/self-reference.gradle'
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
@@ -142,7 +123,6 @@ task integrationTestRepo( type : Copy ) {
 
 task createIntegrationTestClasspathManifest {
 
-
     ext {
         outputDir = file("$buildDir/integrationTest/manifest")
     }
@@ -181,6 +161,19 @@ integrationTest {
 		systemProperties OFFLINE:'1'
 	}
 
+}
+
+task compatibilityTest( type : GradleBuild ) {
+    group 'Compatibility'
+    description 'Runs the plugin against most Gradle 2.0+ releases'
+    dependsOn integrationTestRepo,jar
+    mustRunAfter test,integrationTest
+
+    tasks = ['gradleTest']
+    dir = file("${projectDir}/compatibility")
+    buildFile = 'compatibility/compatibility.gradle'
+
+    onlyIf { !gradle.startParameter.offline }
 }
 
 artifactory {

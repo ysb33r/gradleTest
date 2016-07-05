@@ -211,7 +211,7 @@ class GradleTest extends DefaultTask {
             String location = uri.getSchemeSpecificPart().replace('!/'+INIT_GRADLE_PATH,'')
             if(uri.scheme.startsWith('jar')) {
                 location=location.replace('jar:file:','')
-                this.initscript= project.zipTree(location).filter { it.name == 'init.gradle'}
+                this.initscript= project.zipTree(location).filter { it.name == 'init20.gradle'}
             } else if(uri.scheme.startsWith('file')) {
                 this.initscript= location.replace('file:','')
             } else {
@@ -223,7 +223,7 @@ class GradleTest extends DefaultTask {
     private List<Object> versions = []
     private List<TestRunner> testRunners = []
     private Object initscript
-    private final static String  INIT_GRADLE_PATH = 'org/ysb33r/gradletest/init.gradle'
+    private final static String  INIT_GRADLE_PATH = 'org/ysb33r/gradletest/legacy20/init20.gradle'
 
     /** Called by afterEvaluate to look for versions in all GradleTest tasks
      *
