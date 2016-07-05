@@ -21,8 +21,8 @@ import org.gradle.util.GradleVersion
 import org.ysb33r.gradle.gradletest.legacy20.LegacyGradleTestPlugin
 import org.ysb33r.gradle.gradletest.legacy20.DeprecatingGradleTestExtension
 
-/**
- * @author Schalk W. Cronjé
+/** Checks the current Gradle version and decides which real plugin to apply.
+ *
  */
 @CompileStatic
 class GradleTestPlugin implements Plugin<Project> {

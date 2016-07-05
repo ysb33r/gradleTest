@@ -28,8 +28,9 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
 
-/**
- * @author Schalk W. Cronjé
+/** Generates test files that will be compiled against GradleTestKit.
+ *
+ * @since 1.0
  */
 @CompileStatic
 class TestGenerator extends DefaultTask {

@@ -24,9 +24,6 @@ import org.ysb33r.gradle.gradletest.internal.GradleTestSpecification
 import spock.lang.Specification
 
 
-/**
- * @author Schalk W. Cronjé
- */
 class GradleTestPluginSpec extends GradleTestSpecification {
 
     def "Applying the plugin"() {

@@ -25,7 +25,6 @@ import org.ysb33r.gradle.gradletest.Names
 
 /** Unpacks a downloaded distributions to the gradle wrapper in {@code gradleUserHome}
  *
- * @author Schalk W. Cronjé
  */
 class Unpacker {
 

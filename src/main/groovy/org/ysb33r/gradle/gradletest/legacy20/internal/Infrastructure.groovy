@@ -19,7 +19,7 @@ import org.gradle.api.tasks.WorkResult
 
 /** Utiity class to aid in building the files structure for compatibility testing
  *
- * @author Schalk W. Cronjé
+ *
  */
 class Infrastructure {
     /** Creates the file layout. It takes a property map as aparaneter with the following required non-null-value properties:

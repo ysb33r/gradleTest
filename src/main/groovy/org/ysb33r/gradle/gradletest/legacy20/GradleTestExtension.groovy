@@ -20,7 +20,7 @@ import org.ysb33r.gradle.gradletest.legacy20.internal.AvailableDistributionsInte
 /** Extension for global configuration of handling distributions used for
  * testing.
  *
- * @author Schalk W. Cronjé
+ *
  */
 @CompileStatic
 class GradleTestExtension {

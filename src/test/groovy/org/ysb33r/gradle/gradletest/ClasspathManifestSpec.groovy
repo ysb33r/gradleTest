@@ -17,9 +17,6 @@ import org.ysb33r.gradle.gradletest.internal.GradleTestSpecification
 import spock.lang.Specification
 
 
-/**
- * @author Schalk W. Cronjé
- */
 class ClasspathManifestSpec extends GradleTestSpecification {
 
     static final File GRADLETESTREPO = new File(System.getProperty('GRADLETESTREPO') ?: 'build/integrationTest/repo').absoluteFile

@@ -13,8 +13,8 @@
  */
 package org.ysb33r.gradle.gradletest.legacy20
 
-/**
- * @author Schalk W. Cronjé
+/** Inteface used in legacy mode to report test results
+ *
  */
 interface CompatibilityTestResult {
     String getTestName()

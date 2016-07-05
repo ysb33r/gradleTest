@@ -16,9 +16,6 @@ package org.ysb33r.gradle.gradletest.legacy20.internal
 import spock.lang.Specification
 
 
-/**
- * @author Schalk W. Cronjé
- */
 class DistributionSpec extends Specification {
 
     def "Converting a list of Distribution to a Set"() {

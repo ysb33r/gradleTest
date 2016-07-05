@@ -17,8 +17,8 @@ import groovy.transform.TupleConstructor
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
 
-/**
- * @author Schalk W. Cronjé
+/** Runs a single test in legacy mode.
+ *
  */
 @TupleConstructor
 class TestRunner {

@@ -20,9 +20,6 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
-/**
- * @author Schalk W. Cronjé
- */
 @CompileStatic
 class GradleTestSpecification extends Specification {
 

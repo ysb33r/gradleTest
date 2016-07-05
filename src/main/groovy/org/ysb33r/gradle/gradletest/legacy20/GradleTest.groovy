@@ -31,8 +31,8 @@ import org.ysb33r.gradle.gradletest.Names
 import org.ysb33r.gradle.gradletest.legacy20.internal.Infrastructure
 import org.ysb33r.gradle.gradletest.legacy20.internal.TestRunner
 
-/**
- * @author Schalk W. Cronjé
+/** Legacy GradleTest task type. Copies build projects to new directories and runs various
+ * Gradle versions against those projects. Will download distributions if necessary.
  */
 @CompileStatic
 class GradleTest extends DefaultTask {

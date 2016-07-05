@@ -15,8 +15,8 @@ package org.ysb33r.gradle.gradletest
 
 import java.util.regex.Pattern
 
-/**
- * @author Schalk W. Cronjé
+/** Fixed names for various GradleTest elements.
+ *
  */
 class Names {
 

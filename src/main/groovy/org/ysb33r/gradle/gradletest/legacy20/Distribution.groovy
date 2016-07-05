@@ -13,8 +13,8 @@
  */
 package org.ysb33r.gradle.gradletest.legacy20
 
-/**
- * @author Schalk W. Cronjé
+/** Inteface for handlign distributions in legacy mode.
+ *
  */
 interface Distribution extends Comparable {
     String getVersion()

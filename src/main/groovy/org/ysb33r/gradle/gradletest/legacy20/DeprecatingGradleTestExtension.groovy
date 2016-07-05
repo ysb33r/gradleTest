@@ -20,7 +20,6 @@ import org.ysb33r.gradle.gradletest.Names
 
 /** This is used under 2.13+ to warn the user that the gradleLocations extension is no longer in use.
  *
- * @author Schalk W. Cronjé
  * @since 1.0
  */
 @CompileStatic

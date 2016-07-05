@@ -17,20 +17,11 @@ import groovy.transform.CompileStatic
 import org.ysb33r.gradle.gradletest.legacy20.AvailableDistributions
 import org.ysb33r.gradle.gradletest.legacy20.Distribution
 
-/**
- * @author Schalk W. Cronjé
+/** Implementation to report local available distributions
+ *
  */
 @CompileStatic
 class AvailableDistributionsInternal implements AvailableDistributions {
-
-//    /** Gets a list of versions that are available locally
-//     *
-//     * @return List of versions
-//     */
-//    @Override
-//    Set<String> getLocalVersions() {
-//        return null
-//    }
 
     /** Returns all distributions that either found locally or downloaded and unpacked
      *

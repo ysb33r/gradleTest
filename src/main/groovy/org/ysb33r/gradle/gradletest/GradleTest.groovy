@@ -23,7 +23,7 @@ import org.gradle.util.CollectionUtils
 import org.gradle.util.GradleVersion
 
 /**
- * @author Schalk W. Cronjé
+ * Runs compatibility tests using special compiled GradleTestKit-based tests
  */
 @CompileStatic
 class GradleTest extends Test {

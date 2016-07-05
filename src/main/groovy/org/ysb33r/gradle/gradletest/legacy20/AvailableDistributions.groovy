@@ -12,16 +12,11 @@
  * ============================================================================
  */
 package org.ysb33r.gradle.gradletest.legacy20
-/**
- * @author Schalk W. Cronjé
+
+/** Used in legacy mode to report on all distributions that are available locally.
+ *
  */
 interface AvailableDistributions {
-
-//    /** Gets a list of versions that are available locally
-//     *
-//     * @return List of versions
-//     */
-//    Set<String> getLocalVersions()
 
     /** Returns all distributions that either found locally or downloaded and unpacked
      *

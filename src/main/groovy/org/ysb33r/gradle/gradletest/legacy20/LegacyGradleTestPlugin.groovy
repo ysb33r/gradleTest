@@ -26,8 +26,8 @@ import org.ysb33r.gradle.gradletest.legacy20.internal.AvailableDistributionsInte
 import org.ysb33r.gradle.gradletest.legacy20.internal.DistributionInternal
 import org.ysb33r.gradle.gradletest.legacy20.internal.GradleTestDownloader
 
-/**
- * @author Schalk W. Cronjé
+/** Legacy GradleTest plugin which works with Gradle 2.0-2.12.
+ *
  */
 @CompileStatic
 class LegacyGradleTestPlugin implements Plugin<Project> {

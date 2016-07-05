@@ -21,9 +21,6 @@ import org.ysb33r.gradle.gradletest.internal.GradleTestSpecification
 import spock.lang.Specification
 
 
-/**
- * @author Schalk W. Cronjé
- */
 class TestGeneratorSpec extends GradleTestSpecification {
 
     def 'Creating source code from template'() {

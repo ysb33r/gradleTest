@@ -28,7 +28,7 @@ import org.ysb33r.gradle.gradletest.Names
 import java.util.regex.Matcher
 
 /**
- * @author Schalk W. Cronjé
+ * Locates distributions on the file system.
  */
 @TupleConstructor
 @Sortable(excludes=['location'])
