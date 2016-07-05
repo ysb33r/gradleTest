@@ -9,7 +9,7 @@ plugins {
 }
 
 apply from : 'gradle/integration-tests.gradle'
-apply from : 'gradle/self-reference.gradle'
+
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
