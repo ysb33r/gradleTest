@@ -41,7 +41,6 @@ class GradleTest extends Test {
         }
     }
 
-    // TODO: Override version settings by checking for -DgradleTest.versions=2.1,2.2
     /** Returns the set of Gradle versions to tests against
      *
      * @return Set of unique versions
@@ -106,9 +105,14 @@ class GradleTest extends Test {
                 if( ((String)baseUri).empty ) {
                     baseDistributionUri = null
                 } else {
-                    baseDistributionUri = ((String)baseUri).toURI()
+                    final tmpStr = (String)baseUri
+                    URI tmpUri = tmpStr.toURI()
+                    if(tmpUri.scheme == null) {
+                        setGradleDistributionUri(project.file(tmpStr))
+                    } else {
+                        baseDistributionUri = tmpUri
+                    }
                 }
-                // TODO: If URI is not absolute, make it absolute file URI
                 break
             default:
                 setGradleDistributionUri( baseUri.toString() )
