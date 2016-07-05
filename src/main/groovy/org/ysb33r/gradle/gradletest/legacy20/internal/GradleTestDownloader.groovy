@@ -30,7 +30,6 @@ import org.ysb33r.gradle.gradletest.Names
  *  This task is only enabled if the gradle job was not run offline.
  * In the current implementation it will only look for 'bin' variants.
  *
- * @author Schalk W. Cronjé
  */
 class GradleTestDownloader extends DefaultTask {
 
@@ -50,7 +49,7 @@ class GradleTestDownloader extends DefaultTask {
     }
 
     /** Get the output directory.
-     * The default is {@code ${buildDir}/gradleDist
+     * The default is {@code "\$buildDir/gradleDist"}
      */
 
     @OutputDirectory
