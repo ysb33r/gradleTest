@@ -80,6 +80,10 @@ dependencies {
     }
 }
 
+groovydoc {
+    windowTitle 'GradleTest Plugin for Gradle'
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier = 'sources'
 	from sourceSets.main.allSource
@@ -88,13 +92,13 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar) {
 	description "An archive of the JavaDocs for Maven Central"
 	classifier "javadoc"
-	from Javadoc
+	from groovydoc //Javadoc
 }
+
 
 artifacts {
 	archives sourcesJar
-	// TODO: Fix Javadoc errors
-//	archives javadocJar
+	archives javadocJar
 }
 
 jar {
@@ -102,10 +106,6 @@ jar {
 		attributes 'Implementation-Title': moduleName, 'Implementation-Version': version
 	}
 }
-
-// TODO: Fix Javadoc errors
-javadoc { enabled=false }
-javadocJar { enabled=false }
 
 test {
 	systemProperties TESTROOT : "${buildDir}/tmp/testroot"
@@ -137,10 +137,6 @@ task createIntegrationTestClasspathManifest {
 
     dependsOn integrationTestClasses
 }
-
-//dependencies {
-//    integrationTestRuntime files(createIntegrationTestClasspathManifest)
-//}
 
 test {
     dependsOn integrationTestRepo
@@ -209,7 +205,8 @@ uploadArchives  {
 		}
 	}
 
-	onlyIf { !version.endsWith("SNAPSHOT") }
+	onlyIf { !version.endsWith("-SNAPSHOT") }
+    mustRunAfter compatibilityTest
 }
 
 pluginBundle {
@@ -235,6 +232,7 @@ pluginBundle {
 
 publishPlugins {
 	onlyIf { !version.endsWith("SNAPSHOT") }
+    mustRunAfter compatibilityTest
 }
 
 license {
@@ -250,4 +248,9 @@ if (JavaVersion.current().isJava8Compatible()) {
 	tasks.withType(Javadoc) {
 		options.addStringOption('Xdoclint:none', '-quiet')
 	}
+}
+
+task release {
+    onlyIf { !version.endsWith('-SNAPSHOT') }
+    dependsOn build, compatibilityTest, publishPlugins, uploadArchives
 }
