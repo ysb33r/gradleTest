@@ -62,11 +62,16 @@ class Infrastructure {
         List<TestRunner> testRunners = []
         WorkResult wr
 
+        if(initGradle.exists()) {
+            logger.debug "Deleting '${initGradle}' as it exists."
+            initGradle.delete()
+        }
+
         logger.debug "Infrastructure: Copying templateFile from '${initScript}'"
         wr = project.copy {
             from initScript
             into initGradle.parentFile
-            rename { 'init20.gradle' }
+            rename { initGradle.name }
             expand PLUGINDIR : pluginDir.absolutePath
         }
 

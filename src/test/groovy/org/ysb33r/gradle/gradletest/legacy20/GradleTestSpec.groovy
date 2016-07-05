@@ -40,13 +40,13 @@ class GradleTestSpec extends GradleTestSpecification {
 
         task.versions '2.2','2.3'
         task.versions '2.4','2.4'
-        task.initscript file('foo/bar.gradle')
+//        task.initscript file('foo/bar.gradle')
 
         expect:
         task.versions == (['2.2','2.3','2.4'] as Set<String>)
         task.outputDirs == [ new File(output,'2.2'),new File(output,'2.3'),new File(output,'2.4')] as Set
         GradleTest.findAllRequiredVersions(project) == (['2.2','2.3','2.4'] as Set<String>)
-        task.initscript == file('foo/bar.gradle')
+//        task.initscript == file('foo/bar.gradle')
 
     }
 }

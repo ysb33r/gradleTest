@@ -64,34 +64,34 @@ class LegacyGradleTestIntegrationSpec extends GradleTestIntegrationSpecification
         version << ['2.1','2.5','2.8','2.9']
     }
 
-    @Issue('https://github.com/ysb33r/gradleTest/issues/30')
-    def "Run a gradletest with a custom initscript" () {
-        setup:
-        copyTestDir('simpleTest')
-        buildScript(version)
-        buildFile << """
-        gradleTest {
-            initscript file('${new File(simpleTestSrcDir,'../initScripts/gradleTest/initScriptTest/initscript.gradle').absolutePath}')
-        }
-"""
-
-        when: 'Evaluation has been completed'
-        println buildFile.text
-        GradleVersion currentGradle = GradleVersion.version(version)
-        BuildResult result = getGradleRunner(version).build()
-        String output = result.output
-
-        then:
-        if(currentGradle >= GradleVersion.version('2.5')) {
-            result.task(':gradleTest').outcome == TaskOutcome.SUCCESS
-        }
-        !output.contains(':gradleTest SKIPPED')
-        output.contains(':gradleTest')
-
-        where:
-        version << ['2.1','2.5','2.8','2.9']
-
-    }
+//    @Issue('https://github.com/ysb33r/gradleTest/issues/30')
+//    def "Run a gradletest with a custom initscript" () {
+//        setup:
+//        copyTestDir('simpleTest')
+//        buildScript(version)
+//        buildFile << """
+//        gradleTest {
+//            initscript file('${new File(simpleTestSrcDir,'../initScripts/gradleTest/initScriptTest/initscript.gradle').absolutePath}')
+//        }
+//"""
+//
+//        when: 'Evaluation has been completed'
+//        println buildFile.text
+//        GradleVersion currentGradle = GradleVersion.version(version)
+//        BuildResult result = getGradleRunner(version).build()
+//        String output = result.output
+//
+//        then:
+//        if(currentGradle >= GradleVersion.version('2.5')) {
+//            result.task(':gradleTest').outcome == TaskOutcome.SUCCESS
+//        }
+//        !output.contains(':gradleTest SKIPPED')
+//        output.contains(':gradleTest')
+//
+//        where:
+//        version << ['2.1','2.5','2.8','2.9']
+//
+//    }
 
     private void buildScript(final String version) {
         writeBuildScriptHeader(version)

@@ -40,10 +40,6 @@ class GradleTest extends DefaultTask {
     GradleTest() {
         group = Names.TASK_GROUP
         description = "Runs all the compatibility tests for '${name}'"
-
-//        onlyIf {
-//            !getVersions().empty && !getTestNames().empty
-//        }
     }
 
     /** Returns the set of Gradle versions to tests against
@@ -55,11 +51,6 @@ class GradleTest extends DefaultTask {
     Set<String> getVersions() {
         CollectionUtils.stringize(this.versions) as Set<String>
     }
-
-//    No signature of method:
-//    static org.gradle.util.CollectionUtils.stringize()
-//    is applicable for argument types: (java.util.ArrayList) values: [[2.1]]
-//    Possible solutions: stringize(java.util.List), stringize(java.lang.Iterable, java.util.Collection)
 
     /** Adds Gradle versions to be tested against.
      *
@@ -84,16 +75,6 @@ class GradleTest extends DefaultTask {
             }
         }
         tests
-    }
-
-    /** Sets the lcoation of an alternative init script.
-     *
-     * @param script Location of alternative Gradle init script.
-     * Anything that can be passed to {@code project.file} is allowed.
-     * @since 0.5.5
-     */
-    void initscript(Object script) {
-        this.initscript = script
     }
 
     /** Returns the location of the initialisation script.
