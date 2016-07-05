@@ -243,6 +243,7 @@ license {
 	ignoreFailures = false
 	ext.year = '2015'
 	excludes(['**/*.ad', '**/*.asciidoc', '**/*.adoc', '**/*.md','**/*.properties'])
+    mapping 'gradle', 'SLASHSTAR_STYLE'
 }
 
 if (JavaVersion.current().isJava8Compatible()) {

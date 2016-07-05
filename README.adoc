@@ -135,7 +135,6 @@ NOTE: When the system property is set it will override all `distributionUri` set
 == Start Parameters
 
 * If gradle is run with `--offline`, it will be passed to the Gradle.
-* `--project-cache-dir` is always set to at the start of the project in `buildDir`
 * `--full-stacktrace` is set and output is captured to test report.
 
 == Temporarily overriding Gradle versions
