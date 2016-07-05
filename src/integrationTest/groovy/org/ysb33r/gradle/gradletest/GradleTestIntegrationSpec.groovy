@@ -27,10 +27,7 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
     static final File GRADLETESTREPO = new File(System.getProperty('GRADLETESTREPO') ?: 'build/integrationTest/repo').absoluteFile
     @Delegate Project project
 
-
     void setup() {
-        // TODO: Remove this line
-//        project = ProjectBuilder.builder().withProjectDir(new File('/Users/schalkc/Projects/GradleTest/TMP')).build()
         project = ProjectBuilder.builder().withProjectDir(testProjectDir.root).build()
 
         buildFile = new File(project.projectDir,'build.gradle')
