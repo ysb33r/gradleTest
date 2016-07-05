@@ -99,7 +99,7 @@ class GradleTest extends Test {
                 baseDistributionUri = (URI)baseUri
                 break
             case File:
-                setGradleDistributionUri('file://' + ((File)baseUri).absolutePath)
+                baseDistributionUri= ((File)baseUri).absoluteFile.toURI()
                 break
             case String:
                 if( ((String)baseUri).empty ) {

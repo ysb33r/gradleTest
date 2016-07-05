@@ -75,7 +75,7 @@ class GradleTestSpec extends GradleTestSpecification {
             apply plugin: 'org.ysb33r.gradletest'
 
             gradleTest {
-                gradleDistributionUri 'file://foo/bar'
+                gradleDistributionUri 'file:///foo/bar'
             }
             evaluate()
         }
@@ -83,7 +83,7 @@ class GradleTestSpec extends GradleTestSpecification {
         GradleTest defaultTestTask = project.tasks.getByName('gradleTest')
 
         then:
-        defaultTestTask.gradleDistributionUri == 'file://foo/bar'.toURI()
+        defaultTestTask.gradleDistributionUri == 'file:///foo/bar'.toURI()
     }
 
     def 'Accept Distribution URI as File'() {
@@ -100,7 +100,7 @@ class GradleTestSpec extends GradleTestSpecification {
         GradleTest defaultTestTask = project.tasks.getByName('gradleTest')
 
         then:
-        defaultTestTask.gradleDistributionUri == ('file://' + file('foo')).toURI()
+        defaultTestTask.gradleDistributionUri == file('foo').toURI()
     }
 
 }
