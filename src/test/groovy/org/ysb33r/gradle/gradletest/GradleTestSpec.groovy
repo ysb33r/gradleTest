@@ -50,8 +50,6 @@ class GradleTestSpec extends GradleTestSpecification {
 
         and: 'Default task is runGradleTest'
         defaultTestTask.defaultTask == 'runGradleTest'
-
-        // TODO: arguments
     }
 
     def "Adding additional arguments"() {
