@@ -90,5 +90,4 @@ class TestGeneratorSpec extends GradleTestSpecification {
 
     }
 
-    // TODO: Test various combinations of arguments
 }

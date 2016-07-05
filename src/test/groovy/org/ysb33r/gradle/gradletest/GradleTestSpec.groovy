@@ -67,6 +67,9 @@ class GradleTestSpec extends GradleTestSpecification {
 
         then: "The arguments will also contain the extras"
         defaultTestTask.gradleArguments.containsAll '4','--max-workers'
+
+        and: "As well as the required arguments"
+        defaultTestTask.gradleArguments.containsAll '--init-script'
     }
 
     def 'Accept Distribution URI as String'() {
