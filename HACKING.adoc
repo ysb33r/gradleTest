@@ -9,7 +9,7 @@ In order to contribute to this plugin it is useful to understand something about
 src / main             <1>
     / test             <2>
     / integrationTest  <3>
-    / gradleTest       <4>
+compatibility / gradleTest       <4>
 ----
 <1> Plugin source code as usual
 <2> Unittests
@@ -30,12 +30,14 @@ There is also a special `integrationTestDistro` configuration which is only used
 
 == Compatibility Tests
 
-This is handled via `gradle/self-reference.gradle`. Note that we need to take special care of building under Appveyor
-and Travis CI too.
-
 Dependencies required for compatibility testing shoudl be added against the `gradleTest` configuration.
 
 == Branches
 
 * Development is done on `development` branch.
 * `development` is merged to `master` prior to release.
+
+== Releases
+
+Releases are run via the `release` task. THis will take care of buildign, running ALL tests and publishing to both
+plugin portal & Bintray.
