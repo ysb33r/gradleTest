@@ -22,6 +22,7 @@
 === Other
 
 * https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors
+* https://github.com/ysb33r/gradleTest/issues/36[#36] - Integration test failure under M$ Windows
 
 == v0.5.5
 * https://github.com/ysb33r/gradleTest/issues/30[#30] - Specify init scripts
