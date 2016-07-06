@@ -18,6 +18,8 @@
 * https://github.com/ysb33r/gradleTest/issues/34[#34] - Distribution URI fails with File paths under Windows.
 * https://github.com/ysb33r/gradleTest/issues/35[#35] - TestGenerator is not correctly substituting paths in
    initscript under Windows
+* https://github.com/ysb33r/gradleTest/issues/38[#38] - TestGenerator is not correctly substituting paths in
+   generated test source code under Windows
 
 === Other
 

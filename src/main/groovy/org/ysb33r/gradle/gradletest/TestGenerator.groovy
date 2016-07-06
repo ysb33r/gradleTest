@@ -27,6 +27,7 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.internal.os.OperatingSystem
 
 /** Generates test files that will be compiled against GradleTestKit.
  *
@@ -239,7 +240,7 @@ class TestGenerator extends DefaultTask {
                 VERSIONS : verText,
                 DISTRIBUTION_URI : gradleDistributionUri ?: '',
                 WORKDIR : workDir.absolutePath,
-                SOURCEDIR : testProjectSrcDir.absolutePath
+                SOURCEDIR : winSafe(testProjectSrcDir.absolutePath)
         }
     }
 
@@ -292,8 +293,18 @@ class TestGenerator extends DefaultTask {
         task.destinationDir
     }
 
+    String winSafe(final String text) {
+        if(OperatingSystem.current().isWindows()) {
+            text.replaceAll(BACKSLASH,DBL_BACKSLASH)
+        } else {
+            text
+        }
+    }
+
     private def templateFile
     private def templateInitScript
     static final String TEST_TEMPLATE_PATH = 'org/ysb33r/gradletest/GradleTestTemplate.groovy.template'
     static final String INIT_TEMPLATE_PATH = 'org/ysb33r/gradletest/init.gradle'
+    static final String BACKSLASH = '\\'
+    static final String DBL_BACKSLASH = BACKSLASH.multiply(2)
 }

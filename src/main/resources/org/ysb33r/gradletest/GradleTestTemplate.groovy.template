@@ -20,7 +20,6 @@ class ${TESTNAME}CompatibilitySpec extends Specification {
     static List<File> pluginClasspath
     static String buildscriptClasspath
 
-//    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
     File testProjectDir
     File buildFile
     GradleRunner gradleRunner
