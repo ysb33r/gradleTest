@@ -98,7 +98,7 @@ class LegacyGradleTestIntegrationSpec extends GradleTestIntegrationSpecification
         buildFile << """
             repositories {
                 flatDir {
-                    dirs '${REPODIR}'
+                    dirs '${REPODIR.toURI()}'
                 }
             }
 
