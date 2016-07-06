@@ -295,7 +295,7 @@ class TestGenerator extends DefaultTask {
 
     String winSafe(final String text) {
         if(OperatingSystem.current().isWindows()) {
-            text.replaceAll(BACKSLASH,DBL_BACKSLASH)
+            text.replaceAll(/BACKSLASH/,DBL_BACKSLASH)
         } else {
             text
         }
