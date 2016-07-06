@@ -36,12 +36,12 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
         buildFile <<  """
         repositories {
             flatDir {
-                dirs '${GRADLETESTREPO}'
+                dirs '${GRADLETESTREPO.toURI()}'
             }
         }
         gradleTest {
             versions '2.13', '2.9', '2.8', '2.5', '2.1'
-            gradleDistributionUri file('${GRADLETESTREPO}').toURI()
+            gradleDistributionUri '${GRADLETESTREPO.toURI()}'
 
             doFirst {
                 println 'I am the actual invocation of GradleTest (from GradleIntegrationSpec) and I am ' + GradleVersion.current()
