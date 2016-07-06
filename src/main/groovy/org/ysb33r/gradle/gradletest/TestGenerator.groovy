@@ -183,7 +183,7 @@ class TestGenerator extends DefaultTask {
         project.copy {
             from fromSource
             into targetDir
-            expand PLUGINJARPATH: jarDir.absolutePath
+            expand PLUGINJARPATH: jarDir.absoluteFile.toURI()
         }
     }
 
