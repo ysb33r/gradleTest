@@ -11,9 +11,9 @@ import spock.lang.Unroll
 
 class ${TESTNAME}CompatibilitySpec extends Specification {
 
-    static final File SOURCEDIR = new File('${SOURCEDIR}')
-    static final File MANIFEST = new File('${MANIFEST}')
-    static final File WORKDIR = new File('${WORKDIR}')
+    static final File SOURCEDIR = new File('${SOURCEDIR}'.toURI())
+    static final File CP_MANIFEST = new File('${MANIFEST}'.toURI())
+    static final File WORKDIR = new File('${WORKDIR}'.toURI())
 
     static final String DISTRIBUTION_URI = System.getProperty('org.ysb33r.gradletest.distribution.uri') ?: '${DISTRIBUTION_URI}'
     static final List<String> gradleArguments = [${ARGUMENTS}]
@@ -29,12 +29,12 @@ class ${TESTNAME}CompatibilitySpec extends Specification {
             WORKDIR.mkdirs()
         }
 
-        pluginClasspath = MANIFEST.readLines().collect {
+        pluginClasspath = CP_MANIFEST.readLines().collect {
             new File(it)
         }
 
         buildscriptClasspath = 'buildscript { dependencies { classpath files(' +
-            MANIFEST.readLines().collect { "'" + it + "'" }.join(',') +
+            CP_MANIFEST.readLines().collect { "'" + it + "'" }.join(',') +
             ') } }' + "\\n\\n"
     }
 

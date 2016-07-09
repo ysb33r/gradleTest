@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * (C) Copyright Schalk W. Cronje 2015
+ * (C) Copyright Schalk W. Cronje 2015 - 2016
  *
  * This software is licensed under the Apache License 2.0
  * See http://www.apache.org/licenses/LICENSE-2.0 for license details
@@ -153,7 +153,7 @@ class TestGenerator extends DefaultTask {
 
         final ClasspathManifest manifestTask = project.tasks.getByName(TestSet.getManifestTaskName(linkedTestTaskName)) as ClasspathManifest
         File manifestDir = manifestTask.outputDir
-        final String manifestFile = new File("${manifestDir}/${manifestTask.outputFilename}").absolutePath
+        final File manifestFile = new File("${manifestDir}/${manifestTask.outputFilename}")
         final File workDir = project.file("${project.buildDir}/${linkedTestTaskName}")
 
         createInitScript(workDir,pluginJarDirectory)
@@ -218,7 +218,7 @@ class TestGenerator extends DefaultTask {
         final File targetDir,
         final String testName,
         final String defaultTask,
-        final String manifestName,
+        final File manifestFile,
         final File workDir,
         final File testProjectSrcDir,
         final List<String> arguments
@@ -234,17 +234,17 @@ class TestGenerator extends DefaultTask {
             rename ~/.+/,"${testName.capitalize()}CompatibilitySpec.groovy"
             expand TESTPACKAGE : testPackageName,
                 TESTNAME : testName.capitalize(),
-                MANIFEST : manifestName,
+                MANIFEST : manifestFile.absoluteFile.toURI(),
                 ARGUMENTS : argsText,
                 DEFAULTTASK : defaultTask,
                 VERSIONS : verText,
                 DISTRIBUTION_URI : gradleDistributionUri ?: '',
-                WORKDIR : workDir.absolutePath,
-                SOURCEDIR : winSafe(testProjectSrcDir.absolutePath)
+                WORKDIR : workDir.absoluteFile.toURI(),
+                SOURCEDIR : testProjectSrcDir.absoluteFile.toURI()
         }
     }
 
-    /** Quotes items in non-interpoalted strings amd then joins them as a comma-separated list
+    /** Quotes items in non-interpolated strings amd then joins them as a comma-separated list
      *
      * @param c Any container
      * @return Comma-separated list
@@ -293,18 +293,9 @@ class TestGenerator extends DefaultTask {
         task.destinationDir
     }
 
-    String winSafe(final String text) {
-        if(OperatingSystem.current().isWindows()) {
-            text.replaceAll(/BACKSLASH/,DBL_BACKSLASH)
-        } else {
-            text
-        }
-    }
-
     private def templateFile
     private def templateInitScript
     static final String TEST_TEMPLATE_PATH = 'org/ysb33r/gradletest/GradleTestTemplate.groovy.template'
     static final String INIT_TEMPLATE_PATH = 'org/ysb33r/gradletest/init.gradle'
     static final String BACKSLASH = '\\'
-    static final String DBL_BACKSLASH = BACKSLASH.multiply(2)
 }
