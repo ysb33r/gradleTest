@@ -41,7 +41,7 @@ class LegacyGradleTestIntegrationSpec extends GradleTestIntegrationSpecification
 
 
     @Unroll
-    def "Gradle #version (<2.13): Simepl project that will pass"() {
+    def "Gradle #version (<2.13): Simple project that will pass"() {
 
         setup:
         copyTestDir('simpleTest')

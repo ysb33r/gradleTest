@@ -308,5 +308,4 @@ class TestGenerator extends DefaultTask {
     private def templateInitScript
     static final String TEST_TEMPLATE_PATH = 'org/ysb33r/gradletest/GradleTestTemplate.groovy.template'
     static final String INIT_TEMPLATE_PATH = 'org/ysb33r/gradletest/init.gradle'
-    static final String BACKSLASH = '\\'
 }

@@ -19,6 +19,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.Test
+import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.CollectionUtils
 import org.gradle.util.GradleVersion
 
@@ -135,7 +136,7 @@ class GradleTest extends Test {
      */
     @Input
     List<String> getGradleArguments() {
-        ([ '--init-script',initScript ] as List<String>) +
+        ([ '--init-script',winSafeCmdlineSafe(initScript) ] as List<String>) +
         CollectionUtils.stringize(this.arguments) as List<String>
     }
 
@@ -174,5 +175,16 @@ class GradleTest extends Test {
     private void notSupported(final String name) {
         throw new GradleException("${name} is not supported in GradleTest tasks")
     }
+
+    private String winSafeCmdlineSafe(final String path) {
+        if(OperatingSystem.current().isWindows()) {
+            path.replace(BACKSLASH,BACKSLASH.multiply(4))
+        } else {
+            path
+        }
+    }
+
+    static final String BACKSLASH = '\\'
+
 }
 
