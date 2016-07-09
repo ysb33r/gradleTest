@@ -137,15 +137,6 @@ class GradleTest extends Test {
     List<String> getGradleArguments() {
         ([ '--init-script',initScript ] as List<String>) +
         CollectionUtils.stringize(this.arguments) as List<String>
-        /* Do we need any of these?
-            args '--project-cache-dir',"${testProjectDir}/.gradle"
-            args '--gradle-user-home',  "${testProjectDir}/../home"
-            * If gradle is run with `--offline`, it will be passed to the Gradle.
-* `--project-cache-dir` is always set to at the start of the project in `buildDir`
-* `--full-stacktrace` is set and output is captured to test report.
-* Handle no-daemon as a special case
-
-        */
     }
 
     /** The name of the task that will be executed in the test project

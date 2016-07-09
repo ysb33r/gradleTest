@@ -17,7 +17,7 @@
 
 buildscript {
     dependencies {
-        classpath fileTree("${projectDir}/../build/libs") { include 'gradletest-*.jar'}
+        classpath fileTree("${projectDir}/../build/libs") { include "gradletest-${compatibilityVersion}.jar"}
     }
 }
 

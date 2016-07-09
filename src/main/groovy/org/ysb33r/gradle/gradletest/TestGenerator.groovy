@@ -152,7 +152,7 @@ class TestGenerator extends DefaultTask {
         }
 
         final ClasspathManifest manifestTask = project.tasks.getByName(TestSet.getManifestTaskName(linkedTestTaskName)) as ClasspathManifest
-        File manifestDir = manifestTask.outputDir
+        final File manifestDir = manifestTask.outputDir
         final File manifestFile = new File("${manifestDir}/${manifestTask.outputFilename}")
         final File workDir = project.file("${project.buildDir}/${linkedTestTaskName}")
 
@@ -180,11 +180,11 @@ class TestGenerator extends DefaultTask {
     @CompileDynamic
     private void createInitScript(final File targetDir,final File jarDir) {
         final def fromSource = templateInitScript
-
+        final String pluginJarPath = pathAsUriStr(jarDir)
         project.copy {
             from fromSource
             into targetDir
-            expand PLUGINJARPATH: jarDir.absoluteFile.toURI()
+            expand PLUGINJARPATH: pluginJarPath
         }
     }
 
@@ -227,6 +227,9 @@ class TestGenerator extends DefaultTask {
         final def fromSource = templateFile
         final String verText = quoteAndJoin(versions)
         final String argsText = quoteAndJoin([defaultTask] + arguments)
+        final String manifest = pathAsUriStr(manifestFile)
+        final String work = pathAsUriStr(workDir)
+        final String src = pathAsUriStr(testProjectSrcDir)
 
         project.copy {
             from fromSource
@@ -234,13 +237,13 @@ class TestGenerator extends DefaultTask {
             rename ~/.+/,"${testName.capitalize()}CompatibilitySpec.groovy"
             expand TESTPACKAGE : testPackageName,
                 TESTNAME : testName.capitalize(),
-                MANIFEST : manifestFile.absoluteFile.toURI(),
+                MANIFEST : manifest,
                 ARGUMENTS : argsText,
                 DEFAULTTASK : defaultTask,
                 VERSIONS : verText,
                 DISTRIBUTION_URI : gradleDistributionUri ?: '',
-                WORKDIR : workDir.absoluteFile.toURI(),
-                SOURCEDIR : testProjectSrcDir.absoluteFile.toURI()
+                WORKDIR : work,
+                SOURCEDIR : src
         }
     }
 
@@ -252,6 +255,14 @@ class TestGenerator extends DefaultTask {
     @CompileDynamic
     private String quoteAndJoin(Iterable c) {
         c.collect { "'${it}'" }.join(',')
+    }
+
+    /** Ensures that files are represented as URIs.
+     * (This helps with compatibility across operating systems).
+     * @param path Path to output
+     */
+    private String pathAsUriStr(final File path) {
+        path.absoluteFile.toURI().toString()
     }
 
     /** Finds the template in the classpath.

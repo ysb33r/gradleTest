@@ -14,7 +14,7 @@
 allprojects {
     buildscript {
         dependencies {
-            classpath fileTree ('${PLUGINJARPATH}') {
+            classpath fileTree ('${PLUGINJARPATH}'.toURI()) {
                 include '*.jar'
             }
         }

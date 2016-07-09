@@ -69,7 +69,7 @@ class TestGeneratorSpec extends GradleTestSpecification {
         new File(genTask.outputDir.parentFile,'init.gradle').text.contains ("""allprojects {
     buildscript {
         dependencies {
-            classpath fileTree ('${new File(buildDir,'libs').toURI()}') {
+            classpath fileTree ('${new File(buildDir,'libs').toURI()}'.toURI()) {
                 include '*.jar'
             }
         }

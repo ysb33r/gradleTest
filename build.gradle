@@ -9,11 +9,13 @@ plugins {
     id 'com.github.hierynomus.license' version '0.13.1'
 }
 
-apply from : 'gradle/integration-tests.gradle'
-
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta1'
+version = '1.0-beta2-SNAPSHOT'
+
+apply from : 'gradle/integration-tests.gradle'
+apply from : 'gradle/compatibility-tests.gradle'
+
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -159,18 +161,6 @@ integrationTest {
 
 }
 
-task compatibilityTest( type : GradleBuild ) {
-    group 'Compatibility'
-    description 'Runs the plugin against most Gradle 2.0+ releases'
-    dependsOn integrationTestRepo,jar
-    mustRunAfter test,integrationTest
-
-    tasks = ['gradleTest']
-    dir = file("${projectDir}/compatibility")
-    buildFile = 'compatibility/compatibility.gradle'
-
-    onlyIf { !gradle.startParameter.offline }
-}
 
 artifactory {
 	publish {
