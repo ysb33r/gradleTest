@@ -249,3 +249,8 @@ task release {
     onlyIf { !version.endsWith('-SNAPSHOT') }
     dependsOn build, compatibilityTest, publishPlugins, uploadArchives
 }
+
+task foo {
+	println test.reports.html.destination
+	println test.reports.junitXml.destination
+}

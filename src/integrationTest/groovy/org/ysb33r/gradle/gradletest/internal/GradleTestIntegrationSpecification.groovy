@@ -36,7 +36,7 @@ class GradleTestIntegrationSpecification extends Specification {
         GradleVersion current = GradleVersion.version(version)
         if (current < GradleVersion.version('2.8')) {
             String uriList = readMetadataFile().collect {
-                "'" + it.absolutePath.replace('\\','\\\\') + "'"
+                "'${it.absoluteFile.toURI()}'.toURI()"
             }.join(',')
             buildFile << """
             buildscript {
