@@ -72,7 +72,7 @@ class Infrastructure {
             from initScript
             into initGradle.parentFile
             rename { initGradle.name }
-            expand PLUGINDIR : pluginDir.absolutePath
+            expand PLUGINDIR : pluginDir.absoluteFile.toURI()
         }
 
         assert wr.didWork
