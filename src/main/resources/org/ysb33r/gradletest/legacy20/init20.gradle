@@ -22,7 +22,7 @@ allprojects {
             }
         }
         dependencies {
-            classpath fileTree('${PLUGINDIR}') { include "*.jar"}
+            classpath fileTree('${PLUGINDIR}'.toURI()) { include "*.jar"}
         }
     }
     repositories {
