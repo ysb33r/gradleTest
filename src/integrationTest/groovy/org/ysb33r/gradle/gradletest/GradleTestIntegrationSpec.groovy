@@ -36,7 +36,7 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
         buildFile <<  """
         repositories {
             flatDir {
-                dirs '${GRADLETESTREPO.toURI()}'
+                dirs '${GRADLETESTREPO.toURI()}'.toURI()
             }
         }
         gradleTest {
@@ -82,6 +82,5 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
 
         then:
         result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
-//        result.output.contains('Hello world!')
     }
 }

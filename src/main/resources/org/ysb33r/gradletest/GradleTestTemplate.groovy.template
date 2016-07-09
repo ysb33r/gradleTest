@@ -34,7 +34,7 @@ class ${TESTNAME}CompatibilitySpec extends Specification {
         }
 
         buildscriptClasspath = 'buildscript { dependencies { classpath files(' +
-            CP_MANIFEST.readLines().collect { "'" + it + "'" }.join(',') +
+            pluginClasspath.collect { "'" + it.absoluteFile.toURI().toString() + "'.toURI()" }.join(',') +
             ') } }' + "\\n\\n"
     }
 
