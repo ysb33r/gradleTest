@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>GradleTest Gradle Plugin</title>
+<title>Changelog &amp; Release Notes 1.0-beta2</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -416,101 +416,83 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .hide-for-print{display:none!important}
 .show-for-print{display:inherit!important}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 </head>
 <body class="article">
 <div id="header">
-<h1>GradleTest Gradle Plugin</h1>
+<h1>Changelog &amp; Release Notes 1.0-beta2</h1>
 <div class="details">
 <span id="revnumber">version 1.0-beta2</span>
 </div>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>A plugin for testing the compatibility of a Gradle plugin against a list of Gradle releases.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">apply plugin : 'org.ysb33r.gradletest'
-
-gradleTest {
-    versions '2.14','2.13'
-    versions '2.12' ,'2.11','2.10','2.9','2.8'
-    versions '2.7','2.6','2.5'
-    versions '2.4','2.3','2.2','2.1','2.0'
-}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Product version documentation</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><strong>1.0-beta2</strong></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0-beta2/docs/product-documentation.html">Docs</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0-beta2/api/index.html">Groovydoc</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0-beta2/docs/changelog.html">Changelog</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><strong>0.5.5</strong></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="0.5.5/docs/product-documentation.html">Docs</a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="0.5.5/docs/changelog.html">Changelog</a></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
 <div class="sect1">
-<h2 id="_other_links">Other links</h2>
+<h2 id="_features">Features</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://plugins.gradle.org/search?term=gradleTest">Gradle Plugin Portal</a></p>
+<p>From Gradle 2.13+ GradleTestKit is used to run compatibility tests</p>
 </li>
 <li>
-<p><a href="https://plugins.gradle.org/search?term=gradleTest">Bintray backup repository</a></p>
+<p>For Gradle 2.12 and earlier, legacy mode (from v0.5.5) is used for running tests.</p>
 </li>
 <li>
-<p><a href="https://github.com/ysb33r/gradleTest">Fork me on Github</a></p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/1">#1</a> - Graceful failure when tests have not passed</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/2">#2</a> - HTML test report</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/3">#3</a> - Running counter of tests being executed</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/4">#4</a> - Capture test output and add to test report</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/5">#5</a> - Allow tests to be executed in parallel</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_contributors">Contributors</h2>
+<h2 id="_bugs">Bugs</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>A special thank you goes to:</p>
-</div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/dcendents">Daniel Beland</a> - Gradle 2.5 fixes.</p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/26">#26</a> - Unable to build gradleTest project with Gradle 2.1+</p>
 </li>
 <li>
-<p><a href="https://github.com/szpak">Marcin Zajączkowski</a> - Fix for Zip errors</p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/34">#34</a> - Distribution URI fails with File paths under Windows.</p>
 </li>
 <li>
-<p><a href="https://github.com/matthiasbalke">Matthias Balke</a> - Documentation</p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/35">#35</a> - TestGenerator is not correctly substituting paths in
+initscript under Windows</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/38">#38</a> - TestGenerator is not correctly substituting paths in
+generated test source code under Windows</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>If you would liek to contribute, please see <a href="https://github.com/ysb33r/gradleTest/blob/master/HACKING.adoc">HACKING.adoc</a></p>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_other">Other</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/12">#12</a> - Fix Javadoc errors</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/36">#36</a> - Integration test for <code>GradleTest</code> failure under M$ Windows</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/37">#37</a> - Integration test for <code>legacy20.GeadleTest</code> failure under M$ Windows</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -518,7 +500,7 @@ gradleTest {
 <div id="footer">
 <div id="footer-text">
 Version 1.0-beta2<br>
-Last updated 2016-07-10 23:48:20 BST
+Last updated 2016-07-10 23:33:34 BST
 </div>
 </div>
 </body>
