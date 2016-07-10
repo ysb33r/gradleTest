@@ -1,0 +1,7 @@
+== Advanced Features
+
+=== Overriding dependencies
+
+GradleTest uses Spock Framework, JUnit & Apache Commons IO underneath. If, for some reason you need to override the
+versions of these dependencies it can be done in the `gradleTestCompile` configuration. If you created a new `GradleTest`
+task called `foobar` then the appropriate configuration will be callled `foobarCompile`.

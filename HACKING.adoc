@@ -39,5 +39,5 @@ Dependencies required for compatibility testing shoudl be added against the `gra
 
 == Releases
 
-Releases are run via the `release` task. THis will take care of buildign, running ALL tests and publishing to both
+Releases are run via the `release` task. This will take care of building, running ALL tests and publishing to both
 plugin portal & Bintray.

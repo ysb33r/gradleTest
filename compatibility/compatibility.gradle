@@ -33,7 +33,10 @@ repositories {
     }
 }
 
+// tag::applyplugin1[]
 apply plugin : 'org.ysb33r.gradletest'
+// end::applyplugin1[]
+
 apply plugin : 'java'
 
 gradleTestGenerator {
@@ -54,13 +57,18 @@ task sanityCheck {
     }
 }
 
+
+// tag::applyplugin2[]
 gradleTest {
+// end::applyplugin2[]
     dependsOn sanityCheck
+// tag::applyplugin2[]
     versions '2.14','2.13'
     versions '2.12' ,'2.11','2.10','2.9','2.8'
     versions '2.7','2.6','2.5'
     versions '2.4','2.3','2.2','2.1','2.0'
 }
+// end::applyplugin2[]
 
 
 test.enabled = false

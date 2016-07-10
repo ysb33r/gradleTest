@@ -1,7 +1,11 @@
 = CHANGELOG
 
+This only documents the current in-progress changelog (or call it a roadmap if you wish). To see changelog
+for a specific release, please visit the http://ysb33r.github.io/gradleTest[plugin website].
+
 == Roadmap - v1.0
 
+// tag::changelog[]
 === Features
 
 * From Gradle 2.13+ GradleTestKit is used to run compatibility tests
@@ -26,6 +30,12 @@
 * https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors
 * https://github.com/ysb33r/gradleTest/issues/36[#36] - Integration test for `GradleTest` failure under M$ Windows
 * https://github.com/ysb33r/gradleTest/issues/37[#37] - Integration test for `legacy20.GeadleTest` failure under M$ Windows
+// end::changelog[]
+
+== Contributors
+
+// tag::contributors[]
+// end::contributors[]
 
 == v0.5.5
 * https://github.com/ysb33r/gradleTest/issues/30[#30] - Specify init scripts

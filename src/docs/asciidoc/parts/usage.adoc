@@ -1,0 +1,241 @@
+== Structure
+
+.Source directory layout
+----
+${projectDir} / src / gradleTest /  project1  / build.gradle
+                                    project2  /
+                                    project3  /
+----
+
+Each directory below `gradleTest` becomes a test. Tests are executed in-folder
+and expects a `build.gradle` file. If the latter is not found the test will not be
+executed.
+
+For testing, a folder is created for each gradle version to be tested and the
+projects are duplicated below the verson folder. Each version testsute is executed
+within a separate JVM.
+
+.Test directory layout
+----
+${buildDir} / gradleTest / project1  / ver1   <1>
+                                     / ver2   <2>
+                         / project2  / ver1
+                         / manifest  <3>
+                         / src       <4>
+                         / init.gradle <5>
+----
+<1> A folder is created for each project
+<2> A folder for each Gradle version is created underneath the project folder
+<3> Classpath manifest used when running tests
+<4> Folder where generated source code ends up in
+<5> Initscript used by GradleTest
+
+.Test layout for one test
+----
+... / project1 / .gradle         <1>
+               / build           <2>
+               / build.gradle    <3>
+               / settings.gradle <4>
+----
+<1> Project cachedir is sent here
+<2> It is recommended that the build directory not be changed and left as per default
+<3> `build.gradle` is required for the test to be executed. It must contain a task called `runGradleTest`.
+<4> If a test project does not have a `settings.gradle file` an empty one will
+be generated in the test folder
+
+.Setting up your test project's build.gradle
+----
+apply plugin : 'my.project.id'   <1>
+
+task runGradleTest {
+  dependsOn 'someTask'   <2>
+}
+----
+<1> Use `apply plugin` instead as it works across a larger range of Gradle versions. (No need for `buildscript` block
+  as GradleTest will take care of injecting the plugin on the classpath).
+<2> Create a `runGradleTest` task and make it depend on the real task from your plugin that needs execution.
+
+== Bootstrap
+
+GradleTest is available in the https://plugins.gradle.org/plugin/org.ysb33r.gradletest[Gradle Plugins] repository.
+To use it, add the following snippet into your build script.
+
+[source,groovy]
+----
+plugins {
+  id 'org.ysb33r.gradletest' version '1.0'
+}
+----
+
+When your setup is more complex and the plugins block does not work OR if you are using Gradle 2.0 use the following instead
+
+[source,groovy]
+----
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"         // <1>
+    }
+  }
+
+  dependencies {
+    classpath 'org.ysb33r.gradle:gradletest:0.5.4' // <2>
+  }
+}
+
+apply plugin: 'org.ysb33r.gradletest'             // <3>
+----
+<1> Add the Gradle Plugins repository.
+<2> Add the last version as a buildscript dependency.
+<3> Apply the plugin.
+
+== Task Configuration
+
+[source,groovy]
+----
+gradleTest {
+  versions '2.2','2.4-beta1'   // <1>
+
+  initscript '/path/to/script' // <2>
+
+}
+----
+<1> Test against the listed versions
+<2> All gradle tests are invoked with a default initscript. This
+  can be changed by setting your own init script. This path is evaluated
+  with `project.file`.
+
+== Overriding Gradle Distribution Location
+
+With the 1.0 release the location for distributions are determined by `GradleTestKit`. However it is possible to
+override that and set a base location to find distributions by two possible means.
+
+.Configure distribution location by task
+[source,groovy]
+----
+gradleTest {
+  distributionUri 'file://local/area' // <1>
+}
+----
+<1> Set local area to find Gradle distributions instead of default Gradle location. When this is set Gradle will only look
+  here for distributions.
+
+.Configure distribution location by system property
+----
+-Dorg.ysb33r.gradletest.distribution.uri=file://local/area
+----
+
+NOTE: When the system property is set it will override all `distributionUri` settings in task configurations
+
+== Start Parameters
+
+* If gradle is run with `--offline`, it will be passed to the Gradle.
+* `--full-stacktrace` is set and output is captured to test report.
+
+== Temporarily overriding Gradle versions
+
+It is very convenient to sometimes to runs the test with a subset of the versions specified in the configuration. This is
+achievable by passing a system property to Gradle
+
+[source,bash]
+----
+-DgradleTest.versions=2.2,2.3 <1> <2>
+----
+<1> If more than one GradleTest task is defined, replace `gradleTest` with the name of the appropriate GradleTest task.
+<2> List the versions in a commma-separated list. No validation is done on the string. If it leads to invalid Gradle
+  versions the build will fail.
+
+== Task dependencies
+
+`gradleTest` is now linked into the `check` lifecycle task.
+
+== Dependencies
+
+Although gradle tests can download their own dependencies, this might consume unnecessary
+bandwidth and waste a lot of testing time. In order to combat this,
+any dependencies listed under `gradleTest` configuration will be downloaded and
+made available to the running gradle tests.
+
+.Define dependencies in build.gradle
+[source,groovy]
+----
+dependencies {
+  gradleTest 'commons-cli:commons-cli:1.2'
+}
+----
+
+These dependencies then appear as a `flatDir` repository in the gradle test.
+
+*NOTE*: It is not necessary to add your plugin to the dependencies. The output of the `jar` task
+is automatically added to the `gradleTest` configuration.
+
+.Configure test build.gradle for dependency
+[source,groovy]
+----
+buildscript {
+  dependencies {
+    classpath ':gnumake:1.0.1' // <1>
+  }
+}
+
+dependencies {
+  compile ':commons-cli:1.2' // <2>
+}
+----
+<1> It is completely possible to add it to the `buildscript` for loading
+  plugins
+<2> Load up any dependencies a per normal
+
+
+*NOTE*:This repository is injected into the test using the default initscript. If you use your own `initscript`
+and still want to avail your own feature you'll need to add the following to your `initscript`.
+
+[source,groovy]
+----
+buildscript {
+  repositories {
+    flatDir {
+      dirs
+    }
+  }
+}
+
+allprojects {
+  repositories {
+  }
+}
+----
+
+== Adding additional GradleTest tasks
+
+It is possible to add additional test tasks beyond `gradleTest`, by doing
+
+[source,groovy]
+----
+configurations {
+  furtherTest
+}
+
+task furtherTest( type : org.ysb33r.gradle.gradletest.legacy20.GradleTest ) {
+  versions '2.2'
+}
+----
+
+Test files should be placed under `src/furtherTest` using the same layout as described earlier. Dependencies should be
+listed under `furtherTest` configuration.
+
+Global configuration is still read from `gradleLocations` project extension.
+
+== Dynamic dependencies
+
+Hard-coding the plugin version in to the `build.gradle` files of the `gradleTest` test fixtures is a maintenance pain.
+However the plugin is injected automatically into the build via `GradleTestKit`.
+
+== Known Limitations
+
+* Not designed to test with Gradle < 2.0. If the community requires this functionality an effort will be made to
+  see if it is possible. (It will actually try to runs tests against a Gradle version < 2.0, if configured in
+  `gradleTest` by YMMV).
+* Runs in legacy mode when the project is built with Gradle 2.0 - 2.12.
+
+
