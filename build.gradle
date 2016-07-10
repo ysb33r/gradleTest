@@ -11,7 +11,7 @@ plugins {
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta2-SNAPSHOT'
+version = '1.0-beta2'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
