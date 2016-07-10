@@ -1,4 +1,0 @@
-// Apply this plugin should automatically create a runGradleTest task.
-// If that is created then running it should print a silly message
-// and the build would succeed.
-apply plugin: 'fake'

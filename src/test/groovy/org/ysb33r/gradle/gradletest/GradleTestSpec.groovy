@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * (C) Copyright Schalk W. Cronje 2015
+ * (C) Copyright Schalk W. Cronje 2015 - 2016
  *
  * This software is licensed under the Apache License 2.0
  * See http://www.apache.org/licenses/LICENSE-2.0 for license details
@@ -14,41 +14,94 @@
 package org.ysb33r.gradle.gradletest
 
 import org.gradle.api.Project
-import org.ysb33r.gradle.gradletest.internal.TestHelper
+import org.ysb33r.gradle.gradletest.internal.GradleTestSpecification
 import spock.lang.Specification
 
 
-/**
- * @author Schalk W. Cronjé
- */
-class GradleTestSpec extends Specification {
-    Project project = TestHelper.buildProject('gts')
+class GradleTestSpec extends GradleTestSpecification {
 
-    def "Unconfigured task"() {
-        given:
-        def task = project.tasks.create('Foo',GradleTest)
+    def 'Effect of plugin on afterEvaluate'() {
+        when: "Versions are configured "
+        project.with {
+            apply plugin : 'org.ysb33r.gradletest'
 
-        expect:
-        task.group == Names.TASK_GROUP
-        task.description == "Runs all the compatibility tests for 'Foo'"
-        task.versions.empty
-        task.sourceDir == project.file("${project.projectDir}/src/Foo")
-        task.outputDirs.empty
+            gradleTest {
+                versions '1.999','1.998'
+                versions '1.997'
 
+
+            }
+            evaluate()
+        }
+        GradleTest defaultTestTask    = project.tasks.getByName('gradleTest')
+        def defaultGenTask     = project.tasks.getByName('gradleTestGenerator')
+
+        then: "The test task will contain a list of these versions"
+        defaultTestTask.versions == ['1.999','1.998','1.997'] as Set<String>
+
+        and: "The generator task will contain a list of these versions"
+        defaultGenTask.versions == ['1.999','1.998','1.997'] as Set<String>
+
+        and: "Distribution URI will be null (indicating default behaviour)"
+        defaultTestTask.gradleDistributionUri == null
+
+        and: 'Default task is runGradleTest'
+        defaultTestTask.defaultTask == 'runGradleTest'
     }
 
-    def "Basic Configured task"() {
-        given:
-        def task = project.tasks.create('Foo',GradleTest)
-        def output = new File(project.buildDir,'Foo')
+    def "Adding additional arguments"() {
+        when: "Arguments are configured "
+        project.with {
+            apply plugin : 'org.ysb33r.gradletest'
 
-        task.versions '2.2','2.3'
-        task.versions '2.4','2.4'
+            gradleTest {
+                versions '1.997'
+                gradleArguments '--max-workers',4
+            }
+            evaluate()
+        }
+        GradleTest defaultTestTask    = project.tasks.getByName('gradleTest')
 
-        expect:
-        task.versions == (['2.2','2.3','2.4'] as Set<String>)
-        task.outputDirs == [ new File(output,'2.2'),new File(output,'2.3'),new File(output,'2.4')] as Set
+        then: "The arguments will also contain the extras"
+        defaultTestTask.gradleArguments.containsAll '4','--max-workers'
 
+        and: "As well as the required arguments"
+        defaultTestTask.gradleArguments.containsAll '--init-script'
     }
+
+    def 'Accept Distribution URI as String'() {
+        when: "Distribution URI is configured"
+        project.with {
+            apply plugin: 'org.ysb33r.gradletest'
+
+            gradleTest {
+                gradleDistributionUri 'file:///foo/bar'
+            }
+            evaluate()
+        }
+
+        GradleTest defaultTestTask = project.tasks.getByName('gradleTest')
+
+        then:
+        defaultTestTask.gradleDistributionUri == 'file:///foo/bar'.toURI()
+    }
+
+    def 'Accept Distribution URI as File'() {
+        when: "Distribution URI is configured"
+        project.with {
+            apply plugin: 'org.ysb33r.gradletest'
+
+            gradleTest {
+                gradleDistributionUri file('foo')
+            }
+            evaluate()
+        }
+
+        GradleTest defaultTestTask = project.tasks.getByName('gradleTest')
+
+        then:
+        defaultTestTask.gradleDistributionUri == file('foo').toURI()
+    }
+
 }
 

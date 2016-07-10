@@ -4,10 +4,10 @@ build:
   verbosity: detailed
 
 build_script:
-  - gradlew.bat -PTRAVIS_CI=1 assemble --info --no-daemon -PbintrayUserName -PbintrayApiKey
+  - gradlew.bat assemble --info --no-daemon -PbintrayUserName -PbintrayApiKey
 
 test_script:
-  - gradlew.bat check gradleTest -PTRAVIS_CI=1 --info --no-daemon -PbintrayUserName -PbintrayApiKey
+  - gradlew.bat test integrationTest compatibilityTest --info --no-daemon -PbintrayUserName -PbintrayApiKey
 
 branches:
   only:

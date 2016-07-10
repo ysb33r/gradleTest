@@ -8,7 +8,11 @@ configurations {
     integrationTestRuntime {
         extendsFrom integrationTestCompile, testRuntime
     }
-    integrationTestDistro
+    integrationTestDistro2_1
+    integrationTestDistro2_5
+    integrationTestDistro2_8
+    integrationTestDistro2_9
+    integrationTestDistro2_13
     integrationTestRepo
 }
 

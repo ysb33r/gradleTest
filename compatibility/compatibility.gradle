@@ -1,0 +1,67 @@
+
+// ----------------------------------------------------------------------------
+// This build script bends corners to get the latest version of GradleTest to
+// be tested by itself:
+//
+// - This build script is detached from the calling project and the latter
+//   be accessed as a rootProject as would be the normal convention.
+// - We redirect the build directory to be underneath the calling project's
+//   build directory.
+// - Any test dpenedencies are picked up from the test dependencies of the
+//   calling project.
+// - We need to run this project with the GradleTest jat that was created by
+//   the calling project
+// - We also need to tell the gradleTestGenerator where to find the GradleTest
+//   jar. (This is not something a consumer of this plugin would normally do.)
+// - We have also added a sanity check to ensure there is not more than one
+//   gradletest plugin JAR in the folder. Although we can check this at the level
+//   of this build script, further down the chain it cannot be done, therefore
+//   the sanityCheck task will fail the build if need be.
+// ----------------------------------------------------------------------------
+
+buildscript {
+    dependencies {
+        classpath fileTree("${projectDir}/../build/libs") { include "gradletest-${compatibilityVersion}.jar"}
+    }
+}
+
+buildDir = file("${projectDir}/../build/compatibilityTest")
+
+repositories {
+    flatDir {
+        dirs "${projectDir}/../build/integrationTest/repo"
+    }
+}
+
+apply plugin : 'org.ysb33r.gradletest'
+apply plugin : 'java'
+
+gradleTestGenerator {
+    pluginJarDirectory = file("${projectDir}/../build/libs")
+}
+
+task sanityCheck {
+    inputs.files fileTree("${projectDir}/../build/libs") {
+        include "gradletest-*.jar"
+        exclude "gradletest-*-javadoc.jar"
+        exclude "gradletest-*-sources.jar"
+    }
+
+    doFirst {
+        if(inputs.files.files.size() > 1) {
+            throw new GradleException( 'More than one gradletest plugin JAR was found. Run clean first or delete offending JARs' )
+        }
+    }
+}
+
+gradleTest {
+    dependsOn sanityCheck
+    versions '2.14','2.13'
+    versions '2.12' ,'2.11','2.10','2.9','2.8'
+    versions '2.7','2.6','2.5'
+    versions '2.4','2.3','2.2','2.1','2.0'
+}
+
+
+test.enabled = false
+

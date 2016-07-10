@@ -1,0 +1,17 @@
+apply plugin : 'org.ysb33r.gradletest'
+apply plugin : 'groovy'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile localGroovy()
+    compile gradleApi()
+}
+
+gradleTest {
+    versions '2.13'
+}
+
+task runGradleTest( dependsOn : ['assemble','gradleTest'] )

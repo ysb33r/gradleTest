@@ -1,38 +1,21 @@
-import org.gradle.internal.os.OperatingSystem
 
-buildscript {
-	repositories {
-		jcenter()
-		mavenLocal()
-		maven {
-			url "https://plugins.gradle.org/m2/"
-		}
-	}
-	dependencies {
-		classpath 'org.ysb33r.gradle:bintray:1.5'
-		classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.0'
-		classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
-
-		// See: https://github.com/hierynomus/license-gradle-plugin/issues/67
-		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0', {
-			exclude module : 'guava'
-		}
-
-	}
+plugins {
+	id 'com.gradle.build-scan' version '1.0'
+    id 'groovy'
+    id 'maven'
+    id 'org.ysb33r.bintray' version '1.5'
+    id 'com.jfrog.artifactory' version '3.1.0'
+    id 'com.gradle.plugin-publish' version '0.9.4'
+    id 'com.github.hierynomus.license' version '0.13.1'
 }
-
-apply plugin : 'org.ysb33r.bintray'
-apply plugin : 'groovy'
-apply plugin : 'maven'
-apply plugin : 'com.jfrog.artifactory'
-apply plugin : 'com.gradle.plugin-publish'
-apply plugin : 'com.github.hierynomus.license'
-apply   from : 'gradle/integration-tests.gradle'
-apply   from : 'gradle/self-reference.gradle'
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '0.5.5'
+version = '1.0-beta2'
+
+apply from : 'gradle/integration-tests.gradle'
+apply from : 'gradle/compatibility-tests.gradle'
+
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -69,16 +52,38 @@ repositories {
 	}
 }
 
+ext {
+    depCommonsIO = 'commons-io:commons-io:2.5'
+    depSpock = "org.spockframework:spock-core:1.0-groovy-${GroovySystem.version.replaceAll(/\.\d+$/,'')}"
+}
 
 dependencies {
 	compile gradleApi()
 	compile localGroovy()
-	testCompile ('org.spockframework:spock-core:1.0-groovy-2.3') {
+	compile depCommonsIO
+
+	testCompile (depSpock) {
 		exclude module : 'groovy-all'
 	}
-	integrationTestDistro ':gradle:2.1:bin@zip'
+	integrationTestCompile gradleTestKit()
+
+	integrationTestDistro2_1 ':gradle:2.1:bin@zip'
+    integrationTestDistro2_5 ':gradle:2.5:bin@zip'
+    integrationTestDistro2_8 ':gradle:2.8:bin@zip'
+    integrationTestDistro2_9 ':gradle:2.9:bin@zip'
+    integrationTestDistro2_13 ':gradle:2.13:bin@zip'
 	integrationTestRepo 'commons-cli:commons-cli:1.2'
 	integrationTestRepo 'org.ysb33r.gradle:doxygen:0.2'
+
+    integrationTestRepo depCommonsIO
+    // This dependency must match the one in src/main/groovy/org/ysb33r/gradle/gradletest/internal/TestSet.groovy
+    integrationTestRepo (depSpock) {
+        exclude module : 'groovy-all'
+    }
+}
+
+groovydoc {
+    windowTitle 'GradleTest Plugin for Gradle'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -89,13 +94,13 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar) {
 	description "An archive of the JavaDocs for Maven Central"
 	classifier "javadoc"
-	from Javadoc
+	from groovydoc //Javadoc
 }
+
 
 artifacts {
 	archives sourcesJar
-	// TODO: Fix Javadoc errors
-//	archives javadocJar
+	archives javadocJar
 }
 
 jar {
@@ -104,26 +109,57 @@ jar {
 	}
 }
 
-// TODO: Fix Javadoc errors
-javadoc { enabled=false }
-javadocJar { enabled=false }
-
 test {
 	systemProperties TESTROOT : "${buildDir}/tmp/testroot"
 }
 
+task integrationTestRepo( type : Copy ) {
+    from {configurations.integrationTestRepo.files}
+    from {configurations.integrationTestDistro2_1.files}
+    from {configurations.integrationTestDistro2_5.files}
+    from {configurations.integrationTestDistro2_8.files}
+    from {configurations.integrationTestDistro2_9.files}
+    from {configurations.integrationTestDistro2_13.files}
+    into "${buildDir}/integrationTest/repo"
+}
+
+task createIntegrationTestClasspathManifest {
+
+    ext {
+        outputDir = file("$buildDir/integrationTest/manifest")
+    }
+
+    inputs.files sourceSets.main.runtimeClasspath
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+        file("${outputDir}/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+    }
+
+    dependsOn integrationTestClasses
+}
+
+test {
+    dependsOn integrationTestRepo
+    systemProperties GRADLETESTREPO : file("${buildDir}/integrationTest/repo")
+}
+
 integrationTest {
-	systemProperties TESTROOT : "${buildDir}/tmp/integrationtestroot"
+
+    dependsOn integrationTestRepo, createIntegrationTestClasspathManifest
+
+    systemProperties TESTPROJECTSRCDIR : "${buildDir}/resources/integrationTest/gradleTest"
+    systemProperties GRADLETESTDIST : configurations.integrationTestDistro2_1.files[0]
+    systemProperties GRADLETESTREPO : file("${buildDir}/integrationTest/repo")
+    systemProperties PLUGIN_METADATA_FILE : file("${createIntegrationTestClasspathManifest.outputDir}/plugin-classpath.txt")
 	systemProperties PROJECTROOT : projectDir
-	systemProperties GRADLETESTDIST : configurations.integrationTestDistro.files[0]
-    systemProperties GRADLETESTREPO : configurations.integrationTestRepo.files.join(',')
-	systemProperties CURRENT_GRADLEHOME : gradle.gradleHomeDir
 
 	if(gradle.startParameter.offline) {
 		systemProperties OFFLINE:'1'
 	}
-}
 
+}
 
 
 artifactory {
@@ -159,7 +195,8 @@ uploadArchives  {
 		}
 	}
 
-	onlyIf { !version.endsWith("SNAPSHOT") }
+	onlyIf { !version.endsWith("-SNAPSHOT") }
+    mustRunAfter compatibilityTest
 }
 
 pluginBundle {
@@ -185,22 +222,35 @@ pluginBundle {
 
 publishPlugins {
 	onlyIf { !version.endsWith("SNAPSHOT") }
+    mustRunAfter compatibilityTest
 }
 
 license {
 	header = rootProject.file('config/HEADER')
 	strictCheck = true
 	ignoreFailures = false
-	// TODO: Fix Mappings
-//	mapping {
-//		groovy = 'gradleTest'
-//	}
-	ext.year = '2015'
+	ext.year = '2015 - 2016'
 	excludes(['**/*.ad', '**/*.asciidoc', '**/*.adoc', '**/*.md','**/*.properties'])
+    mapping 'gradle', 'SLASHSTAR_STYLE'
+}
+
+buildScan {
+	licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+	licenseAgree = 'yes'
 }
 
 if (JavaVersion.current().isJava8Compatible()) {
 	tasks.withType(Javadoc) {
 		options.addStringOption('Xdoclint:none', '-quiet')
 	}
+}
+
+task release {
+    onlyIf { !version.endsWith('-SNAPSHOT') }
+    dependsOn build, compatibilityTest, publishPlugins, uploadArchives
+}
+
+task foo {
+	println test.reports.html.destination
+	println test.reports.junitXml.destination
 }

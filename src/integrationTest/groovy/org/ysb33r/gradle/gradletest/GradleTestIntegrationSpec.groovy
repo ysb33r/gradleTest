@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * (C) Copyright Schalk W. Cronje 2015
+ * (C) Copyright Schalk W. Cronje 2015 - 2016
  *
  * This software is licensed under the Apache License 2.0
  * See http://www.apache.org/licenses/LICENSE-2.0 for license details
@@ -13,97 +13,74 @@
  */
 package org.ysb33r.gradle.gradletest
 
-import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
-import org.gradle.api.tasks.TaskExecutionException
-import org.ysb33r.gradle.gradletest.internal.IntegrationTestHelper
-import spock.lang.Issue
-import spock.lang.Specification
+import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.TaskOutcome
+import org.gradle.util.GradleVersion
+import org.ysb33r.gradle.gradletest.internal.GradleTestIntegrationSpecification
 
 
-/**
- * @author Schalk W. Cronjé
- */
-class GradleTestIntegrationSpec extends Specification {
-    static final File repoTestFile = new File(System.getProperty('GRADLETESTREPO'))
-    Project project = IntegrationTestHelper.buildProject('gtis')
-    File simpleTestSrcDir = new File(IntegrationTestHelper.PROJECTROOT,'build/resources/integrationTest/gradleTest')
-    File simpleTestDestDir = new File(project.projectDir,'src/'+Names.DEFAULT_TASK)
-    File expectedOutputDir = new File(project.buildDir,Names.DEFAULT_TASK + '/' + project.gradle.gradleVersion )
-    File repoDir = new File(project.projectDir,'srcRepo').absoluteFile
+class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
+
+    static final List TESTNAMES = ['alpha','beta','gamma']
+    static final File GRADLETESTREPO = new File(System.getProperty('GRADLETESTREPO') ?: 'build/integrationTest/repo').absoluteFile
+    @Delegate Project project
 
     void setup() {
+        project = ProjectBuilder.builder().withProjectDir(testProjectDir.root).build()
 
-        assert  simpleTestSrcDir.exists()
-        FileUtils.copyDirectory simpleTestSrcDir, simpleTestDestDir
-        IntegrationTestHelper.createTestRepo(repoDir)
+        buildFile = new File(project.projectDir,'build.gradle')
+        writeBuildScriptHeader(project.gradle.gradleVersion)
 
-        project.allprojects {
-            apply plugin: 'org.ysb33r.gradletest'
-
-            project.repositories {
-                flatDir {
-                    dirs repoDir
-                }
+        buildFile <<  """
+        repositories {
+            flatDir {
+                dirs '${GRADLETESTREPO.toURI()}'.toURI()
             }
+        }
+        gradleTest {
+            versions '2.13', '2.9', '2.8', '2.5', '2.1'
+            gradleDistributionUri '${GRADLETESTREPO.toURI()}'
 
-            // Restrict the test to no downloading except from a local source
-            gradleLocations {
-                includeGradleHome = false
-                searchGradleUserHome = false
-                searchGvm = false
-                download = false
-                useGradleSite = false
-                downloadToGradleUserHome = false
-                search IntegrationTestHelper.CURRENT_GRADLEHOME.parentFile
+            doFirst {
+                println 'I am the actual invocation of GradleTest (from GradleIntegrationSpec) and I am ' + GradleVersion.current()
             }
+        }
+        """
 
-            dependencies {
-                gradleTest ':commons-cli:1.2'
-                gradleTest ':doxygen:0.2'
-            }
+        new File(project.projectDir,'settings.gradle').text = ''
 
-            // Only use the current gradle version for testing
-            gradleTest {
-                versions gradle.gradleVersion
+
+        File srcDir = new File(project.projectDir,'src/gradleTest')
+        srcDir.mkdirs()
+        TESTNAMES.each {
+            File testDir = new File(srcDir,it)
+            testDir.mkdirs()
+            new File(testDir,'build.gradle').text = '''
+            task runGradleTest << {
+                println "I'm  runGradleTest and I'm " + GradleVersion.current()
+
+                println "Hello, ${project.name}"
             }
+'''
         }
     }
 
-    def "Two simple gradleTests; one will pass and one will fail"() {
 
-        when: 'Evaluation has been completed'
-        project.evaluate()
 
-        then:
-        project.tasks.gradleTest.versions.size()
-        project.tasks.gradleTest.sourceDir == simpleTestDestDir
-        project.tasks.gradleTest.outputDirs.contains( expectedOutputDir )
-
-        when: 'The tasks is executed'
-        project.tasks.gradleTest.execute()
-
-        then: "We expect this ugly exception, but need to fix it to be more like the 'test' task "
-        thrown(TaskExecutionException)
+    def "Running with 2.13+ invokes new GradleTestKit"() {
 
         when:
-        def results = project.tasks.gradleTest.testResults
+        println "I'm starting this test chain and I'm " + GradleVersion.current()
+        def result = GradleRunner.create()
+            .withProjectDir(projectDir)
+            .withArguments('gradleTest','-i')
+            .withPluginClasspath(readMetadataFile())
+            .forwardOutput()
+            .build()
 
         then:
-        project.tasks.gradleTest.didWork
-        results.size() == 2
-
-        and:
-        new File(expectedOutputDir,'simpleTest').exists()
-        results[1].passed
-        results[1].gradleVersion == project.gradle.gradleVersion
-        results[1].testName == 'simpleTest'
-
-        and:
-        new File(expectedOutputDir,'failureTest').exists()
-        !results[0].passed
-        results[0].gradleVersion == project.gradle.gradleVersion
-        results[0].testName == 'failureTest'
+        result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
     }
-
 }
