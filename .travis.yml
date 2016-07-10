@@ -4,10 +4,10 @@ language: groovy
 sudo: false
 
 before_script:
- - ./gradlew -S clean
+ - ./gradlew -S clean --console=plain
 
 script:
- - ./gradlew -S -i build compatibilityTest
+ - ./gradlew -S -i --console=plain build compatibilityTest
 
 jdk:
  - oraclejdk8
@@ -18,9 +18,6 @@ jdk:
 os:
  - linux
 # osx_image: xcode7.3
-
-env:
- - TERM=dumb
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
