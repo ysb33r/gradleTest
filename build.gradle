@@ -164,8 +164,16 @@ integrationTest {
 		systemProperties OFFLINE:'1'
 	}
 
+	reports.html.destination = file("${reporting.baseDir}/integrationTests")
 }
 
+task combinedTestReport( type : TestReport ) {
+	group 'Validation'
+	description 'Produces combined testing report'
+	destinationDir file("${reporting.baseDir}/combined")
+	reportOn test, integrationTest, file("${buildDir}/compatibilityTest/test-results/binary/gradleTest")
+	dependsOn test, integrationTest, compatibilityTest
+}
 
 artifactory {
 	publish {
@@ -246,6 +254,7 @@ buildScan {
 
 check {
 	dependsOn 'validateDocversions'
+	dependsOn 'combinedTestReport'
 }
 
 if (JavaVersion.current().isJava8Compatible()) {
