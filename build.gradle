@@ -4,7 +4,6 @@ plugins {
     id 'groovy'
     id 'maven'
     id 'org.ysb33r.bintray' version '1.5'
-    id 'com.jfrog.artifactory' version '3.1.0'
     id 'com.gradle.plugin-publish' version '0.9.4'
     id 'com.github.hierynomus.license' version '0.13.1'
 	id 'org.asciidoctor.convert' version '1.5.3'
@@ -14,7 +13,7 @@ import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta3-SNAPSHOT'
+version = '1.0-beta3'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
@@ -171,21 +170,6 @@ task combinedTestReport( type : TestReport ) {
 	destinationDir file("${reporting.baseDir}/combined")
 	reportOn test, integrationTest, file("${buildDir}/compatibilityTest/test-results/binary/gradleTest")
 	dependsOn test, integrationTest, compatibilityTest
-}
-
-artifactory {
-	publish {
-		contextUrl = 'http://oss.jfrog.org'
-		repository {
-			repoKey = 'oss-snapshot-local'
-			username = project.properties.bintrayUserName
-			password = project.properties.bintrayApiKey
-		}
-	}
-}
-
-artifactoryPublish {
-	onlyIf { version.endsWith("SNAPSHOT") }
 }
 
 uploadArchives  {
