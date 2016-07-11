@@ -17,7 +17,6 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.CollectionUtils
@@ -40,6 +39,8 @@ class GradleTest extends Test {
         if(project.gradle.startParameter.offline) {
             arguments+= '--offline'
         }
+
+        setHtmlReportFolder()
     }
 
     /** Returns the set of Gradle versions to tests against
@@ -167,10 +168,13 @@ class GradleTest extends Test {
         project.file("${project.buildDir}/${name}/init.gradle").absolutePath
     }
 
-    private List<Object> arguments = [/*'--no-daemon',*/ '--full-stacktrace', '--info'] as List<Object>
-    private List<Object> versions = []
-    private URI baseDistributionUri
+    @CompileDynamic
+    void setHtmlReportFolder() {
+        reports.html.destination = {
+            "${project.reporting.baseDir}/${owner.name}"
+        }
 
+    }
 
     private void notSupported(final String name) {
         throw new GradleException("${name} is not supported in GradleTest tasks")
@@ -183,6 +187,12 @@ class GradleTest extends Test {
             path
         }
     }
+
+    private List<Object> arguments = [/*'--no-daemon',*/ '--full-stacktrace', '--info'] as List<Object>
+    private List<Object> versions = []
+    private URI baseDistributionUri
+
+
 
     static final String BACKSLASH = '\\'
 

@@ -47,6 +47,9 @@ class GradleTestSpec extends GradleTestSpecification {
 
         and: 'Default task is runGradleTest'
         defaultTestTask.defaultTask == 'runGradleTest'
+
+        and: 'The HTML report folder reflects the task name'
+        defaultTestTask.reports.html.destination == file("${project.reporting.baseDir}/gradleTest")
     }
 
     def "Adding additional arguments"() {

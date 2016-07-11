@@ -226,6 +226,11 @@ listed under `furtherTest` configuration.
 
 Global configuration is still read from `gradleLocations` project extension.
 
+== HTML Reports
+
+HTML reports will appear as folder named after the `GradleTask instance below the `${reporting.baseDir}` folder.
+ Practically in most cases this will be `build/reports/gradleTest`.
+
 == Dynamic dependencies
 
 Hard-coding the plugin version in to the `build.gradle` files of the `gradleTest` test fixtures is a maintenance pain.
