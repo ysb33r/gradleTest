@@ -1,0 +1,4 @@
+# List versions in order that they should appear on the landing page
+#
+1.0-beta3
+0.5.5

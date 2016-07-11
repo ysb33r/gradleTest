@@ -4,18 +4,19 @@ plugins {
     id 'groovy'
     id 'maven'
     id 'org.ysb33r.bintray' version '1.5'
-    id 'com.jfrog.artifactory' version '3.1.0'
     id 'com.gradle.plugin-publish' version '0.9.4'
     id 'com.github.hierynomus.license' version '0.13.1'
+	id 'org.asciidoctor.convert' version '1.5.3'
 }
+
+import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta2'
+version = '1.0-beta3'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
-
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -37,6 +38,7 @@ ext {
 	bintrayOwner = 'ysb33r'
 	bintrayRepo = 'grysb33r'
 	moduleName = 'gradletest-gradle-plugin'
+	websitePublishFolder = "${projectDir}/website"
 }
 
 repositories {
@@ -159,22 +161,15 @@ integrationTest {
 		systemProperties OFFLINE:'1'
 	}
 
+	reports.html.destination = file("${reporting.baseDir}/integrationTests")
 }
 
-
-artifactory {
-	publish {
-		contextUrl = 'http://oss.jfrog.org'
-		repository {
-			repoKey = 'oss-snapshot-local'
-			username = project.properties.bintrayUserName
-			password = project.properties.bintrayApiKey
-		}
-	}
-}
-
-artifactoryPublish {
-	onlyIf { version.endsWith("SNAPSHOT") }
+task combinedTestReport( type : TestReport ) {
+	group 'Validation'
+	description 'Produces combined testing report'
+	destinationDir file("${reporting.baseDir}/combined")
+	reportOn test, integrationTest, file("${buildDir}/compatibilityTest/test-results/binary/gradleTest")
+	dependsOn test, integrationTest, compatibilityTest
 }
 
 uploadArchives  {
@@ -239,18 +234,134 @@ buildScan {
 	licenseAgree = 'yes'
 }
 
+
 if (JavaVersion.current().isJava8Compatible()) {
 	tasks.withType(Javadoc) {
 		options.addStringOption('Xdoclint:none', '-quiet')
 	}
 }
 
-task release {
-    onlyIf { !version.endsWith('-SNAPSHOT') }
-    dependsOn build, compatibilityTest, publishPlugins, uploadArchives
+task validateDocVersions {
+	group 'Documentation'
+	description 'Validates if current version is listed in (not SNAPSHOTS)'
+	onlyIf {!version.endsWith('-SNAPSHOT')}
+
+	ext {
+		versionsFile = file('src/docs/landingPage/display-versions.txt')
+	}
+
+	doLast {
+		if(null == versionsFile.readLines().find { it == version }) {
+			throw new GradleException("Current version ${version} is not listed. " +
+				"Please correct ${versionsFile} before installing.")
+		}
+	}
 }
 
-task foo {
-	println test.reports.html.destination
-	println test.reports.junitXml.destination
+task generateDocVersionsTable( type : Copy ) {
+
+	ext {
+		targetDir = file("${buildDir}/generated-docs")
+	}
+
+	group "Documentation"
+	description 'Generates Asciidoc content for landing page'
+	mustRunAfter validateDocVersions
+
+	from 'src/docs/landingPage', {
+		include 'display-versions.txt'
+		rename ~/(.+)\.txt/,'$1.adoc'
+		filter { String line ->
+			if(line.startsWith('//') || line.startsWith('#')) {
+				return null
+			}
+			final String docsLink = "link:${line}/docs/product-documentation.html[Docs]"
+			final String apiLink  = line == '0.5.5' ? '' : "link:${line}/api/index.html[Groovydoc]"
+			final String clogLink = "link:${line}/docs/changelog.html[Changelog]"
+			return "a|*${line}*|${docsLink}|${apiLink}|${clogLink}"
+		}
+	}
+
+	into targetDir
 }
+
+task landingPage( type : AsciidoctorTask ) {
+
+	dependsOn generateDocVersionsTable
+	mustRunAfter validateDocVersions
+
+	inputs.dir generateDocVersionsTable.targetDir
+	sourceDir 'src/docs/landingPage'
+	outputDir "${buildDir}/docs/landingPage"
+	separateOutputDirs = false
+
+	sources {
+		include 'index.adoc'
+	}
+
+	resources {
+		from 'stylesheets'
+		from 'images'
+	}
+
+	attributes gendocdir : file("${generateDocVersionsTable.targetDir}").absolutePath,
+		compatdir : file('compatibility').absolutePath,
+		revnumber : "${version}"
+}
+
+asciidoctor {
+	group "Documentation"
+	description 'Generates the main product documentation & changelog'
+	mustRunAfter validateDocVersions
+	outputDir "${buildDir}/docs/plugin"
+	separateOutputDirs = false
+
+	sources {
+		include 'product-documentation.adoc'
+		include 'changelog.adoc'
+	}
+
+	attributes revnumber: "${version}",
+		projectdir : projectDir.absolutePath
+}
+
+
+task installDocs( type : Copy ) {
+
+	dependsOn validateDocVersions, asciidoctor, landingPage, groovydoc
+
+	from landingPage.outputDir
+	into websitePublishFolder
+
+	with copySpec {
+		from asciidoctor.outputDir
+		into "${version}/docs"
+	}
+
+	with copySpec {
+		from groovydoc
+		into "${version}/api"
+	}
+
+
+	doLast {
+		logger.lifecycle "Files copied to website repo. To publish, change to ${websitePublishFolder} and commit and push from there."
+	}
+
+	onlyIf {!version.endsWith('-SNAPSHOT')}
+}
+
+check {
+	dependsOn validateDocVersions
+	dependsOn combinedTestReport
+}
+
+task release {
+    onlyIf { !version.endsWith('-SNAPSHOT') }
+    dependsOn build, compatibilityTest, publishPlugins, uploadArchives, installDocs
+}
+
+//task foo {
+//	println test.reports.html.destination
+//	println test.reports.junitXml.destination
+//}

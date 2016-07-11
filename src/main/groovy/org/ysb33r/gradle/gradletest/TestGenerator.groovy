@@ -155,8 +155,9 @@ class TestGenerator extends DefaultTask {
         final File manifestDir = manifestTask.outputDir
         final File manifestFile = new File("${manifestDir}/${manifestTask.outputFilename}")
         final File workDir = project.file("${project.buildDir}/${linkedTestTaskName}")
+        final File repoDir = new File(workDir,'repo')
 
-        createInitScript(workDir,pluginJarDirectory)
+        createInitScript(workDir,pluginJarDirectory,repoDir)
 
         testMap.each { String testName,File testLocation ->
 
@@ -170,21 +171,38 @@ class TestGenerator extends DefaultTask {
                 gradleArguments
             )
         }
+
+        createRepo(repoDir)
+    }
+
+    /** Created a local repo for use by tests.
+     *
+     * @param repoDir Where to copy files to
+     */
+    @CompileDynamic
+    private void createRepo(final File repoDir) {
+        project.copy {
+            from project.configurations.getByName(linkedTestTaskName)
+            into repoDir
+        }
     }
 
     /** Creates a init script to be used for running tests
      *
-     * @param targetDir
-     * @param jarDir
+     * @param targetDir Where the init script is copied to
+     * @param jarDir THe path where the plugin JAR will be found
+     * @param repoDir The path to where the local repo will be created
      */
     @CompileDynamic
-    private void createInitScript(final File targetDir,final File jarDir) {
+    private void createInitScript(final File targetDir,final File jarDir,final File repoDir) {
         final def fromSource = templateInitScript
         final String pluginJarPath = pathAsUriStr(jarDir)
+        final String repoPath = pathAsUriStr(repoDir)
         project.copy {
             from fromSource
             into targetDir
-            expand PLUGINJARPATH: pluginJarPath
+            expand PLUGINJARPATH: pluginJarPath,
+                LOCALREPOPATH :  repoPath
         }
     }
 

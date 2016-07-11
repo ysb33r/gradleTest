@@ -1,0 +1,46 @@
+
+== Temporarily overriding Gradle versions
+
+It is very convenient to sometimes to runs the test with a subset of the versions specified in the configuration. This is
+achievable by passing a system property to Gradle
+
+[source,bash]
+----
+-DgradleTest.versions=2.2,2.3 <1> <2>
+----
+<1> If more than one GradleTest task is defined, replace `gradleTest` with the name of the appropriate GradleTest task.
+<2> List the versions in a commma-separated list. No validation is done on the string. If it leads to invalid Gradle
+  versions the build will fail.
+
+== Task dependencies
+
+`gradleTest` is linked into the `check` lifecycle task.
+
+
+== Adding additional GradleTest tasks
+
+It is possible to add additional test tasks beyond `gradleTest`, by doing
+
+[source,groovy]
+----
+configurations {
+  furtherTest
+}
+
+task furtherTest( type : org.ysb33r.gradle.gradletest.legacy20.GradleTest ) {
+  versions '2.2'
+}
+----
+
+Test files should be placed under `src/furtherTest` using the same layout as described earlier. Dependencies should be
+listed under `furtherTest` configuration.
+
+Global configuration is still read from `gradleLocations` project extension.
+
+== HTML Reports
+
+HTML reports will appear as folder named after the `GradleTest` instance below the `${reporting.baseDir}` folder.
+ Practically in most cases this will be `build/reports/gradleTest`.
+
+
+

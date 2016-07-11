@@ -1,0 +1,12 @@
+= References & Miscellaneous Material.
+
+== Awesomeness
+
+This plugin is so awesome, it applies to itself and then runs a collection of tests.
+
+In v0.5.5 this was handled through the self-referencing plugin recipe - See `gradle/self-reference.gradle` in
+an old codebase.
+
+Since 1.0, the complexities required more than the above could handle and the same is noe achived via a
+https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/GradleBuild.html[GradleBuild] task. See
+`gradle/compatibility-tests.gradle` in an up to date codebase on how this is done.

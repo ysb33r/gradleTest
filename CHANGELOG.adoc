@@ -1,7 +1,11 @@
 = CHANGELOG
 
+This only documents the current in-progress changelog (or call it a roadmap if you wish). To see changelog
+for a specific release, please visit the http://ysb33r.github.io/gradleTest[plugin website].
+
 == Roadmap - v1.0
 
+// tag::changelog[]
 === Features
 
 * From Gradle 2.13+ GradleTestKit is used to run compatibility tests
@@ -20,12 +24,22 @@
    initscript under Windows
 * https://github.com/ysb33r/gradleTest/issues/38[#38] - TestGenerator is not correctly substituting paths in
    generated test source code under Windows
+* https://github.com/ysb33r/gradleTest/issues/41[#41] - `gradleTest` configuration is broken
+* https://github.com/ysb33r/gradleTest/issues/42[#42] - `GradleTest` HTML reports should not overwrite over Test
+  task reports
 
 === Other
 
 * https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors
 * https://github.com/ysb33r/gradleTest/issues/36[#36] - Integration test for `GradleTest` failure under M$ Windows
 * https://github.com/ysb33r/gradleTest/issues/37[#37] - Integration test for `legacy20.GeadleTest` failure under M$ Windows
+* https://github.com/ysb33r/gradleTest/issues/40[#40] - Add gh-pages based docs
+// end::changelog[]
+
+== Contributors
+
+// tag::contributors[]
+// end::contributors[]
 
 == v0.5.5
 * https://github.com/ysb33r/gradleTest/issues/30[#30] - Specify init scripts

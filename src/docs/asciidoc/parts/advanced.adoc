@@ -1,0 +1,49 @@
+== Advanced Features
+
+=== Caching Dependencies
+
+Although gradle tests can download their own dependencies, this might consume unnecessary
+bandwidth and waste a lot of testing time. In order to combat this,
+any dependencies listed under `gradleTest` configuration will be downloaded and
+made available to the running gradle tests.
+
+.Define dependencies in build.gradle
+[source,groovy]
+----
+dependencies {
+  gradleTest 'commons-cli:commons-cli:1.2'
+}
+----
+
+These dependencies then appear as a `flatDir` repository in the gradle test.
+
+*NOTE*: It is not necessary to add your plugin to the dependencies. The output of the `jar` task
+is automatically added to the `gradleTest` configuration.
+
+.Configure test build.gradle for dependency
+[source,groovy]
+----
+buildscript {
+  dependencies {
+    classpath ':gnumake:1.0.1' // <1>
+  }
+}
+
+dependencies {
+  compile ':commons-cli:1.2' // <2>
+}
+----
+<1> It is completely possible to add it to the `buildscript` for loading
+  plugins
+<2> Load up any dependencies a per normal
+
+
+*NOTE*: This repository is injected into the test using an internal initialisation script.
+
+=== Overriding internal dependencies
+
+GradleTest uses Spock Framework, JUnit & Apache Commons IO underneath. If, for some reason you need to override the
+versions of these dependencies it can be done in the `gradleTestCompile` configuration. If you created a new `GradleTest`
+task called `foobar` then the appropriate configuration will be called `foobarCompile`.
+
+

@@ -36,6 +36,7 @@ class TestSet {
         String setname = baseName(testSetName)
         Map<String,String> configNames = configurationNames(testSetName)
 
+        project.configurations.maybeCreate setname
         addConfigurations(project,configNames)
         addTestTasks(project,setname)
         addManifestTask(project,setname,configNames['runtime'])
