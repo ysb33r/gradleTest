@@ -14,12 +14,10 @@ import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta2'
+version = '1.0-beta3-SNAPSHOT'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
-//apply from : 'gradle/documentation.gradle'
-
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -252,10 +250,6 @@ buildScan {
 	licenseAgree = 'yes'
 }
 
-check {
-	dependsOn 'validateDocversions'
-	dependsOn 'combinedTestReport'
-}
 
 if (JavaVersion.current().isJava8Compatible()) {
 	tasks.withType(Javadoc) {
@@ -373,6 +367,10 @@ task installDocs( type : Copy ) {
 	onlyIf {!version.endsWith('-SNAPSHOT')}
 }
 
+check {
+	dependsOn validateDocVersions
+	dependsOn combinedTestReport
+}
 
 task release {
     onlyIf { !version.endsWith('-SNAPSHOT') }

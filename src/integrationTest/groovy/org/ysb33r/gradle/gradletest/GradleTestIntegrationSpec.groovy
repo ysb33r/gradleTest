@@ -39,6 +39,9 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
                 dirs '${GRADLETESTREPO.toURI()}'.toURI()
             }
         }
+        dependencies {
+          gradleTest 'org.ysb33r.gradle:doxygen:0.2'
+        }
         gradleTest {
             versions '2.13', '2.9', '2.8', '2.5', '2.1'
             gradleDistributionUri '${GRADLETESTREPO.toURI()}'
@@ -82,5 +85,8 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
 
         then:
         result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
+
+        and: "There is a file in the local repo"
+        new File("${buildDir}/gradleTest/repo/doxygen-0.2.jar").exists()
     }
 }

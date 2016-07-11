@@ -51,6 +51,7 @@ class TestGeneratorSpec extends GradleTestSpecification {
         and: "The generator task is executed"
         genTask.execute()
         Set testNames = genTask.testMap.keySet()
+        String initScriptContent = new File(genTask.outputDir.parentFile,'init.gradle').text
 
         then: "The test names reflect the directories under gradleTest"
         testNames.containsAll(['alpha','beta','gamma'])
@@ -66,16 +67,9 @@ class TestGeneratorSpec extends GradleTestSpecification {
         !new File(genTask.outputDir,"DeltaCompatibilitySpec.groovy").exists()
 
         and: "An initscript is created"
-        new File(genTask.outputDir.parentFile,'init.gradle').text.contains ("""allprojects {
-    buildscript {
-        dependencies {
-            classpath fileTree ('${new File(buildDir,'libs').toURI()}'.toURI()) {
-                include '*.jar'
-            }
-        }
-    }
-}
-""")
+        initScriptContent.contains("classpath fileTree ('${new File(buildDir,'libs').toURI()}'.toURI())")
+        initScriptContent.contains("dirs '${new File(buildDir,'gradleTest/repo').toURI()}'.toURI()")
+
         when: "The generated source file is inspected"
         String source = new File(genTask.outputDir,"AlphaCompatibilitySpec.groovy").text
 

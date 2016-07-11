@@ -40,7 +40,7 @@ class ClasspathManifest extends DefaultTask {
         outputDir = TestSet.getManifestDir(project,linkedTestTaskName)
     }
 
-    /** Returns directory where mnaifest file will be written to
+    /** Returns directory where manifest file will be written to
      *
      * @return
      */

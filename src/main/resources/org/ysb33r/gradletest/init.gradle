@@ -18,13 +18,17 @@ allprojects {
                 include '*.jar'
             }
         }
+        repositories {
+            flatDir {
+                dirs '${LOCALREPOPATH}'.toURI()
+            }
+        }
+    }
+
+    repositories {
+        flatDir {
+            dirs '${LOCALREPOPATH}'.toURI()
+        }
     }
 }
 
-//buildscript {
-//    dependencies {
-//        classpath fileTree('/Users/schalkc/Projects/GradleTest/compatibility/build/gradleTest/EatYourDogFood/2.13/build/libs') {
-//            include '*.jar'
-//        }
-//    }
-//}
