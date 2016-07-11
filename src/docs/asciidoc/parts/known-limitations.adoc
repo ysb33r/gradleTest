@@ -1,0 +1,6 @@
+== Known Limitations (Gradle 2.13+)
+
+* Not designed to test with Gradle < 2.0. If the community requires this functionality an effort will be made to
+  see if it is possible. (It will actually try to runs tests against a Gradle version < 2.0, if configured in
+  `gradleTest` by YMMV).
+* Runs in legacy mode when the project is built with Gradle 2.0 - 2.12.

@@ -11,8 +11,16 @@ that can directly be used in documentation.
 
 NOTE: *If you are using a Gradle version < 2.13, it will run in legacy mode and behave like the 0.5.5 version of the plugin*.
 
+= Testkit Mode (Gradle 2.13+)
+
+include::parts/bootstrap.adoc[]
+
+include::parts/structure.adoc[]
+
 include::parts/usage.adoc[]
 
 include::parts/advanced.adoc[]
+
+include::parts/known-limitations.adoc[]
 
 include::parts/legacy-mode.adoc[]

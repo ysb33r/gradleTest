@@ -1,0 +1,39 @@
+== Task Configuration
+
+=== Gradle versions to test against\
+[source,groovy]
+----
+gradleTest {
+  versions '2.2','2.4-beta1'   // <1>
+}
+----
+<1> Test against the listed versions. (`versions` can be called more than once and additional listings will
+  just be appended).
+
+=== Overriding Gradle Distribution Location
+
+With the 1.0 release the location for distributions are determined by `GradleTestKit`. However it is possible to
+override that and set a base location to find distributions by two possible means.
+
+.Configure distribution location by task
+[source,groovy]
+----
+gradleTest {
+  distributionUri 'file://local/area' // <1>
+}
+----
+<1> Set local area to find Gradle distributions instead of default Gradle location. When this is set Gradle will only look
+  here for distributions.
+
+.Configure distribution location by system property
+----
+-Dorg.ysb33r.gradletest.distribution.uri=file://local/area
+----
+
+NOTE: When the system property is set it will override all `distributionUri` settings in task configurations
+
+=== Start Parameters
+
+* If gradle is run with `--offline`, it will be passed to the Gradle.
+* `--full-stacktrace` is set and output is captured to test report.
+

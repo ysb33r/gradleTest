@@ -102,7 +102,7 @@ ${buildDir} / gradleTest / ver1 / project1 <1>
 <5> If a test project does not have a `settings.gradle file` an empty one will
 be generated in the test folder
 
-== Known Limitations
+== Known Limitations (Gradle 2.0-2.12)
 
 * The plugin assumes that no Gradle distributions in `gradle,gradleUserHomeDir` or `GVM_HOME` will be removed whilst it
   is running.
