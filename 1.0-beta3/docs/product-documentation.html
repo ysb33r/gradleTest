@@ -5,7 +5,8 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>GradleTest Gradle Plugin</title>
+<meta name="author" content="Schalk W. Cronjé">
+<title>GradleTest : A Gradle Compatibility Testing Plugin</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -418,99 +419,688 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 </head>
-<body class="article">
+<body class="book toc2 toc-right">
 <div id="header">
-<h1>GradleTest Gradle Plugin</h1>
+<h1>GradleTest : A Gradle Compatibility Testing Plugin</h1>
 <div class="details">
+<span id="author" class="author">Schalk W. Cronjé</span><br>
 <span id="revnumber">version 1.0-beta3</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel0">
+<li><a href="#_testkit_mode_gradle_2_13">Testkit Mode (Gradle 2.13+)</a>
+<ul class="sectlevel1">
+<li><a href="#_bootstrap">Bootstrap</a></li>
+<li><a href="#_conventions">Conventions</a>
+<ul class="sectlevel2">
+<li><a href="#_filesystem">Filesystem</a></li>
+<li><a href="#_gradle_entities">Gradle Entities</a></li>
+</ul>
+</li>
+<li><a href="#_temporarily_overriding_gradle_versions">Temporarily overriding Gradle versions</a></li>
+<li><a href="#_task_dependencies">Task dependencies</a></li>
+<li><a href="#_adding_additional_gradletest_tasks">Adding additional GradleTest tasks</a></li>
+<li><a href="#_html_reports">HTML Reports</a></li>
+<li><a href="#_advanced_features">Advanced Features</a>
+<ul class="sectlevel2">
+<li><a href="#_caching_dependencies">Caching Dependencies</a></li>
+<li><a href="#_overriding_internal_dependencies">Overriding internal dependencies</a></li>
+</ul>
+</li>
+<li><a href="#_known_limitations_gradle_2_13">Known Limitations (Gradle 2.13+)</a></li>
+</ul>
+</li>
+<li><a href="#_legacy_mode_gradle_2_0_2_12">Legacy Mode (Gradle 2.0-2.12)</a>
+<ul class="sectlevel1">
+<li><a href="#_global_configuration">Global Configuration</a></li>
+<li><a href="#_dynamic_dependencies">Dynamic dependencies</a></li>
+<li><a href="#_task_dependencies_2">Task dependencies</a></li>
+<li><a href="#_test_directory_layout">Test directory layout</a></li>
+<li><a href="#_known_limitations_gradle_2_0_2_12">Known Limitations (Gradle 2.0-2.12)</a></li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 <div id="content">
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>A plugin for testing the compatibility of a Gradle plugin against a list of Gradle releases.</p>
+<p>Test your plugin against different versions of Gradle as part of your build. This plugin extends the power that the new
+<a href="https://docs.gradle.org/2.13/userguide/test_kit.html">GradleTestKit</a> brings without having to actually author code. It rather allows plugins authors to write functional tests
+that looks like normal Gradle projects (multi-project is supported). This also makes it easier to create sample projects
+that can directly be used in documentation.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<strong>If you are using a Gradle version &lt; 2.13, it will run in legacy mode and behave like the 0.5.5 version of the plugin</strong>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<h1 id="_testkit_mode_gradle_2_13" class="sect0">Testkit Mode (Gradle 2.13+)</h1>
+<div class="sect1">
+<h2 id="_bootstrap">Bootstrap</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>GradleTest is available in the <a href="https://plugins.gradle.org/plugin/org.ysb33r.gradletest">Gradle Plugins</a> repository.
+To use it, add the following snippet into your build script.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">apply plugin : 'org.ysb33r.gradletest'
-
-gradleTest {
-    versions '2.14','2.13'
-    versions '2.12' ,'2.11','2.10','2.9','2.8'
-    versions '2.7','2.6','2.5'
-    versions '2.4','2.3','2.2','2.1','2.0'
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">plugins {
+  id 'org.ysb33r.gradletest' version '1.0-beta3'
 }</code></pre>
 </div>
 </div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Product version documentation</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<tbody>
+<div class="paragraph">
+<p>When your setup is more complex and the plugins block does not work OR if you are using Gradle 2.0 use the following instead</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+
+  dependencies {
+    classpath 'org.ysb33r.gradle:gradletest:1.0-beta3'
+  }
+}
+
+apply plugin: 'org.ysb33r.gradletest'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Dynamic dependencies</strong>: Hard-coding the plugin version in to the <code>build.gradle</code> files of the <code>gradleTest</code>
+test fixtures is a maintenance pain. However the plugin is injected automatically into the build via <code>GradleTestKit</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conventions">Conventions</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_filesystem">Filesystem</h3>
+<div class="listingblock">
+<div class="title">Source directory layout</div>
+<div class="content">
+<pre>${projectDir} / src / gradleTest /  project1  / build.gradle
+                                    project2  /
+                                    project3  /</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each directory below <code>gradleTest</code> becomes a test. Tests are executed in-folder
+and expects a <code>build.gradle</code> file. If the latter is not found the test will not be
+executed.</p>
+</div>
+<div class="paragraph">
+<p>For testing, a folder is created for each gradle version to be tested and the
+projects are duplicated below the verson folder. Each version testsute is executed
+within a separate JVM.</p>
+</div>
+<div class="listingblock">
+<div class="title">Test directory layout</div>
+<div class="content">
+<pre>${buildDir} / gradleTest / project1  / ver1   <i class="conum" data-value="1"></i><b>(1)</b>
+                                     / ver2   <i class="conum" data-value="2"></i><b>(2)</b>
+                         / project2  / ver1
+                         / manifest  <i class="conum" data-value="3"></i><b>(3)</b>
+                         / src       <i class="conum" data-value="4"></i><b>(4)</b>
+                         / init.gradle <i class="conum" data-value="5"></i><b>(5)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><strong>1.0-beta3</strong></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0-beta3/docs/product-documentation.html">Docs</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0-beta3/api/index.html">Groovydoc</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0-beta3/docs/changelog.html">Changelog</a></p></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>A folder is created for each project</td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><strong>0.5.5</strong></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="0.5.5/docs/product-documentation.html">Docs</a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="0.5.5/docs/changelog.html">Changelog</a></p></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A folder for each Gradle version is created underneath the project folder</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Classpath manifest used when running tests</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Folder where generated source code ends up in</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Initscript used by GradleTest</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Test layout for one test</div>
+<div class="content">
+<pre>... / project1 / .gradle         <i class="conum" data-value="1"></i><b>(1)</b>
+               / build           <i class="conum" data-value="2"></i><b>(2)</b>
+               / build.gradle    <i class="conum" data-value="3"></i><b>(3)</b>
+               / settings.gradle <i class="conum" data-value="4"></i><b>(4)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Project cachedir is sent here</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>It is recommended that the build directory not be changed and left as per default</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>build.gradle</code> is required for the test to be executed. It must contain a task called <code>runGradleTest</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If a test project does not have a <code>settings.gradle file</code> an empty one will
+be generated in the test folder</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Setting up your test project&#8217;s build.gradle</div>
+<div class="content">
+<pre>apply plugin : 'my.project.id'   <i class="conum" data-value="1"></i><b>(1)</b>
+
+task runGradleTest {
+  dependsOn 'someTask'   <i class="conum" data-value="2"></i><b>(2)</b>
+}</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>apply plugin</code> instead as it works across a larger range of Gradle versions. (No need for <code>buildscript</code> block
+as GradleTest will take care of injecting the plugin on the classpath).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Create a <code>runGradleTest</code> task and make it depend on the real task from your plugin that needs execution.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_gradle_entities">Gradle Entities</h3>
+<div class="paragraph">
+<p>A <code>GradleTest</code> task called <code>gradleTest</code> will have the following associated entities:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Entity</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gradleTest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For local available dependencies.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gradleTest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Task</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The actual <code>GradleTest</code> task type (extending <code>Test</code> task type).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gradleTest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SourceSet</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Manages internal generated source code</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gradleTestCompile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal configuration for dependencies required to compile compatibility tests.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gradleTestRuntime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal configuration for dependencies required execute tests (different classpath to those passed to
+  actual <code>GradleRunner</code> invocation).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gradleTestGenerator</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Task</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Generates test code that will be compiled and used to actually executed <code>GradleTestKit</code>-based code</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>compileGradleTestGroovy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Task</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compiles Groovy code generated by <code>gradleTestGenerator</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gradleTestClasses</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Task</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Associated <code>classes</code> task for <code>compileGradleTestGroovy</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gradleTestClasspathManifest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Task</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Creates a classpath manifest file that will be used during test execution to load the correct plugin and
+  transitive dependencies</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="_other_links">Other links</h2>
+<h2 id="_temporarily_overriding_gradle_versions">Temporarily overriding Gradle versions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It is very convenient to sometimes to runs the test with a subset of the versions specified in the configuration. This is
+achievable by passing a system property to Gradle</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">-DgradleTest.versions=2.2,2.3 <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>If more than one GradleTest task is defined, replace <code>gradleTest</code> with the name of the appropriate GradleTest task.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>List the versions in a commma-separated list. No validation is done on the string. If it leads to invalid Gradle
+versions the build will fail.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_dependencies">Task dependencies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>gradleTest</code> is linked into the <code>check</code> lifecycle task.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_adding_additional_gradletest_tasks">Adding additional GradleTest tasks</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It is possible to add additional test tasks beyond <code>gradleTest</code>, by doing</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">configurations {
+  furtherTest
+}
+
+task furtherTest( type : org.ysb33r.gradle.gradletest.legacy20.GradleTest ) {
+  versions '2.2'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Test files should be placed under <code>src/furtherTest</code> using the same layout as described earlier. Dependencies should be
+listed under <code>furtherTest</code> configuration.</p>
+</div>
+<div class="paragraph">
+<p>Global configuration is still read from <code>gradleLocations</code> project extension.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_html_reports">HTML Reports</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>HTML reports will appear as folder named after the <code>GradleTest</code> instance below the <code>${reporting.baseDir}</code> folder.
+ Practically in most cases this will be <code>build/reports/gradleTest</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_advanced_features">Advanced Features</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_caching_dependencies">Caching Dependencies</h3>
+<div class="paragraph">
+<p>Although gradle tests can download their own dependencies, this might consume unnecessary
+bandwidth and waste a lot of testing time. In order to combat this,
+any dependencies listed under <code>gradleTest</code> configuration will be downloaded and
+made available to the running gradle tests.</p>
+</div>
+<div class="listingblock">
+<div class="title">Define dependencies in build.gradle</div>
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
+  gradleTest 'commons-cli:commons-cli:1.2'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These dependencies then appear as a <code>flatDir</code> repository in the gradle test.</p>
+</div>
+<div class="paragraph">
+<p><strong>NOTE</strong>: It is not necessary to add your plugin to the dependencies. The output of the <code>jar</code> task
+is automatically added to the <code>gradleTest</code> configuration.</p>
+</div>
+<div class="listingblock">
+<div class="title">Configure test build.gradle for dependency</div>
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+  dependencies {
+    classpath ':gnumake:1.0.1' <i class="conum" data-value="1"></i><b>(1)</b>
+  }
+}
+
+dependencies {
+  compile ':commons-cli:1.2' <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>It is completely possible to add it to the <code>buildscript</code> for loading
+plugins</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Load up any dependencies a per normal</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>NOTE</strong>: This repository is injected into the test using an internal initialisation script.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_overriding_internal_dependencies">Overriding internal dependencies</h3>
+<div class="paragraph">
+<p>GradleTest uses Spock Framework, JUnit &amp; Apache Commons IO underneath. If, for some reason you need to override the
+versions of these dependencies it can be done in the <code>gradleTestCompile</code> configuration. If you created a new <code>GradleTest</code>
+task called <code>foobar</code> then the appropriate configuration will be called <code>foobarCompile</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_limitations_gradle_2_13">Known Limitations (Gradle 2.13+)</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://plugins.gradle.org/search?term=gradleTest">Gradle Plugin Portal</a></p>
+<p>Not designed to test with Gradle &lt; 2.0. If the community requires this functionality an effort will be made to
+see if it is possible. (It will actually try to runs tests against a Gradle version &lt; 2.0, if configured in
+<code>gradleTest</code> by YMMV).</p>
 </li>
 <li>
-<p><a href="https://plugins.gradle.org/search?term=gradleTest">Bintray backup repository</a></p>
-</li>
-<li>
-<p><a href="https://github.com/ysb33r/gradleTest">Fork me on Github</a></p>
+<p>Runs in legacy mode when the project is built with Gradle 2.0 - 2.12.</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
+<h1 id="_legacy_mode_gradle_2_0_2_12" class="sect0">Legacy Mode (Gradle 2.0-2.12)</h1>
+<div class="openblock partintro">
+<div class="content">
+If you are building your plugin project with any Gradle version 2.0 - 2.12 it automatically invoked legacy mode and
+behaves like the v0.5.5 version of this plugin.
+</div>
+</div>
 <div class="sect1">
-<h2 id="_contributors">Contributors</h2>
+<h2 id="_global_configuration">Global Configuration</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">gradleLocations {
+  searchGradleUserHome = true      <i class="conum" data-value="1"></i><b>(1)</b>
+  includeGradleHome = true         <i class="conum" data-value="2"></i><b>(2)</b>
+  searchGvm = true                 <i class="conum" data-value="3"></i><b>(3)</b>
+  download = true                  <i class="conum" data-value="4"></i><b>(4)</b>
+  downloadToGradleUserHome = false <i class="conum" data-value="5"></i><b>(5)</b>
+  useGradleSite = true             <i class="conum" data-value="6"></i><b>(6)</b>
+  uri                              <i class="conum" data-value="7"></i><b>(7)</b>
+  search                           <i class="conum" data-value="8"></i><b>(8)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Search Gradle home for Gradle installations.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Include the current <code>GRADLE_HOME</code> folder.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Search the GVM folder for Gradle installations</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Download uninstalled version if online. These distributions will be
+placed in the appropriate location in <code>gradle.gradleHome</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Place downloaded distributions in <code>gradle.gradleUserHomeDir</code> in the same way
+Gradle wrapper will do.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Download distribution from the global Gradle distribution site.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>List additional URLs to search for Gradle distributions.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Search these additional folders for Gradle installations. Search will be performed
+both as if it a cache-style folder (aka <code>gradleUserHome</code>) or an installation-style folder
+(aka <code>GVM_HOME</code>).</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If the above is used with Gradle 2.13+ it will be accepted and ignored. Deprecation warnings will also be printed.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dynamic_dependencies">Dynamic dependencies</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A special thank you goes to:</p>
+<p>Hard-coding the plugin version in to the <code>build.gradle</code> files of the <code>gradleTest</code> test fixtures is a maintenance pain.
+In previous versions of the plugin one had to dp to write something like</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">buildscript {
+  dependencies {
+    classpath ':gnumake:%%VERSION%%'
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and the plugin would substitute the <code>%%VERSION%%</code> token with the version of your project. This is <strong>no longer necessary
+with this release</strong> even when running in legacy mode. The plugin will inject the path to the plugin automatically
+eliminating the need to use a block like the above at all.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_dependencies_2">Task dependencies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>gradleTest</code> task is not linked to any other tasks. Run this as
+explicit task on the command-line or add your own task dependencies in your
+gradle script. The reason for this is that  in legacy mode it can be quite a time-consuming testset to run. The typical
+case will be that the tests are only run close to release time. If you prefer you might want to set
+<code>install.dependsOn gradleTest</code> rather than <code>check.dependsOn gradleTest</code> or <code>build.dependsOn gradleTest</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_test_directory_layout">Test directory layout</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For testing, a folder is created for each gradle version to be tested and the
+projects are duplicated below the verson folder. Each version&#8217;s testsuite is executed
+within a separate JVM.</p>
+</div>
+<div class="listingblock">
+<div class="title">Test directory layout</div>
+<div class="content">
+<pre>${buildDir} / gradleTest / ver1 / project1 <i class="conum" data-value="1"></i><b>(1)</b>
+                                / project2
+                                / project3
+                         / ver2 / project1
+                                / project2
+                                / project3
+                         / init20.gradle   <i class="conum" data-value="2"></i><b>(2)</b>
+                         / repo            <i class="conum" data-value="3"></i><b>(3)</b>
+                         / home            <i class="conum" data-value="4"></i><b>(4)</b>
+            / classes / gradleTest         <i class="conum" data-value="5"></i><b>(5)</b>
+            / gradleDist                   <i class="conum" data-value="6"></i><b>(6)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Projects are duplicated for each Gradle version. See below for a more detailed
+layout</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is a generated <code>initscript</code> used to start all tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This is flat repository that can be utilised by all tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Gradle home directory for all the tests</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Temporary classes for bootstrapping the tests are kept here.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Distributions are downloaded here if necessary</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Test layout for one test</div>
+<div class="content">
+<pre>... / project1 / .gradle         <i class="conum" data-value="1"></i><b>(1)</b>
+               / src             <i class="conum" data-value="2"></i><b>(2)</b>
+               / build           <i class="conum" data-value="3"></i><b>(3)</b>
+               / build.gradle    <i class="conum" data-value="4"></i><b>(4)</b>
+               / settings.gradle <i class="conum" data-value="5"></i><b>(5)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Project cachedir is sent here</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If the test project has any folders they will be copied here</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>It is recommended that the build directory not be changed and left as per default</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>build.gradle</code> is required for the test to be executed. It must contain a task called <code>runGradleTest</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>If a test project does not have a <code>settings.gradle file</code> an empty one will
+be generated in the test folder</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_limitations_gradle_2_0_2_12">Known Limitations (Gradle 2.0-2.12)</h2>
+<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/dcendents">Daniel Beland</a> - Gradle 2.5 fixes.</p>
+<p>The plugin assumes that no Gradle distributions in <code>gradle,gradleUserHomeDir</code> or <code>GVM_HOME</code> will be removed whilst it
+is running.</p>
 </li>
 <li>
-<p><a href="https://github.com/szpak">Marcin Zajączkowski</a> - Fix for Zip errors</p>
+<p>The source sets for the Gradle tests cannot be renamed or added to. The subdirectory name is fixed to the task name.</p>
 </li>
 <li>
-<p><a href="https://github.com/matthiasbalke">Matthias Balke</a> - Documentation</p>
+<p>No nice HTML report (<a href="https://github.com/ysb33r/gradleTest/issues/2" class="bare">https://github.com/ysb33r/gradleTest/issues/2</a>)</p>
+</li>
+<li>
+<p>No graceful failure as for <code>test</code> task. Currently throws a <code>TaskExecutionException</code> at the end, which is ugly. (<a href="https://github.com/ysb33r/gradleTest/issues/1" class="bare">https://github.com/ysb33r/gradleTest/issues/1</a>)</p>
+</li>
+<li>
+<p>No running counter of tests run and test failures (as for <code>test</code> task). (<a href="https://github.com/ysb33r/gradleTest/issues/3" class="bare">https://github.com/ysb33r/gradleTest/issues/3</a>)</p>
+</li>
+<li>
+<p>All test output is going to stdout instead of being captured and added to test report. (<a href="https://github.com/ysb33r/gradleTest/issues/4" class="bare">https://github.com/ysb33r/gradleTest/issues/4</a>)</p>
+</li>
+<li>
+<p><code>--no-daemon</code> is set, as we don&#8217;t want to clash with existing running daemons.</p>
+</li>
+<li>
+<p>Init scripts can no longer be passed. (This will probably be addressed in another release).</p>
+</li>
+<li>
+<p>Does not run test in parallel, even though it theoretically could</p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>If you would liek to contribute, please see <a href="https://github.com/ysb33r/gradleTest/blob/master/HACKING.adoc">HACKING.adoc</a></p>
 </div>
 </div>
 </div>
@@ -518,7 +1108,7 @@ gradleTest {
 <div id="footer">
 <div id="footer-text">
 Version 1.0-beta3<br>
-Last updated 2016-07-10 23:48:20 BST
+Last updated 2016-07-11 14:22:58 BST
 </div>
 </div>
 </body>
