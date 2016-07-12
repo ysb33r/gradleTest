@@ -80,4 +80,18 @@ class TestGeneratorSpec extends GradleTestSpecification {
         source.contains "version << ['1.999','1.998','1.997']"
     }
 
+    def "When there is no gradleTest folder, teh task should not fail, just be skipped"() {
+        given: "There is no src/gradleTest folder and the plugin is applied"
+        configure(project) {
+            apply plugin : 'org.ysb33r.gradletest'
+
+            gradleTest {
+                versions '1.997'
+            }
+            evaluate()
+        }
+
+        expect: "No exception when getTestMap is requested"
+        [:] == project.gradleTestGenerator.testMap
+    }
 }
