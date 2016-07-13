@@ -8,8 +8,10 @@ import org.gradle.util.GradleVersion
 import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Specification
 import spock.lang.Unroll
+import spock.lang.Title
 
-class ${TESTNAME}CompatibilitySpec extends Specification {
+@Title('${TESTNAME}')
+class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
 
     static final File SOURCEDIR = new File('${SOURCEDIR}'.toURI())
     static final File CP_MANIFEST = new File('${MANIFEST}'.toURI())
