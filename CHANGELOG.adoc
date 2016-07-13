@@ -28,6 +28,8 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/42[#42] - `GradleTest` HTML reports should not overwrite over Test
   task reports.
 * https://github.com/ysb33r/gradleTest/issues/45[#45] - When there is no `src/gradleTest` the build fails.
+* https://github.com/ysb33r/gradleTest/issues/46[#46] - When folders below `src/gradleTest` non-word characters, compilation of
+  test classes fails.
 
 === Other
 
