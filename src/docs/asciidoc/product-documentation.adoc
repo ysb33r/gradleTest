@@ -23,6 +23,8 @@ include::parts/advanced.adoc[]
 
 include::parts/known-limitations.adoc[]
 
+include::parts/upgrading.adoc[]
+
 include::parts/legacy-mode.adoc[]
 
 include::parts/other-plugins.adoc[]
