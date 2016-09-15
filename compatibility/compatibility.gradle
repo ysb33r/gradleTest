@@ -63,6 +63,7 @@ gradleTest {
 // end::applyplugin2[]
     dependsOn sanityCheck
 // tag::applyplugin2[]
+    versions '3.0'
     versions '2.14','2.13'
     versions '2.12' ,'2.11','2.10','2.9','2.8'
     versions '2.7','2.6','2.5'
