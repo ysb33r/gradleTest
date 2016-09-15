@@ -3,3 +3,7 @@
 // and the build would succeed.
 
 apply plugin : 'fake'
+
+// This is just here to check that imports will actually work
+// when used in test scripts under GradleTest.
+import fake.ImportCanary

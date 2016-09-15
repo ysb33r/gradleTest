@@ -1,0 +1,3 @@
+package fake
+
+class ImportCanary {}

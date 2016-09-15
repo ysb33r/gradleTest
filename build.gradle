@@ -361,7 +361,6 @@ task release {
     dependsOn build, compatibilityTest, publishPlugins, uploadArchives, installDocs
 }
 
-//task foo {
-//	println test.reports.html.destination
-//	println test.reports.junitXml.destination
-//}
+task foo {
+	println configurations.runtime.files
+}
