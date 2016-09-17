@@ -1,6 +1,6 @@
 // This line is used as an import canary
 // It relates to https://github.com/ysb33r/gradleTest/issues/47
-import org.ysb33r.gradle.gradleTest.GradleTest
+import org.ysb33r.gradle.gradletest.GradleTest
 
 apply plugin : 'org.ysb33r.gradletest'
 apply plugin : 'groovy'
