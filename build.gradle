@@ -13,7 +13,7 @@ import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta4-SNAPSHOT'
+version = '1.0-beta4'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
@@ -359,8 +359,4 @@ check {
 task release {
     onlyIf { !version.endsWith('-SNAPSHOT') }
     dependsOn build, compatibilityTest, publishPlugins, uploadArchives, installDocs
-}
-
-task foo {
-	println configurations.runtime.files
 }
