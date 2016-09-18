@@ -356,6 +356,10 @@ check {
 	dependsOn combinedTestReport
 }
 
+publishPlugins {
+	onlyIf { !version.endsWith('-SNAPSHOT') }
+}
+
 task release {
     onlyIf { !version.endsWith('-SNAPSHOT') }
     dependsOn build, compatibilityTest, publishPlugins, uploadArchives, installDocs
