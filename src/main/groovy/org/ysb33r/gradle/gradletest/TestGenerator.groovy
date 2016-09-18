@@ -94,9 +94,12 @@ class TestGenerator extends DefaultTask {
     @Input
     TreeMap<String,File> getTestMap() {
         TreeMap<String,File> derivedTestNames = [:] as TreeMap
-        getTestRootDirectory().eachFile( FileType.DIRECTORIES) { File dir ->
-            if(project.file("${dir}/build.gradle").exists()) {
-                derivedTestNames[dir.name] = dir.canonicalFile
+        final File root = getTestRootDirectory()
+        if(root.exists()) {
+            root.eachFile( FileType.DIRECTORIES) { File dir ->
+                if(project.file("${dir}/build.gradle").exists()) {
+                    derivedTestNames[dir.name] = dir.canonicalFile
+                }
             }
         }
         derivedTestNames

@@ -18,22 +18,32 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 
 === Bugs
 
-* https://github.com/ysb33r/gradleTest/issues/26[#26] - Unable to build gradleTest project with Gradle 2.1+
+* https://github.com/ysb33r/gradleTest/issues/26[#26] - Unable to build gradleTest project with Gradle 2.1+.
 * https://github.com/ysb33r/gradleTest/issues/34[#34] - Distribution URI fails with File paths under Windows.
 * https://github.com/ysb33r/gradleTest/issues/35[#35] - TestGenerator is not correctly substituting paths in
-   initscript under Windows
+   initscript under Windows.
 * https://github.com/ysb33r/gradleTest/issues/38[#38] - TestGenerator is not correctly substituting paths in
-   generated test source code under Windows
-* https://github.com/ysb33r/gradleTest/issues/41[#41] - `gradleTest` configuration is broken
+   generated test source code under Windows.
+* https://github.com/ysb33r/gradleTest/issues/41[#41] - `gradleTest` configuration is broken.
 * https://github.com/ysb33r/gradleTest/issues/42[#42] - `GradleTest` HTML reports should not overwrite over Test
-  task reports
+  task reports.
+* https://github.com/ysb33r/gradleTest/issues/45[#45] - When there is no `src/gradleTest` the build fails.
+* https://github.com/ysb33r/gradleTest/issues/46[#46] - When folders below `src/gradleTest` non-word characters,
+  compilation of test classes fails.
+* https://github.com/ysb33r/gradleTest/issues/47[#47] - Classpath not correctly resolved under test.
+* https://github.com/ysb33r/gradleTest/issues/48[#48] - When copying gradleTest folders maintain same permissions
+* https://github.com/ysb33r/gradleTest/issues/49[#49] - When folders below `gradleTest` are removed, generated code
+  should be removed too.
 
 === Other
 
-* https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors
-* https://github.com/ysb33r/gradleTest/issues/36[#36] - Integration test for `GradleTest` failure under M$ Windows
-* https://github.com/ysb33r/gradleTest/issues/37[#37] - Integration test for `legacy20.GeadleTest` failure under M$ Windows
+* https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors.
+* https://github.com/ysb33r/gradleTest/issues/36[#36] - Integration test for `GradleTest` failure under M$ Windows.
+* https://github.com/ysb33r/gradleTest/issues/37[#37] - Integration test for `legacy20.GeadleTest` failure under
+ M$ Windows.
 * https://github.com/ysb33r/gradleTest/issues/40[#40] - Add gh-pages based docs
+* https://github.com/ysb33r/gradleTest/issues/44[#44] - If license plugin is applied, exclude GradleTest sourcesets
+    from check.
 // end::changelog[]
 
 == Contributors
@@ -43,9 +53,10 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 
 == v0.5.5
 * https://github.com/ysb33r/gradleTest/issues/30[#30] - Specify init scripts
-* https://github.com/ysb33r/gradleTest/issues/28[#28], https://github.com/ysb33r/gradleTest/pull/29[#29] - Better error message when ZIP archive is broken
-(https://github.com/szpak[Marcin Zajączkowski])
-* https://github.com/ysb33r/gradleTest/pull/22[#22], https://github.com/ysb33r/gradleTest/pull/23[#23] - Documentation corrections (https://github.com/matthiasbalke[Matthias Balke])
+* https://github.com/ysb33r/gradleTest/issues/28[#28], https://github.com/ysb33r/gradleTest/pull/29[#29] - Better error
+    message when ZIP archive is broken. (https://github.com/szpak[Marcin Zajączkowski])
+* https://github.com/ysb33r/gradleTest/pull/22[#22], https://github.com/ysb33r/gradleTest/pull/23[#23] - Documentation
+    corrections (https://github.com/matthiasbalke[Matthias Balke]).
 
 == v0.5.4
 * Updates for Gradle 2.5 

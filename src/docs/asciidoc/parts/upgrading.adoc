@@ -1,0 +1,18 @@
+== Upgrading from v0.5.x
+
+`%%.VERSION%%` is no longer supported when building with Gradle 2.13+ and builds will fail with
+`Could not find foo:bar:%%VERSION%%`` error if encountered.
+It will still be supported if using Gradle 2.12 or earlier as legacy mode will be invoked.
+Even under legacy mode it's use is no longer required. Simply remove the classpath, and if
+you don't anything extra in the `buildscript` block, the whole of the `buildscript` block.
+
+For instance the following block can be complety removed:
+
+[source,groovy]
+----
+buildscript {
+    dependencies {
+        classpath 'com.github.jruby-gradle:jruby-gradle-plugin:%%VERSION%%'
+    }
+}
+----

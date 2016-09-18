@@ -20,6 +20,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.ysb33r.gradle.gradletest.internal.GradleTestIntegrationSpecification
+import spock.lang.Issue
 import spock.lang.Specification
 
 
@@ -36,10 +37,13 @@ class CompileIntegrationSpec extends Specification {
 
     void setup() {
         project = ProjectBuilder.builder().withProjectDir(testProjectDir.root).build()
+    }
+
+    void setupForNames(List<String> projNames) {
 
         File srcDir = new File(project.projectDir,'src/gradleTest')
         srcDir.mkdirs()
-        TESTNAMES.each {
+        projNames.each {
             File testDir = new File(srcDir,it)
             testDir.mkdirs()
             new File(testDir,'build.gradle').text = ''
@@ -48,6 +52,7 @@ class CompileIntegrationSpec extends Specification {
 
     def "Compiling generated source code"() {
         given: "A GradleTest project"
+        setupForNames(TESTNAMES)
         configure(project) {
             apply plugin : 'org.ysb33r.gradletest'
 
@@ -79,5 +84,43 @@ class CompileIntegrationSpec extends Specification {
 
         and: "Expected classes in output directory"
         new File(classesDir,"gradleTest/tests/AlphaCompatibilitySpec.class").exists()
+    }
+
+    @Issue('https://github.com/ysb33r/gradleTest/issues/46')
+    def "Compiling a project name containing non-word characters"() {
+        given: "A GradleTest project"
+        def troublesomeNames = [ 'contains-d-a-s-h-e-s', 'contains s p a c e s']
+        setupForNames(troublesomeNames)
+        configure(project) {
+            apply plugin : 'org.ysb33r.gradletest'
+
+            repositories {
+                flatDir {
+                    dirs GRADLETESTREPO
+                }
+            }
+
+            gradleTest {
+                versions '2.1','2.2'
+            }
+
+            evaluate()
+        }
+
+        when: "The generated source is compiled"
+        Task generatorTask = tasks.getByName('gradleTestGenerator')
+        Task compileTask = tasks.getByName('compileGradleTestGroovy')
+        SourceSet sourceSet = project.sourceSets.getByName('gradleTest')
+        File classesDir = sourceSet.output.classesDir
+        generatorTask.execute()
+        compileTask.execute()
+
+        then: "Generator task to have executed"
+        generatorTask.didWork
+
+        and: "Expected classes in output directory"
+        new File(classesDir,"gradleTest/tests/Contains_d_a_s_h_e_sCompatibilitySpec.class").exists()
+        new File(classesDir,"gradleTest/tests/Contains_s_p_a_c_e_sCompatibilitySpec.class").exists()
+
     }
 }
