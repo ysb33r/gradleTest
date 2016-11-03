@@ -36,6 +36,10 @@ import org.gradle.internal.os.OperatingSystem
 @CompileStatic
 class TestGenerator extends DefaultTask {
 
+    TestGenerator() {
+        onlyIf { getTestRootDirectory().exists() }
+    }
+
     /** Name of the test task this is linked to.
      * Under normal circumstances this property should not be modified by a build script author
      */
