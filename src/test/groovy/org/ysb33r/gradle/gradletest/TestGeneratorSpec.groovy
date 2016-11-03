@@ -17,6 +17,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskState
 import org.ysb33r.gradle.gradletest.internal.GradleTestSpecification
 import spock.lang.Specification
 
@@ -80,7 +81,7 @@ class TestGeneratorSpec extends GradleTestSpecification {
         source.contains "version << ['1.999','1.998','1.997']"
     }
 
-    def "When there is no gradleTest folder, teh task should not fail, just be skipped"() {
+    def "When there is no gradleTest folder, the task should not fail, just be skipped"() {
         given: "There is no src/gradleTest folder and the plugin is applied"
         configure(project) {
             apply plugin : 'org.ysb33r.gradletest'
@@ -91,7 +92,16 @@ class TestGeneratorSpec extends GradleTestSpecification {
             evaluate()
         }
 
-        expect: "No exception when getTestMap is requested"
+        when: 'The evaluation phase is completed'
+        project.evaluate()
+
+        then: "No exception when getTestMap is requested"
         [:] == project.gradleTestGenerator.testMap
+
+        when: 'The task is executed'
+        project.tasks.getByName(TestSet.getGeneratorTaskName(Names.DEFAULT_TASK)).execute()
+
+        then: 'The generator task should be skipped'
+        project.tasks.getByName(TestSet.getGeneratorTaskName(Names.DEFAULT_TASK)).state.skipped
     }
 }
