@@ -19,6 +19,7 @@ import groovy.transform.PackageScope
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
+import org.gradle.util.GradleVersion
 
 /** Internal utility functions to add a new GradleTest test set.
  *
@@ -174,7 +175,11 @@ class TestSet {
                 testClassesDir = project.sourceSets.getByName(testSetBaseName).output.classesDir
                 classpath = project.sourceSets.getByName(testSetBaseName).runtimeClasspath
 
-                inputs.source project.sourceSets.getByName(testSetBaseName).output.classesDir
+                if(GradleVersion.current() < GradleVersion.version('3.0') ) {
+                    inputs.source (project.sourceSets.getByName(testSetBaseName).output.classesDir)
+                } else {
+                    inputs.dir (project.sourceSets.getByName(testSetBaseName).output.classesDir).skipWhenEmpty
+                }
             }
         }
     }
