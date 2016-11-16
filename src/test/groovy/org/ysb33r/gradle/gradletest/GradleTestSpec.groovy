@@ -106,5 +106,26 @@ class GradleTestSpec extends GradleTestSpecification {
         defaultTestTask.gradleDistributionUri == file('foo').toURI()
     }
 
+    def 'Expected failure patterns'() {
+        when: "Expected failure are added"
+        project.with {
+            apply plugin: 'org.ysb33r.gradletest'
+
+            gradleTest {
+                expectFailure 'foo.*'
+                expectFailure ~/bar.+/
+            }
+            evaluate()
+        }
+
+        GradleTest defaultTestTask = project.tasks.getByName('gradleTest')
+        def patterns = defaultTestTask.getExpectedFailures()
+
+        then: "Both patterns should be available"
+        patterns.size() == 2
+        patterns[0].toString() == 'foo.*'
+        patterns[1].toString() == 'bar.+'
+
+    }
 }
 
