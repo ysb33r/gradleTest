@@ -39,6 +39,8 @@ ext {
 	bintrayRepo = 'grysb33r'
 	moduleName = 'gradletest-gradle-plugin'
 	websitePublishFolder = "${projectDir}/website"
+
+	notSnapshot = {!version.endsWith("SNAPSHOT") }
 }
 
 repositories {
@@ -216,7 +218,7 @@ pluginBundle {
 }
 
 publishPlugins {
-	onlyIf { !version.endsWith("SNAPSHOT") }
+	onlyIf notSnapshot
     mustRunAfter compatibilityTest
 }
 
@@ -348,7 +350,7 @@ task installDocs( type : Copy ) {
 		logger.lifecycle "Files copied to website repo. To publish, change to ${websitePublishFolder} and commit and push from there."
 	}
 
-	onlyIf {!version.endsWith('-SNAPSHOT')}
+	onlyIf notSnapshot
 }
 
 check {
@@ -357,10 +359,10 @@ check {
 }
 
 publishPlugins {
-	onlyIf { !version.endsWith('-SNAPSHOT') }
+	onlyIf notSnapshot
 }
 
 task release {
-    onlyIf { !version.endsWith('-SNAPSHOT') }
+	onlyIf notSnapshot
     dependsOn build, compatibilityTest, publishPlugins, uploadArchives, installDocs
 }
