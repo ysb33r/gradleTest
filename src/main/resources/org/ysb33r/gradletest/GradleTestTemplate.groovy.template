@@ -94,12 +94,20 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
 
         then:
         if(gradleVersionUnderTest >= GradleVersion.version('2.5')) {
-            result.task(':${DEFAULTTASK}')?.outcome == TaskOutcome.SUCCESS
+            result.task(':${DEFAULTTASK}')?.outcome == TaskOutcome.${FAILMODE?'FAILURE':'SUCCESS'}
         } else {
-            !result.output.matches(':${DEFAULTTASK} (SKIPPED|UP-TO-DATE|FAILED)')
+            pre25_checkoutcome(${FAILMODE},result.output)
         }
 
         where:
         version << [${VERSIONS}]
+    }
+
+    boolean pre25_checkoutcome(boolean is_failmode,def output) {
+        if(is_failmode) {
+            output.matches(':${DEFAULTTASK} FAILED')
+        } else {
+            !output.matches(':${DEFAULTTASK} (SKIPPED|UP-TO-DATE|FAILED)')
+        }
     }
 }
