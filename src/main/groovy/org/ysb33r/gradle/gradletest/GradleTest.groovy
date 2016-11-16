@@ -22,6 +22,8 @@ import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.CollectionUtils
 import org.gradle.util.GradleVersion
 
+import java.util.regex.Pattern
+
 /**
  * Runs compatibility tests using special compiled GradleTestKit-based tests
  */
@@ -168,6 +170,31 @@ class GradleTest extends Test {
         project.file("${project.buildDir}/${name}/init.gradle").absolutePath
     }
 
+    /** Provide a pattern for recognising tests that are expected to fail
+     *
+     * @param pattern Pattern to match the name of the gradleTest test (i.e. folder below the gradleTest or equivalent)
+     */
+    void expectFailure(final Pattern pattern) {
+        expectedFailures.add(pattern)
+    }
+
+    /** Provide a pattern for recognising tests that are expected to fail
+     *
+     * @param pattern Pattern to match the name of the gradleTest test (i.e. folder below the gradleTest or equivalent)
+     */
+    void expectFailure(String pattern) {
+        expectFailure ~/${pattern}/
+    }
+
+    /** Returns a list of expected failures as patterns
+     *
+     * @return
+     */
+    List<Pattern> getExpectedFailures() {
+        this.expectedFailures
+    }
+
+
     @CompileDynamic
     void setHtmlReportFolder() {
         reports.html.destination = {
@@ -191,7 +218,7 @@ class GradleTest extends Test {
     private List<Object> arguments = [/*'--no-daemon',*/ '--full-stacktrace', '--info'] as List<Object>
     private List<Object> versions = []
     private URI baseDistributionUri
-
+    private List<Pattern> expectedFailures = []
 
 
     static final String BACKSLASH = '\\'
