@@ -70,20 +70,19 @@ dependencies {
 		exclude module : 'groovy-all'
 	}
 	integrationTestCompile gradleTestKit()
-
-	integrationTestDistro2_1 ':gradle:2.1:bin@zip'
-    integrationTestDistro2_5 ':gradle:2.5:bin@zip'
-    integrationTestDistro2_8 ':gradle:2.8:bin@zip'
-    integrationTestDistro2_9 ':gradle:2.9:bin@zip'
-    integrationTestDistro2_13 ':gradle:2.13:bin@zip'
-	integrationTestRepo 'commons-cli:commons-cli:1.2'
+    integrationTestRepo 'commons-cli:commons-cli:1.2'
 	integrationTestRepo 'org.ysb33r.gradle:doxygen:0.2'
-
     integrationTestRepo depCommonsIO
+
     // This dependency must match the one in src/main/groovy/org/ysb33r/gradle/gradletest/internal/TestSet.groovy
     integrationTestRepo (depSpock) {
         exclude module : 'groovy-all'
     }
+
+    integrationTestDistros.each {
+        add "integrationTestDistro${it.replaceAll(~/\./,'_')}", ":gradle:${it}:bin@zip"
+    }
+
 }
 
 groovydoc {
@@ -118,12 +117,11 @@ test {
 }
 
 task integrationTestRepo( type : Copy ) {
+
     from {configurations.integrationTestRepo.files}
-    from {configurations.integrationTestDistro2_1.files}
-    from {configurations.integrationTestDistro2_5.files}
-    from {configurations.integrationTestDistro2_8.files}
-    from {configurations.integrationTestDistro2_9.files}
-    from {configurations.integrationTestDistro2_13.files}
+    integrationTestDistros.each { distro ->
+        from {configurations.getByName("integrationTestDistro${distro.replaceAll(~/\./,'_')}").files}
+    }
     into "${buildDir}/integrationTest/repo"
 }
 
@@ -345,7 +343,6 @@ task installDocs( type : Copy ) {
 		into "${version}/api"
 	}
 
-
 	doLast {
 		logger.lifecycle "Files copied to website repo. To publish, change to ${websitePublishFolder} and commit and push from there."
 	}
@@ -363,6 +360,8 @@ publishPlugins {
 }
 
 task release {
+    group "Release"
+    description "Lifecycle task for release a new version"
 	onlyIf notSnapshot
     dependsOn build, compatibilityTest, publishPlugins, uploadArchives, installDocs
 }
