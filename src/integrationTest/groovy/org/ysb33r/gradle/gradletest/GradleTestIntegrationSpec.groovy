@@ -43,7 +43,7 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
           gradleTest 'org.ysb33r.gradle:doxygen:0.2'
         }
         gradleTest {
-            versions '2.13', '2.9', '2.8', '2.5', '2.1'
+            versions '3.2', '2.13', '2.9', '2.8', '2.5', '2.1'
             gradleDistributionUri '${GRADLETESTREPO.toURI()}'
 
             doFirst {
@@ -61,10 +61,11 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
             File testDir = new File(srcDir,it)
             testDir.mkdirs()
             new File(testDir,'build.gradle').text = '''
-            task runGradleTest << {
-                println "I'm  runGradleTest and I'm " + GradleVersion.current()
-
-                println "Hello, ${project.name}"
+            task runGradleTest  {
+                doLast {
+                    println "I'm  runGradleTest and I'm " + GradleVersion.current()
+                    println "Hello, ${project.name}"
+                }
             }
 '''
         }
