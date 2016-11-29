@@ -22,6 +22,7 @@ import org.ysb33r.gradle.gradletest.legacy20.LegacyGradleTestPlugin
 import org.ysb33r.gradle.gradletest.legacy20.DeprecatingGradleTestExtension
 
 /** Checks the current Gradle version and decides which real plugin to apply.
+ * In case of GRadle 2.13+ it will also apply a legacy-compatible extension.
  *
  */
 @CompileStatic
@@ -44,21 +45,10 @@ class GradleTestPlugin implements Plugin<Project> {
      */
     private void applyTestKit(Project project) {
         project.with {
-            apply plugin : 'groovy'
+            apply plugin : GradleTestBasePlugin
             extensions.create Names.EXTENSION, DeprecatingGradleTestExtension, project
         }
-        addTestKitTriggers(project)
         TestSet.addTestSet(project,Names.DEFAULT_TASK)
     }
 
-    /** Adds the appropriate task triggers.
-     */
-    @CompileDynamic
-    private void addTestKitTriggers(Project project) {
-        project.ext {
-            additionalGradleTestSet = { String name ->
-                TestSet.addTestSet(project, name)
-            }
-        }
-    }
 }
