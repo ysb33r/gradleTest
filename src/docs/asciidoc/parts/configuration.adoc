@@ -1,6 +1,7 @@
 == Task Configuration
 
-=== Gradle versions to test against\
+=== Gradle versions to test against
+
 [source,groovy]
 ----
 gradleTest {
@@ -9,6 +10,23 @@ gradleTest {
 ----
 <1> Test against the listed versions. (`versions` can be called more than once and additional listings will
   just be appended).
+
+=== Marking test builds for failure
+
+It is possible to mark specific tests (build scripts) to be expected failures. 
+This is useful for cases where negative testing such as missing flags etc. need to be performed.
+(This is effectively TestKit's `buildAndFail` at a larger scale)*[]:
+
+[source,groovy]
+----
+gradleTest {
+    expectFailure ~/foo/ // <1>
+    expectFailure 'bar' // <2>
+}
+----
+<1> All test names matching this regular expression (`Pattern`) will be marked as expected failures.
+  The test names reflect the folder name below `gradleTest`.
+<2> Similar as before, but using a string alternative.
 
 === Overriding Gradle Distribution Location
 
