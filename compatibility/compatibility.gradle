@@ -37,6 +37,7 @@ repositories {
 apply plugin : 'org.ysb33r.gradletest'
 // end::applyplugin1[]
 
+
 apply plugin : 'java'
 
 gradleTestGenerator {
@@ -64,13 +65,41 @@ gradleTest {
     dependsOn sanityCheck
 // tag::applyplugin2[]
     versions '3.2', '3.1', '3.0'
-    versions '2.14','2.13'
+    versions '2.14'
+    versions '2.13'
     versions '2.12' ,'2.11','2.10','2.9','2.8'
     versions '2.7','2.6','2.5'
     versions '2.4','2.3','2.2','2.1','2.0'
+
+    beforeTest {
+        println "  ${it.name}"
+    }
 }
 // end::applyplugin2[]
 
 
 test.enabled = false
+
+if(GradleVersion.current() >= GradleVersion.version('2.13')) {
+    // tag::addTestSets[]
+    additionalGradleTestSet 'nonLegacyOnly' // <1>
+
+    nonLegacyOnlyGradleTest { // <2>
+        versions '3.2', '3.1', '3.0' // <3>
+        versions '2.14','2.13'
+    }
+
+    nonLegacyOnlyGradleTestGenerator { // <4>
+        pluginJarDirectory = gradleTestGenerator.pluginJarDirectory
+    }
+    // end::addTestSets[]
+
+    nonLegacyOnlyGradleTest {
+        dependsOn sanityCheck
+
+        beforeTest {
+            println "  ${it.name}"
+        }
+    }
+}
 
