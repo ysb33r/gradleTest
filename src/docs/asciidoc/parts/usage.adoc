@@ -16,31 +16,40 @@ achievable by passing a system property to Gradle
 
 `gradleTest` is linked into the `check` lifecycle task.
 
-
-== Adding additional GradleTest tasks
-
-It is possible to add additional test tasks beyond `gradleTest`, by doing
-
-[source,groovy]
-----
-configurations {
-  furtherTest
-}
-
-task furtherTest( type : org.ysb33r.gradle.gradletest.legacy20.GradleTest ) {
-  versions '2.2'
-}
-----
-
-Test files should be placed under `src/furtherTest` using the same layout as described earlier. Dependencies should be
-listed under `furtherTest` configuration.
-
-Global configuration is still read from `gradleLocations` project extension.
-
 == HTML Reports
 
 HTML reports will appear as folder named after the `GradleTest` instance below the `${reporting.baseDir}` folder.
  Practically in most cases this will be `build/reports/gradleTest`.
 
+== Add additional compatibility test sets
+
+Use the `additionalGradleTestSet` project extension. Specify the basename and all of
+the appropriate configurations and tasks will be added.
+
+[source,groovy]
+----
+include::{projectDir}/compatibility/compatibility.gradle[tags=addTestSets]
+----
+<1> Supply basename to `additionalGradleTestSet`
+<2> This will result in a test task in the format `${baseName}GradleTest`. Sources are expected to be layed out below
+  the `src/${baseName}GradleTest` folder in a similar fashion to `gradleTest`
+<3> Configure test task as per normal.
+<4> Other tasks in the groups are all named using the same convention and can also
+  just be configured as per normal.
+
+== More feedback
+
+Running lots of compatibility tests can take some time. If you need more visual feedback
+regarding progress try adding something like this to the `gradleTest` configuration.
+
+[source,groovy]
+----
+gradleTest{
+  beforeTest {
+    println "  ${it.name}" // <1>
+  }
+}
+----
+<1> Print the name of the current compatibility test that is runnign
 
 
