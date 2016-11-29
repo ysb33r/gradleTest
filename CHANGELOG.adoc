@@ -15,6 +15,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/3[#3] - Running counter of tests being executed
 * https://github.com/ysb33r/gradleTest/issues/4[#4] - Capture test output and add to test report
 * https://github.com/ysb33r/gradleTest/issues/5[#5] - Allow tests to be executed in parallel
+* https://github.com/ysb33r/gradleTest/issues/52[#52] - Allow for expected failure cases
 
 === Bugs
 
@@ -50,6 +51,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 == Contributors
 
 // tag::contributors[]
+*
 // end::contributors[]
 
 == v0.5.5
