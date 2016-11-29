@@ -74,8 +74,16 @@ gradleTest {
     beforeTest {
         println "  ${it.name}"
     }
+
 }
 // end::applyplugin2[]
+
+if(System.getenv('APPVEYOR')  && JavaVersion.current().isJava7() ) {
+    gradleTest {
+        jvmArgs '-XX:+CMSClassUnloadingEnabled', '-XX:+CMSPermGenSweepingEnabled',
+            '-XX:+UseConcMarkSweepGC'
+    }
+}
 
 
 test.enabled = false
