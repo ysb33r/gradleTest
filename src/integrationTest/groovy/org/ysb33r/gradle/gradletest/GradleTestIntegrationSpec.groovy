@@ -19,6 +19,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.util.GradleVersion
 import org.ysb33r.gradle.gradletest.internal.GradleTestIntegrationSpecification
+import spock.lang.Issue
 
 
 class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
@@ -26,6 +27,7 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
     static final List TESTNAMES = ['alpha','beta','gamma']
     static final File GRADLETESTREPO = new File(System.getProperty('GRADLETESTREPO') ?: 'build/integrationTest/repo').absoluteFile
     @Delegate Project project
+    File srcDir
 
     void setup() {
         project = ProjectBuilder.builder().withProjectDir(testProjectDir.root).build()
@@ -55,12 +57,16 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
         new File(project.projectDir,'settings.gradle').text = ''
 
 
-        File srcDir = new File(project.projectDir,'src/gradleTest')
+        srcDir = new File(project.projectDir,'src/gradleTest')
         srcDir.mkdirs()
+
+    }
+
+    void genTestStructureForSuccess( File genToDir ) {
         TESTNAMES.each {
-            File testDir = new File(srcDir,it)
+            File testDir = new File(genToDir, it)
             testDir.mkdirs()
-            new File(testDir,'build.gradle').text = '''
+            new File(testDir, 'build.gradle').text = '''
             task runGradleTest  {
                 doLast {
                     println "I'm  runGradleTest and I'm " + GradleVersion.current()
@@ -71,9 +77,36 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
         }
     }
 
+    void genTestStructureForFailure() {
+        TESTNAMES.each {
+            File testDir = new File(srcDir, it)
+            testDir.mkdirs()
+            if(it == 'gamma') {
+                new File(testDir, 'build.gradle').text = '''
+            task runGradleTest  {
+                doLast {
+                    throw new GradleException('Expect this to fail')
+                }
+            }
+'''
 
+            } else {
+                new File(testDir, 'build.gradle').text = '''
+            task runGradleTest  {
+                doLast {
+                    println "I'm  runGradleTest and I'm " + GradleVersion.current()
+                    println "Hello, ${project.name}"
+                }
+            }
+'''
+            }
+        }
+    }
 
     def "Running with 2.13+ invokes new GradleTestKit"() {
+
+        setup:
+        genTestStructureForSuccess(srcDir)
 
         when:
         println "I'm starting this test chain and I'm " + GradleVersion.current()
@@ -90,4 +123,70 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
         and: "There is a file in the local repo"
         new File("${buildDir}/gradleTest/repo/doxygen-0.2.jar").exists()
     }
+
+    def "Setting up a second test set for Gradle 2.13+"() {
+        setup:
+        buildFile << """
+        additionalGradleTestSet ('second')
+
+        dependencies {
+          secondGradleTest 'org.ysb33r.gradle:doxygen:0.2'
+        }
+
+        secondGradleTest {
+            versions tasks.gradleTest.versions
+            gradleDistributionUri '${GRADLETESTREPO.toURI()}'
+
+            doFirst {
+                println 'I am the actual invocation of secondGradleTest (from GradleIntegrationSpec) and I am ' + GradleVersion.current()
+            }
+        }
+
+"""
+        File srcDir2 = new File(project.projectDir,'src/secondGradleTest')
+        srcDir2.mkdirs()
+        genTestStructureForSuccess(srcDir2)
+
+
+        when:
+        def result = GradleRunner.create()
+            .withProjectDir(projectDir)
+            .withArguments('secondGradleTest','-i')
+            .withPluginClasspath(readMetadataFile())
+            .forwardOutput()
+            .build()
+
+        then:
+        result.task(":secondGradleTest").outcome == TaskOutcome.SUCCESS
+
+        and: "There is a file in the local repo"
+        new File("${buildDir}/secondGradleTest/repo/doxygen-0.2.jar").exists()
+    }
+
+    @Issue("https://github.com/ysb33r/gradleTest/issues/52")
+    def "Handle expected failure"() {
+
+        setup:
+        buildFile << """
+        gradleTest {
+            expectFailure ~/gamma/
+        }
+"""
+        genTestStructureForFailure()
+
+        when:
+        println "I'm starting this test chain and I'm " + GradleVersion.current()
+        def result = GradleRunner.create()
+            .withProjectDir(projectDir)
+            .withArguments('gradleTest','-i')
+            .withPluginClasspath(readMetadataFile())
+            .forwardOutput()
+            .build()
+        println new File("${projectDir}/build/gradleTest/src/GammaCompatibilitySpec.groovy").text
+
+        then:
+        result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
+
+    }
+
 }
