@@ -16,6 +16,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/4[#4] - Capture test output and add to test report
 * https://github.com/ysb33r/gradleTest/issues/5[#5] - Allow tests to be executed in parallel
 * https://github.com/ysb33r/gradleTest/issues/52[#52] - Allow for expected failure cases
+* https://github.com/ysb33r/gradleTest/issues/54[#54] - Added base plugin `org.ysb33r.gradletest.base`.
 
 === Bugs
 
@@ -46,6 +47,8 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/40[#40] - Add gh-pages based docs
 * https://github.com/ysb33r/gradleTest/issues/44[#44] - If license plugin is applied, exclude GradleTest sourcesets
     from check.
+* https://github.com/ysb33r/gradleTest/issues/50[#50] - Removed the use of deprecated `TaskInputs.source(Object)`
+  when running under Gradle 3.0+.
 // end::changelog[]
 
 == Contributors

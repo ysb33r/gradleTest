@@ -21,6 +21,8 @@ include::parts/usage.adoc[]
 
 include::parts/advanced.adoc[]
 
+include::parts/base-plugin.adoc[]
+
 include::parts/known-limitations.adoc[]
 
 include::parts/upgrading.adoc[]

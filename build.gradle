@@ -206,6 +206,10 @@ pluginBundle {
 			id = 'org.ysb33r.gradletest'
 			displayName = 'Plugin for compatibility testing of Gradle plugins'
 		}
+		gradletestBasePlugin {
+			id = 'org.ysb33r.gradletest.base'
+			displayName = 'Base plugin for compatibility testing of Gradle plugins providing only functionality, but not default testsets.'
+		}
 	}
 
 	mavenCoordinates {

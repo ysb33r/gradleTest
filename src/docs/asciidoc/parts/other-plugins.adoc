@@ -1,4 +1,4 @@
-= Compoatibility with Other Plugins
+= Compatibility with Other Plugins
 
 == License plugin
 
