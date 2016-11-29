@@ -61,8 +61,8 @@ class TestSet {
      */
     static Map<String,String> configurationNames(final String testSetName) {
         final String name = baseName(testSetName)
-        [ compile : "${name}Compile",
-          runtime : "${name}Runtime"
+        [ compile : "${name}Compile".toString(),
+          runtime : "${name}Runtime".toString()
         ]
     }
 
@@ -131,8 +131,11 @@ class TestSet {
     @PackageScope
     static void addConfigurations(Project project, final Map<String,String> configNames) {
         configNames.each { String key,String val ->
-            project.configurations.create(val).extendsFrom(project.configurations.getByName(key))
+            project.configurations.create(val) //.extendsFrom(project.configurations.getByName(key))
         }
+        project.configurations.getByName(configNames['runtime']).extendsFrom(
+            project.configurations.getByName(configNames['compile'])
+        )
     }
 
     /** Adds the required test dependencies to a configuration
@@ -143,8 +146,11 @@ class TestSet {
     @PackageScope
     static void addTestDependencies(Project project,final String configurationName) {
         project.dependencies.with {
-            add configurationName,spockDependency(project)
+            // IMPORTANT: Due to GRADLE-3433 gradleTestKit must come before gradleApi
+            add configurationName,localGroovy()
             add configurationName,gradleTestKit()
+            add configurationName,gradleApi()
+            add configurationName,spockDependency(project)
             add configurationName,"commons-io:commons-io:${COMMONS_IO_VERSION}"
             add configurationName,"junit:junit:${JUNIT_VERSION}"
             add configurationName,"org.hamcrest:hamcrest-core:${HAMCREST_VERSION}"
