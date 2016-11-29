@@ -102,6 +102,26 @@ ${buildDir} / gradleTest / ver1 / project1 <1>
 <5> If a test project does not have a `settings.gradle file` an empty one will
 be generated in the test folder
 
+== Adding additional GradleTest tasks
+
+It is possible to add additional test tasks beyond `gradleTest`, by doing
+
+[source,groovy]
+----
+configurations {
+  furtherTest
+}
+
+task furtherTest( type : org.ysb33r.gradle.gradletest.legacy20.GradleTest ) {
+  versions '2.2'
+}
+----
+
+Test files should be placed under `src/furtherTest` using the same layout as described earlier. Dependencies should be
+listed under `furtherTest` configuration.
+
+Global configuration is still read from `gradleLocations` project extension.
+
 == Known Limitations (Gradle 2.0-2.12)
 
 * The plugin assumes that no Gradle distributions in `gradle,gradleUserHomeDir` or `GVM_HOME` will be removed whilst it
