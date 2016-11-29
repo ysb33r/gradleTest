@@ -1,0 +1,5 @@
+task runGradleTest {
+    doLast {
+        throw new GradleException('This build will fail')
+    }
+}

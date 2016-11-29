@@ -1,0 +1,18 @@
+
+apply plugin : 'org.ysb33r.gradletest'
+
+repositories {
+    jcenter()
+}
+
+//dependencies {
+//    gradleTestCompile localGroovy()
+//    gradleTestCompile gradleApi()
+//}
+
+gradleTest {
+    versions '2.12','2.13'
+    expectFailure 'expectedBuildFailure'
+}
+
+task runGradleTest( dependsOn : ['gradleTest'] )
