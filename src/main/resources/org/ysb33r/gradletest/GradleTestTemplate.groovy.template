@@ -77,7 +77,7 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
             gradleRunner.withPluginClasspath(pluginClasspath)
         } else {
             File buildScript = new File(testProjectDir,'build.gradle')
-            String newScript = buildscriptClasspath.replaceAll(/1.0-groovy-2.4/,'1.0-groovy-2.3') + buildScript.text
+                String newScript = buildscriptClasspath.replaceAll(/1.0-groovy-2.4/,'1.0-groovy-2.3') + buildScript.text
             buildScript.text = newScript
         }
     }
@@ -90,11 +90,11 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
 
         when:
         println 'I am about to run the test project with Gradle ' + version + ' and I am ' + GradleVersion.current()
-        def result = gradleRunner.build()
+        def result = gradleRunner.${FAILMODE?'buildAndFail':'build'}()
 
         then:
         if(gradleVersionUnderTest >= GradleVersion.version('2.5')) {
-            result.task(':${DEFAULTTASK}')?.outcome == TaskOutcome.${FAILMODE?'FAILURE':'SUCCESS'}
+            result.task(':${DEFAULTTASK}')?.outcome == TaskOutcome.${FAILMODE?'FAILED':'SUCCESS'}
         } else {
             pre25_checkoutcome(${FAILMODE},result.output)
         }

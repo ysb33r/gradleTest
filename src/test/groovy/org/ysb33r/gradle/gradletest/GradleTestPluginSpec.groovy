@@ -30,6 +30,7 @@ class GradleTestPluginSpec extends GradleTestSpecification {
         when: "The plugin is applied"
         configure(project) {
             apply plugin : 'org.ysb33r.gradletest'
+            additionalGradleTestSet 'foo'
             evaluate()
         }
 
@@ -54,6 +55,12 @@ class GradleTestPluginSpec extends GradleTestSpecification {
         and: "A (deprecated) extension is added"
         extensions.getByName(Names.EXTENSION) instanceof DeprecatingGradleTestExtension
 
+        and: "Appropriate configurations & tasks are added for the additional test sets"
+        tasks.getByName('fooGradleTest') instanceof GradleTest
+        tasks.getByName('fooGradleTestGenerator') instanceof TestGenerator
+        configurations.findByName('fooGradleTestCompile') != null
+        tasks.getByName('compileFooGradleTestGroovy').dependsOn.contains 'fooGradleTestGenerator'
+
         when: "The sourceset is evaluated"
         SourceSet sourceSet = project.sourceSets.getByName('gradleTest')
         SourceDirectorySet sourceDirSet = sourceSet.getGroovy()
@@ -62,8 +69,6 @@ class GradleTestPluginSpec extends GradleTestSpecification {
         sourceDirSet.srcDirs.size() == 1
         sourceDirSet.srcDirs[0].canonicalPath == file("${buildDir}/gradleTest/src").canonicalPath
 
-
-//        and:
     }
 
 }

@@ -29,6 +29,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.internal.os.OperatingSystem
 
+import java.util.regex.Pattern
+
 /** Generates test files that will be compiled against GradleTestKit.
  *
  * @since 1.0
@@ -163,10 +165,15 @@ class TestGenerator extends DefaultTask {
         final File manifestFile = new File("${manifestDir}/${manifestTask.outputFilename}")
         final File workDir = project.file("${project.buildDir}/${linkedTestTaskName}")
         final File repoDir = new File(workDir,'repo')
+        final List<Pattern> testPatternsForFailures = getLinkedTask().getExpectedFailures()
 
         createInitScript(workDir,pluginJarDirectory,repoDir)
 
         testMap.each { String testName,File testLocation ->
+
+            boolean expectFailure = testPatternsForFailures.find { pat ->
+                testName =~ pat
+            }
 
             copy(
                 outputDir,
@@ -175,7 +182,8 @@ class TestGenerator extends DefaultTask {
                 manifestFile,
                 workDir,
                 testLocation,
-                gradleArguments
+                gradleArguments,
+                expectFailure
             )
         }
 
@@ -183,6 +191,7 @@ class TestGenerator extends DefaultTask {
     }
 
     /** Created a local repo for use by tests.
+     * it will copy from the appropriate configuration i.e. {@code gradleTest}, {@code fooGradleTest}} etc.
      *
      * @param repoDir Where to copy files to
      */
@@ -235,8 +244,11 @@ class TestGenerator extends DefaultTask {
      * @param targetDir Directory to generate Spock file into.
      * @param testName Name of the test
      * @param defaultTask Default task to execute
+     * @param manifestFile Where to locate the classpath manifest
+     * @param workDir Directory where run artifats will be written to
      * @param testProjectSrcDir Directory where test project is located
      * @param arguments Arguments that will be passed during a run.
+     * @param willFail Set to {@code true} if the Gradle script under test is expected to fail.
      */
     @CompileDynamic
     private void copy(
@@ -246,7 +258,8 @@ class TestGenerator extends DefaultTask {
         final File manifestFile,
         final File workDir,
         final File testProjectSrcDir,
-        final List<String> arguments
+        final List<String> arguments,
+        final boolean willFail
     ) {
 
         final def fromSource = templateFile
@@ -256,6 +269,7 @@ class TestGenerator extends DefaultTask {
         final String work = pathAsUriStr(workDir)
         final String src = pathAsUriStr(testProjectSrcDir)
 
+        testName
         project.copy {
             from fromSource
             into targetDir
@@ -268,7 +282,8 @@ class TestGenerator extends DefaultTask {
                 VERSIONS : verText,
                 DISTRIBUTION_URI : gradleDistributionUri ?: '',
                 WORKDIR : work,
-                SOURCEDIR : src
+                SOURCEDIR : src,
+                FAILMODE : willFail
         }
     }
 

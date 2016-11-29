@@ -61,5 +61,4 @@ class GradleTestPlugin implements Plugin<Project> {
             }
         }
     }
-
 }

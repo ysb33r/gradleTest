@@ -40,6 +40,11 @@ class Names {
      */
     static final String MANIFEST_TASK_POSTFIX = 'ClasspathManifest'
 
+    /** The name of the extension that is used to add additional test sets
+     *
+     */
+    static final String TESTSET_EXTENSION = 'additionalGradleTestSet'
+
     /** The name of the extension that is to used to configure location and
      * downloadability of Gradle distributions
      */
