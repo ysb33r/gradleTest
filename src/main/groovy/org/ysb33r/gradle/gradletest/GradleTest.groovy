@@ -63,7 +63,15 @@ class GradleTest extends Test {
      * @param ver List of versions
      */
     void versions(String... ver) {
-        this.versions += (ver as List)
+        this.versions.addAll(ver as List)
+    }
+
+    /** Add Gradle versions to be tested against.
+     *
+     * @param ver List of versions
+     */
+    void versions(Iterable<Object> ver) {
+        this.versions.addAll(ver)
     }
 
     /** Append additional arguments to be sent to the running GradleTest instance.
