@@ -28,7 +28,7 @@ the appropriate configurations and tasks will be added.
 
 [source,groovy]
 ----
-include::{projectDir}/compatibility/compatibility.gradle[tags=addTestSets]
+include::{compatdir}/compatibility.gradle[tags=addTestSets]
 ----
 <1> Supply basename to `additionalGradleTestSet`
 <2> This will result in a test task in the format `${baseName}GradleTest`. Sources are expected to be layed out below

@@ -14,7 +14,7 @@ import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta6-SNAPSHOT'
+version = '1.0-beta6'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
@@ -327,7 +327,8 @@ asciidoctor {
 	}
 
 	attributes revnumber: "${version}",
-		projectdir : projectDir.absolutePath
+		topdir : projectDir.absolutePath,
+		compatdir : file('compatibility').absolutePath
 }
 
 
