@@ -19,6 +19,7 @@
 //   the sanityCheck task will fail the build if need be.
 // ----------------------------------------------------------------------------
 
+
 buildscript {
     dependencies {
         classpath fileTree("${projectDir}/../build/libs") { include "gradletest-${compatibilityVersion}.jar"}
@@ -33,12 +34,14 @@ repositories {
     }
 }
 
+
 // tag::applyplugin1[]
 apply plugin : 'org.ysb33r.gradletest'
 // end::applyplugin1[]
 
 
 apply plugin : 'java'
+apply plugin : 'org.ysb33r.cloudci'
 
 gradleTestGenerator {
     pluginJarDirectory = file("${projectDir}/../build/libs")
@@ -78,10 +81,14 @@ gradleTest {
 }
 // end::applyplugin2[]
 
-if(System.getenv('APPVEYOR')  && JavaVersion.current().isJava7() ) {
+appveyor {
     gradleTest {
-        jvmArgs '-XX:+CMSClassUnloadingEnabled', '-XX:+CMSPermGenSweepingEnabled',
-            '-XX:+UseConcMarkSweepGC'
+        if (JavaVersion.current().isJava7()) {
+            jvmArgs '-XX:+CMSClassUnloadingEnabled', '-XX:+CMSPermGenSweepingEnabled',
+                '-XX:+UseConcMarkSweepGC'
+        }
+
+        maxParallelForks = 4
     }
 }
 
