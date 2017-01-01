@@ -28,7 +28,7 @@ import org.ysb33r.gradle.gradletest.Names
  */
 class Unpacker {
 
-    /** Creates a downloader to download a a distrbution to a specific location
+    /** Creates a downloader to download a a distribution to a specific location
      *
      * @param logger Logger to use. (Older versions of Wrapper API will ignore this).
      * @return An instance of a downloader
@@ -156,5 +156,4 @@ class Unpacker {
             return target
         }
     }
-
 }
