@@ -172,7 +172,8 @@ class TestSet {
                 compileClasspath = project.configurations.getByName(configNames['compile'])
                 runtimeClasspath = output + compileClasspath +
                     project.configurations.getByName(configNames['runtime']) +
-                    project.sourceSets.main.output
+                    project.sourceSets.main.output +
+                    project.configurations.getByName('runtime')
             }
 
             project.tasks.getByName(compileTaskName).dependsOn(genTaskName)
