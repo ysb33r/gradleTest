@@ -17,6 +17,7 @@ allprojects {
             classpath fileTree ('${PLUGINJARPATH}'.toURI()) {
                 include '*.jar'
             }
+            ${EXTERNAL_DEP_URILIST.size() ? 'classpath files('+EXTERNAL_DEP_URILIST+')' : ''}
         }
         repositories {
             flatDir {

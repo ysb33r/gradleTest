@@ -63,10 +63,6 @@ class TestRunner {
 
             systemProperties 'org.gradle.appname' : this.class.name
 
-            // Capture standardOutput and errorOutput
-            // errorOutput = new ByteArrayOutputStream()
-            // standardOutput = new ByteArrayOutputStream()
-            // systemProperties & environment in a later release
         }
     }
 }

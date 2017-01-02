@@ -37,6 +37,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/49[#49] - When folders below `gradleTest` are removed, generated code
   should be removed too.
 * https://github.com/ysb33r/gradleTest/issues/53[#53] - Skip test generation if `src/gradleTest` does not exist.
+* https://github.com/ysb33r/gradleTest/issues/57[#57] - Transitive dependencies for pluginsare not injected into classpath.
 
 === Other
 

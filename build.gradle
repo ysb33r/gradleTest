@@ -7,13 +7,14 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.9.4'
     id 'com.github.hierynomus.license' version '0.13.1'
 	id 'org.asciidoctor.convert' version '1.5.3'
+	id 'org.ysb33r.cloudci' version '1.0'
 }
 
 import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta5'
+version = '1.0-beta7'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
@@ -326,7 +327,8 @@ asciidoctor {
 	}
 
 	attributes revnumber: "${version}",
-		projectdir : projectDir.absolutePath
+		topdir : projectDir.absolutePath,
+		compatdir : file('compatibility').absolutePath
 }
 
 

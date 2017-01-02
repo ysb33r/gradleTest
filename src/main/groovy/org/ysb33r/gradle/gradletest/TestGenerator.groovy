@@ -17,7 +17,12 @@ import groovy.io.FileType
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
+import org.gradle.api.DomainObjectSet
 import org.gradle.api.GradleException
+import org.gradle.api.artifacts.DependencySet
+import org.gradle.api.artifacts.ExternalModuleDependency
+import org.gradle.api.artifacts.UnknownConfigurationException
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
@@ -167,7 +172,15 @@ class TestGenerator extends DefaultTask {
         final File repoDir = new File(workDir,'repo')
         final List<Pattern> testPatternsForFailures = getLinkedTask().getExpectedFailures()
 
-        createInitScript(workDir,pluginJarDirectory,repoDir)
+        Set<File> externalDependencies = []
+        try {
+            DomainObjectSet<ExternalModuleDependency> externalDependencySet = project.configurations.getByName('runtime').allDependencies.withType(ExternalModuleDependency)
+            externalDependencies = project.configurations.getByName('runtime').files { dep ->
+                externalDependencySet.contains(dep)
+            }
+        } catch(UnknownConfigurationException e) {}
+
+        createInitScript(workDir,pluginJarDirectory,repoDir,externalDependencies)
 
         testMap.each { String testName,File testLocation ->
 
@@ -208,17 +221,23 @@ class TestGenerator extends DefaultTask {
      * @param targetDir Where the init script is copied to
      * @param jarDir THe path where the plugin JAR will be found
      * @param repoDir The path to where the local repo will be created
+     * @param externalDependencies A list of external dependencies (JARs).
      */
     @CompileDynamic
-    private void createInitScript(final File targetDir,final File jarDir,final File repoDir) {
+    private void createInitScript(final File targetDir,final File jarDir,final File repoDir,Set<File> externalDependencies) {
         final def fromSource = templateInitScript
         final String pluginJarPath = pathAsUriStr(jarDir)
         final String repoPath = pathAsUriStr(repoDir)
+        final String externalDepPaths = externalDependencies.collect {
+            "'${pathAsUriStr(it)}'.toURI()"
+        }.join(',')
+
         project.copy {
             from fromSource
             into targetDir
             expand PLUGINJARPATH: pluginJarPath,
-                LOCALREPOPATH :  repoPath
+                LOCALREPOPATH :  repoPath,
+                EXTERNAL_DEP_URILIST : externalDepPaths
         }
     }
 
@@ -301,7 +320,7 @@ class TestGenerator extends DefaultTask {
      * (This helps with compatibility across operating systems).
      * @param path Path to output
      */
-    private String pathAsUriStr(final File path) {
+    String pathAsUriStr(final File path) {
         path.absoluteFile.toURI().toString()
     }
 
