@@ -1,7 +1,7 @@
 
 language: groovy
 
-sudo: false
+sudo: required
 
 before_script:
  - ./gradlew -S clean --console=plain
