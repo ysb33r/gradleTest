@@ -19,6 +19,8 @@ include::parts/structure.adoc[]
 
 include::parts/usage.adoc[]
 
+include::parts/cmdline.adoc[]
+
 include::parts/advanced.adoc[]
 
 include::parts/base-plugin.adoc[]

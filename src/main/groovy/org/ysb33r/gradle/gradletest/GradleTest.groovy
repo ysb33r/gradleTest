@@ -42,6 +42,11 @@ class GradleTest extends Test {
             arguments+= '--offline'
         }
 
+
+        if(project.gradle.startParameter.isRerunTasks()) {
+            arguments+= '--rerun-tasks'
+        }
+
         setHtmlReportFolder()
     }
 
@@ -147,7 +152,7 @@ class GradleTest extends Test {
      */
     @Input
     List<String> getGradleArguments() {
-        ([ '--init-script',winSafeCmdlineSafe(initScript) ] as List<String>) +
+        List<String> args = ([ '--init-script',winSafeCmdlineSafe(initScript) ] as List<String>) +
         CollectionUtils.stringize(this.arguments) as List<String>
     }
 
