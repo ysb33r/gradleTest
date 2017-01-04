@@ -4,10 +4,16 @@ build:
   verbosity: detailed
 
 build_script:
-  - gradlew.bat assemble --info --no-daemon -PbintrayUserName -PbintrayApiKey
+  - gradlew.bat assemble --info --no-daemon
 
 test_script:
-  - gradlew.bat test integrationTest compatibilityTest --info --no-daemon -PbintrayUserName -PbintrayApiKey
+  - gradlew.bat test integrationTest --info --no-daemon
+  - gradlew.bat test compatibilityTest --info --no-daemon -DgradleTest.versions=2.0,2.1,2.2,2.3 -DnonLegacyOnlyGradleTest.versions=2.13
+  - gradlew.bat test compatibilityTest --info --no-daemon -DgradleTest.versions=2.4,2.5,2.6,2.7 -DnonLegacyOnlyGradleTest.versions=2.14.1
+  - gradlew.bat test compatibilityTest --info --no-daemon -DgradleTest.versions=2.8,2.9,2.10,2.11 -DnonLegacyOnlyGradleTest.versions=3.0
+  - gradlew.bat test compatibilityTest --info --no-daemon -DgradleTest.versions=2.12,2.13,2.14.1 -DnonLegacyOnlyGradleTest.versions=3.1
+  - gradlew.bat test compatibilityTest --info --no-daemon -DgradleTest.versions=3.0,3.1,3.2.1 -DnonLegacyOnlyGradleTest.versions=3.2.1
+  - gradlew.bat test compatibilityTest --info --no-daemon -DgradleTest.versions=3.3 -DnonLegacyOnlyGradleTest.versions=3.3
 
 branches:
   only:
