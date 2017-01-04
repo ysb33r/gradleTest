@@ -94,7 +94,17 @@ appveyor {
                 '-XX:+UseConcMarkSweepGC'
         }
 
-        maxParallelForks = 4
+        maxParallelForks = 2
+        minHeapSize = "256m"
+        maxHeapSize = "768m"
+    }
+}
+
+travisci {
+    gradleTest {
+        maxParallelForks = 2
+        minHeapSize = "256m"
+        maxHeapSize = "768m"
     }
 }
 
