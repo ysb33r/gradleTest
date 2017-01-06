@@ -1,0 +1,5 @@
+// See https://github.com/ysb33r/gradleTest/issues/51
+
+task runGradleTest {
+    dependsOn ':pluginA:runGradleTest'
+}

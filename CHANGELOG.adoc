@@ -52,6 +52,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
     from check.
 * https://github.com/ysb33r/gradleTest/issues/50[#50] - Removed the use of deprecated `TaskInputs.source(Object)`
   when running under Gradle 3.0+.
+* https://github.com/ysb33r/gradleTest/issues/51[#51] - Compatibility test for multi-project scenarios.
 * https://github.com/ysb33r/gradleTest/issues/55[#55] - Memory: Split compatiblity tests into smaller runs on Appveyor.
 * https://github.com/ysb33r/gradleTest/issues/55[#56] - Memory: Use virtual image rather than container on TravisCI.
 * https://github.com/ysb33r/gradleTest/issues/60[#60] - Mention alternative approaches to `GradleTest`.
