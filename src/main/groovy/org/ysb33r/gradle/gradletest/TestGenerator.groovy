@@ -21,6 +21,7 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalModuleDependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
@@ -175,8 +176,9 @@ class TestGenerator extends DefaultTask {
         Set<File> externalDependencies = []
         try {
             DomainObjectSet<ExternalModuleDependency> externalDependencySet = project.configurations.getByName('runtime').allDependencies.withType(ExternalModuleDependency)
+            DomainObjectSet<ProjectDependency> projectDependencySet = project.configurations.getByName('runtime').allDependencies.withType(ProjectDependency)
             externalDependencies = project.configurations.getByName('runtime').files { dep ->
-                externalDependencySet.contains(dep)
+                externalDependencySet.contains(dep) || projectDependencySet.contains(dep)
             }
         } catch(UnknownConfigurationException e) {}
 
