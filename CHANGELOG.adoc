@@ -42,17 +42,18 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 
 === Other
 
-* https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors.
+* https://github.com/ysb33r/gradleTest/issues/12[#12] - Fixed Javadoc errors.
 * https://github.com/ysb33r/gradleTest/issues/36[#36] - Integration test for `GradleTest` failure under M$ Windows.
 * https://github.com/ysb33r/gradleTest/issues/37[#37] - Integration test for `legacy20.GeadleTest` failure under
  M$ Windows.
-* https://github.com/ysb33r/gradleTest/issues/40[#40] - Add gh-pages based docs
+* https://github.com/ysb33r/gradleTest/issues/40[#40] - Added `gh-pages`-based .
 * https://github.com/ysb33r/gradleTest/issues/44[#44] - If license plugin is applied, exclude GradleTest sourcesets
     from check.
 * https://github.com/ysb33r/gradleTest/issues/50[#50] - Removed the use of deprecated `TaskInputs.source(Object)`
   when running under Gradle 3.0+.
 * https://github.com/ysb33r/gradleTest/issues/55[#55] - Memory: Split compatiblity tests into smaller runs on Appveyor.
 * https://github.com/ysb33r/gradleTest/issues/55[#56] - Memory: Use virtual image rather than container on TravisCI.
+* https://github.com/ysb33r/gradleTest/issues/60[#60] - Mention alternative approaches to `GradleTest`.
 * https://github.com/ysb33r/gradleTest/issues/61[#61] - Validate support for Gradle 3.3.
 * https://github.com/ysb33r/gradleTest/issues/63[#63] - Documented `--offline` behaviour.
 

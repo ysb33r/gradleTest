@@ -32,3 +32,5 @@ include::parts/upgrading.adoc[]
 include::parts/legacy-mode.adoc[]
 
 include::parts/other-plugins.adoc[]
+
+include::parts/alternatives.adoc[]
