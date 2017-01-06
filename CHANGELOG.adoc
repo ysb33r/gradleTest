@@ -39,6 +39,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
   should be removed too.
 * https://github.com/ysb33r/gradleTest/issues/53[#53] - Skip test generation if `src/gradleTest` does not exist.
 * https://github.com/ysb33r/gradleTest/issues/57[#57] - Transitive dependencies for pluginsare not injected into classpath.
+* https://github.com/ysb33r/gradleTest/issues/59[#59] - GradleTest does not detect new folders if previous task completed successfully
 
 === Other
 
