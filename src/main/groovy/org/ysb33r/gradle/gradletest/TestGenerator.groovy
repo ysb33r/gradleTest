@@ -182,6 +182,9 @@ class TestGenerator extends DefaultTask {
 
         createInitScript(workDir,pluginJarDirectory,repoDir,externalDependencies)
 
+        // Before generation delete existing generated code
+        outputDir.deleteDir()
+
         testMap.each { String testName,File testLocation ->
 
             boolean expectFailure = testPatternsForFailures.find { pat ->

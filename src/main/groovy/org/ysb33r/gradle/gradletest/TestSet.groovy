@@ -175,7 +175,13 @@ class TestSet {
                     project.sourceSets.main.output
             }
 
-            project.tasks.getByName(compileTaskName).dependsOn(genTaskName)
+            project.tasks.getByName(compileTaskName).with {
+                dependsOn(genTaskName)
+                doFirst {
+                    destinationDir.deleteDir()
+                }
+
+            }
 
             project.tasks.getByName(testTaskName).configure {
                 testClassesDir = project.sourceSets.getByName(testSetBaseName).output.classesDir
@@ -222,7 +228,6 @@ class TestSet {
             dependsOn genTask, compileTaskName, manifestTaskName
             mustRunAfter 'test'
         }
-
 
         project.tasks.getByName('check').dependsOn testTaskName
     }

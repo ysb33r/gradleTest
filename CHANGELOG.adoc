@@ -44,7 +44,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 
 * https://github.com/ysb33r/gradleTest/issues/12[#12] - Fixed Javadoc errors.
 * https://github.com/ysb33r/gradleTest/issues/36[#36] - Integration test for `GradleTest` failure under M$ Windows.
-* https://github.com/ysb33r/gradleTest/issues/37[#37] - Integration test for `legacy20.GeadleTest` failure under
+* https://github.com/ysb33r/gradleTest/issues/37[#37] - Integration test for `legacy20.GradleTest` failure under
  M$ Windows.
 * https://github.com/ysb33r/gradleTest/issues/40[#40] - Added `gh-pages`-based .
 * https://github.com/ysb33r/gradleTest/issues/44[#44] - If license plugin is applied, exclude GradleTest sourcesets
