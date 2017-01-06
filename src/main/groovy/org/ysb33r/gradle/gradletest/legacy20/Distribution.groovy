@@ -13,7 +13,7 @@
  */
 package org.ysb33r.gradle.gradletest.legacy20
 
-/** Inteface for handlign distributions in legacy mode.
+/** Interface for handling distributions in legacy mode.
  *
  */
 interface Distribution extends Comparable {

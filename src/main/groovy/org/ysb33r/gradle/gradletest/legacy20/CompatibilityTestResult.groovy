@@ -13,7 +13,7 @@
  */
 package org.ysb33r.gradle.gradletest.legacy20
 
-/** Inteface used in legacy mode to report test results
+/** Interface used in legacy mode to report test results
  *
  */
 interface CompatibilityTestResult {
