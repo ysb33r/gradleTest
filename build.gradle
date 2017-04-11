@@ -14,7 +14,7 @@ import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta8-SNAPSHOT'
+version = '1.0-beta8'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
@@ -230,7 +230,7 @@ license {
 	strictCheck = true
 	ignoreFailures = false
 	ext.year = '2015 - 2016'
-	excludes(['**/*.ad', '**/*.asciidoc', '**/*.adoc', '**/*.md','**/*.properties'])
+	excludes(['**/*.ad', '**/*.asciidoc', '**/*.adoc', '**/*.md','**/*.properties','**/*.groovy.template'])
     mapping 'gradle', 'SLASHSTAR_STYLE'
 }
 
