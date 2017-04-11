@@ -64,7 +64,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 == Contributors
 
 // tag::contributors[]
-*
+
 // end::contributors[]
 
 == v0.5.5
