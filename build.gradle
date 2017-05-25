@@ -230,7 +230,7 @@ license {
 	header = rootProject.file('config/HEADER')
 	strictCheck = true
 	ignoreFailures = false
-	ext.year = '2015 - 2016'
+	ext.year = '2015 - 2017'
 	excludes(['**/*.ad', '**/*.asciidoc', '**/*.adoc', '**/*.md','**/*.properties','**/*.groovy.template'])
     mapping 'gradle', 'SLASHSTAR_STYLE'
 }
