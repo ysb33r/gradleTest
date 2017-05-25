@@ -50,14 +50,12 @@ class GradleStep extends AbstractStep {
         this.errorFile
     }
 
-    private BuildResult run(File projDir, File outFile,File errFile) {
+    private BuildResult run(final File projDir, final File outFile,final  File errFile) {
         BuildResult result
-        outFile.withWriter { Writer out ->
-            errFile.withWriter { Writer err ->
-                GradleRunner runner = GradleRunner.create().
-                        forwardStdError(err).forwardStdOutput(out).
-                        withArguments(this.args).withProjectDir(projDir)
-
+        GradleRunner runner = GradleRunner.create().withArguments(this.args).withProjectDir(projDir)
+        outFile.withPrintWriter { PrintWriter out ->
+            errFile.withPrintWriter { PrintWriter err ->
+                runner.forwardStdError(err).forwardStdOutput(out)
                 result = this.expectFailure ? runner.buildAndFail() : runner.build()
             }
         }

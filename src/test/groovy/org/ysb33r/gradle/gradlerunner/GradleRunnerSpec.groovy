@@ -3,6 +3,7 @@ package org.ysb33r.gradle.gradlerunner
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.ysb33r.gradle.gradlerunner.internal.GradleStep
 import spock.lang.Specification
 
 
@@ -10,10 +11,11 @@ import spock.lang.Specification
 class GradleRunnerSpec extends Specification {
 
     Project project = ProjectBuilder.builder().build()
-    GradleRunnerSteps gradleRunner = project.tasks.create('gradleRunner',GradleRunnerSteps)
 
     def 'Add basic steps and execute'() {
         when:
+        GradleRunnerSteps gradleRunner = project.tasks.create('gradleRunner',GradleRunnerSteps)
+
         gradleRunner.step'closure', {
             StepInfo info -> println project.name
         }
@@ -45,4 +47,22 @@ class GradleRunnerSpec extends Specification {
 
     }
 
+    def 'Running the task from the plugin'() {
+        setup:
+        project.allprojects {
+            apply plugin : 'org.ysb33r.gradlerunner'
+
+            gradleRunner {
+                step 'gradle', 'tasks', '--all'
+            }
+        }
+
+        when:
+        project.evaluate()
+        project.gradleRunner.execute()
+
+        then:
+        ((GradleStep)(project.gradleRunner.getSteps()[0])).output.exists()
+
+    }
 }

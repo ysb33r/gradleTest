@@ -64,9 +64,9 @@ ext {
 
 dependencies {
 	compile gradleApi()
+	compile gradleTestKit()
 	compile localGroovy()
 	compile depCommonsIO
-	compile gradleTestKit()
 
 	testCompile (depSpock) {
 		exclude module : 'groovy-all'
