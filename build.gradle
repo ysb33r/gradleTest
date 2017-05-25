@@ -14,7 +14,7 @@ import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta9'
+version = '1.0-beta10'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
@@ -211,6 +211,10 @@ pluginBundle {
 		gradletestBasePlugin {
 			id = 'org.ysb33r.gradletest.base'
 			displayName = 'Base plugin for compatibility testing of Gradle plugins providing only functionality, but not default testsets.'
+		}
+		gradleRunnerPlugin {
+			id = 'org.ysb33r.gradlerunner'
+			displayName = 'Run multiple steps including Gradle executions and collect the output. Very useful for crafting documentation.'
 		}
 	}
 
