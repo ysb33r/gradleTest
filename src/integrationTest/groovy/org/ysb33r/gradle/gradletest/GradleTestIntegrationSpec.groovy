@@ -189,4 +189,47 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
 
     }
 
+    @Issue('https://github.com/ysb33r/gradleTest/issues/59')
+    def "Adding folders will re-run test task"() {
+        setup: "A GradleTest structrue with three tests"
+        def gradleRunner = GradleRunner.create()
+            .withProjectDir(projectDir)
+            .withArguments('gradleTest','-i')
+            .withPluginClasspath(readMetadataFile())
+            .forwardOutput()
+        genTestStructureForSuccess(srcDir)
+
+        when: 'When executed'
+        println "I'm starting this test chain and I'm " + GradleVersion.current()
+        def result = gradleRunner.build()
+
+        then: 'The tests execute successfully'
+        result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
+
+        when: 'It is executed again'
+        println "I'm running this test chain again and I'm " + GradleVersion.current()
+        result = gradleRunner.build()
+
+        then: 'The task should be skipped'
+        result.task(":gradleTest").outcome == TaskOutcome.UP_TO_DATE
+
+        when: 'An additional test is added'
+        File testDir = new File(srcDir, 'delta')
+        testDir.mkdirs()
+        new File(testDir, 'build.gradle').text = '''
+            task runGradleTest  {
+                doLast {
+                    println "DELTA: I'm  runGradleTest and I'm " + GradleVersion.current()
+                    println "DELTA: Hello, ${project.name}"
+                }
+            }
+'''
+
+        and: 'The task is executed again'
+        result = gradleRunner.build()
+
+        then: 'Then the task will be successfully executed'
+        result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
+    }
+
 }

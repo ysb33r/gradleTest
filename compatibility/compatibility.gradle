@@ -9,7 +9,7 @@
 //   build directory.
 // - Any test dpenedencie/Users/schalkc/Projects/GradleTest/compatibility/compatibility.gradles are picked up from the test dependencies of the
 //   calling project.
-// - We need to run this project with the GradleTest jat that was created by
+// - We need to run this project with the GradleTest jar that was created by
 //   the calling project
 // - We also need to tell the gradleTestGenerator where to find the GradleTest
 //   jar. (This is not something a consumer of this plugin would normally do.)
@@ -68,12 +68,15 @@ task sanityCheck {
 }
 
 
+// *IMPORTANT* If you update this list also update .travil.yml & appveyor.yml
 // tag::applyplugin2[]
 gradleTest {
 // end::applyplugin2[]
     dependsOn sanityCheck
+    systemProperties = [:]
 // tag::applyplugin2[]
-    versions '3.2.1', '3.1', '3.0'
+    versions '3.5', '3.4.1'
+    versions '3.3', '3.2.1', '3.1', '3.0'
     versions '2.14.1'
     versions '2.13'
     versions '2.12' ,'2.11','2.10','2.9','2.8'
@@ -94,20 +97,32 @@ appveyor {
                 '-XX:+UseConcMarkSweepGC'
         }
 
-        maxParallelForks = 4
+        maxParallelForks = 2
+        minHeapSize = "256m"
+        maxHeapSize = "768m"
+    }
+}
+
+travisci {
+    gradleTest {
+        maxParallelForks = 2
+        minHeapSize = "256m"
+        maxHeapSize = "768m"
     }
 }
 
 
 test.enabled = false
 
+// *IMPORTANT* If you update this list also update .travis.yml & appveyor.yml
 if(GradleVersion.current() >= GradleVersion.version('2.13')) {
     // tag::addTestSets[]
     additionalGradleTestSet 'nonLegacyOnly' // <1>
 
     nonLegacyOnlyGradleTest { // <2>
+	versions '3.5', '3.4.1', '3.3'
         versions '3.2', '3.1', '3.0' // <3>
-        versions '2.14','2.13'
+        versions '2.14.1'
     }
 
     nonLegacyOnlyGradleTestGenerator { // <4>
@@ -117,6 +132,7 @@ if(GradleVersion.current() >= GradleVersion.version('2.13')) {
 
     nonLegacyOnlyGradleTest {
         dependsOn sanityCheck
+        systemProperties = [:]
 
         beforeTest {
             println "  ${it.name}"

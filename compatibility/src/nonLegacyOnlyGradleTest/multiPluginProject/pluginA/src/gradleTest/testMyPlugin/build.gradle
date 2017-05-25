@@ -1,0 +1,5 @@
+apply plugin : multiproject.MyLibPlugin
+
+task runGradleTest {
+    dependsOn myLibRunner
+}

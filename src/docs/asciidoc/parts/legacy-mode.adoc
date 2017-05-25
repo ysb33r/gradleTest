@@ -1,4 +1,4 @@
-= Legacy Mode (Gradle 2.0-2.12)
+= GradleTest Legacy Mode (Gradle 2.0-2.12)
 
 If you are building your plugin project with any Gradle version 2.0 - 2.12 it automatically invoked legacy mode and
 behaves like the v0.5.5 version of this plugin.

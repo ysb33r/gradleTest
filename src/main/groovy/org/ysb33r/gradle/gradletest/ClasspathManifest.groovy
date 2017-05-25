@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * (C) Copyright Schalk W. Cronje 2015 - 2016
+ * (C) Copyright Schalk W. Cronje 2015 - 2017
  *
  * This software is licensed under the Apache License 2.0
  * See http://www.apache.org/licenses/LICENSE-2.0 for license details
@@ -24,7 +24,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 
 /** Generates a manifest file that can be re-used by @link GradleTest tasks to set the correct classpath
- * for {@code GradleRunner}.
+ * for {@code GradleRunnerSteps}.
  *
  * @since 1.0
  */

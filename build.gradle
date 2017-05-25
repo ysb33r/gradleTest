@@ -1,6 +1,6 @@
 
 plugins {
-	id 'com.gradle.build-scan' version '1.0'
+	id 'com.gradle.build-scan' version '1.6'
     id 'groovy'
     id 'maven'
     id 'org.ysb33r.bintray' version '1.5'
@@ -14,7 +14,7 @@ import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta7'
+version = '1.0-beta9'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
@@ -64,6 +64,7 @@ ext {
 
 dependencies {
 	compile gradleApi()
+	compile gradleTestKit()
 	compile localGroovy()
 	compile depCommonsIO
 
@@ -229,8 +230,8 @@ license {
 	header = rootProject.file('config/HEADER')
 	strictCheck = true
 	ignoreFailures = false
-	ext.year = '2015 - 2016'
-	excludes(['**/*.ad', '**/*.asciidoc', '**/*.adoc', '**/*.md','**/*.properties'])
+	ext.year = '2015 - 2017'
+	excludes(['**/*.ad', '**/*.asciidoc', '**/*.adoc', '**/*.md','**/*.properties','**/*.groovy.template'])
     mapping 'gradle', 'SLASHSTAR_STYLE'
 }
 

@@ -1,14 +1,14 @@
 
 language: groovy
 
-sudo: false
+sudo: required
 
 before_script:
  - ./gradlew -S clean --console=plain
 
 script:
  - ./gradlew -S -i --console=plain assemble
- - ./gradlew -S -i --console=plain --debug test
+ - ./gradlew -S -i --console=plain test
  - ./gradlew -S -i --console=plain integrationTest compatibilityTest
 
 jdk:

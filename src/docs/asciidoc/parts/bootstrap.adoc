@@ -1,14 +1,19 @@
-== Bootstrap
+= Bootstrap
 
 GradleTest is available in the https://plugins.gradle.org/plugin/org.ysb33r.gradletest[Gradle Plugins] repository.
-To use it, add the following snippet into your build script.
+To use it, add the appropriate plugin to the `plugins` block.
 
 [source,groovy,subs="attributes"]
 ----
 plugins {
-  id 'org.ysb33r.gradletest' version '{revnumber}'
+  id 'org.ysb33r.gradletest' version '{revnumber}' // <1>
+  id 'org.ysb33r.gradletest.base' version '{revnumber}' // <2>
+  id 'org.ysb33r.gradlerunner' version '{revnumber}' // <3>
 }
 ----
+<1> The common use case for compatibility testing
+<2> Use the base plugin when you do not require the default `gradleTest` tasks (and related source sets)
+<3> Use the `gradlerunner` to easily execute independent steps of `GradleRunner`.
 
 When your setup is more complex and the plugins block does not work OR if you are using Gradle 2.0 use the following instead
 

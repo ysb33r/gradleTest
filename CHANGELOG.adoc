@@ -17,6 +17,8 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/5[#5] - Allow tests to be executed in parallel
 * https://github.com/ysb33r/gradleTest/issues/52[#52] - Allow for expected failure cases
 * https://github.com/ysb33r/gradleTest/issues/54[#54] - Added base plugin `org.ysb33r.gradletest.base`.
+* https://github.com/ysb33r/gradleTest/issues/62[#62] - Propagate `--rerun-tasks` down to test instances.
+* https://github.com/ysb33r/gradleTest/issues/67[#67] - `org.ysb33r.gradlerunner` plugin provides `gradleRunner` task which can interleave different steps with independent Gradle executions.
 
 === Bugs
 
@@ -30,7 +32,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/42[#42] - `GradleTest` HTML reports should not overwrite over Test
   task reports.
 * https://github.com/ysb33r/gradleTest/issues/45[#45] - When there is no `src/gradleTest` the build fails.
-* https://github.com/ysb33r/gradleTest/issues/46[#46] - When folders below `src/gradleTest` non-word characters,
+* https://github.com/ysb33r/gradleTest/issues/46[#46] - When folders below `src/gradleTest` contain non-word characters,
   compilation of test classes fails.
 * https://github.com/ysb33r/gradleTest/issues/47[#47] - Classpath not correctly resolved under test.
 * https://github.com/ysb33r/gradleTest/issues/48[#48] - When copying gradleTest folders maintain same permissions
@@ -38,24 +40,32 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
   should be removed too.
 * https://github.com/ysb33r/gradleTest/issues/53[#53] - Skip test generation if `src/gradleTest` does not exist.
 * https://github.com/ysb33r/gradleTest/issues/57[#57] - Transitive dependencies for pluginsare not injected into classpath.
+* https://github.com/ysb33r/gradleTest/issues/59[#59] - GradleTest does not detect new folders if previous task completed successfully
 
 === Other
 
-* https://github.com/ysb33r/gradleTest/issues/12[#12] - Fix Javadoc errors.
+* https://github.com/ysb33r/gradleTest/issues/12[#12] - Fixed Javadoc errors.
 * https://github.com/ysb33r/gradleTest/issues/36[#36] - Integration test for `GradleTest` failure under M$ Windows.
-* https://github.com/ysb33r/gradleTest/issues/37[#37] - Integration test for `legacy20.GeadleTest` failure under
+* https://github.com/ysb33r/gradleTest/issues/37[#37] - Integration test for `legacy20.GradleTest` failure under
  M$ Windows.
-* https://github.com/ysb33r/gradleTest/issues/40[#40] - Add gh-pages based docs
+* https://github.com/ysb33r/gradleTest/issues/40[#40] - Added `gh-pages`-based .
 * https://github.com/ysb33r/gradleTest/issues/44[#44] - If license plugin is applied, exclude GradleTest sourcesets
     from check.
 * https://github.com/ysb33r/gradleTest/issues/50[#50] - Removed the use of deprecated `TaskInputs.source(Object)`
   when running under Gradle 3.0+.
+* https://github.com/ysb33r/gradleTest/issues/51[#51] - Compatibility test for multi-project scenarios.
+* https://github.com/ysb33r/gradleTest/issues/55[#55] - Memory: Split compatiblity tests into smaller runs on Appveyor.
+* https://github.com/ysb33r/gradleTest/issues/55[#56] - Memory: Use virtual image rather than container on TravisCI.
+* https://github.com/ysb33r/gradleTest/issues/60[#60] - Mention alternative approaches to `GradleTest`.
+* https://github.com/ysb33r/gradleTest/issues/61[#61] - Validate support for Gradle 3.3.
+* https://github.com/ysb33r/gradleTest/issues/63[#63] - Documented `--offline` behaviour.
+
 // end::changelog[]
 
 == Contributors
 
 // tag::contributors[]
-*
+
 // end::contributors[]
 
 == v0.5.5

@@ -40,13 +40,12 @@ class CompileIntegrationSpec extends Specification {
     }
 
     void setupForNames(List<String> projNames) {
-
         File srcDir = new File(project.projectDir,'src/gradleTest')
         srcDir.mkdirs()
         projNames.each {
             File testDir = new File(srcDir,it)
             testDir.mkdirs()
-            new File(testDir,'build.gradle').text = ''
+            new File(testDir,'build.gradle').text = "task runGradleTest {println '${it}'}"
         }
     }
 
@@ -123,4 +122,65 @@ class CompileIntegrationSpec extends Specification {
         new File(classesDir,"gradleTest/tests/Contains_s_p_a_c_e_sCompatibilitySpec.class").exists()
 
     }
+
+    @Issue('https://github.com/ysb33r/gradleTest/issues/49')
+    def "Delete old generated files when tests are deleted"() {
+        given: "A GradleTest project"
+        File buildDir = project.buildDir
+        setupForNames(TESTNAMES)
+        def configureProject = {
+            configure(project) {
+                apply plugin : 'org.ysb33r.gradletest'
+
+                repositories {
+                    flatDir {
+                        dirs GRADLETESTREPO
+                    }
+                }
+
+                gradleTest {
+                    versions '2.13'
+                }
+
+                evaluate()
+            }
+        }
+
+        when: "The generated source is compiled"
+        configureProject()
+        Task generatorTask = tasks.getByName('gradleTestGenerator')
+        Task compileTask = tasks.getByName('compileGradleTestGroovy')
+        File classesDir = project.sourceSets.getByName('gradleTest').output.classesDir
+        File alphaSource = new File(buildDir,"gradleTest/src/AlphaCompatibilitySpec.groovy")
+        File betaSource = new File(buildDir,"gradleTest/src/BetaCompatibilitySpec.groovy")
+        File alphaClass = new File(classesDir,"gradleTest/tests/AlphaCompatibilitySpec.class")
+        File betaClass = new File(classesDir,"gradleTest/tests/BetaCompatibilitySpec.class")
+        generatorTask.execute()
+        compileTask.execute()
+
+
+        then: "Generator task to have executed"
+        generatorTask.didWork
+        alphaSource.exists()
+        betaSource.exists()
+        alphaClass.exists()
+        betaClass.exists()
+
+        when: "Alpha test is deleted"
+        new File(project.projectDir,'src/gradleTest/alpha').deleteDir()
+        project = ProjectBuilder.builder().withProjectDir(testProjectDir.root).build()
+        configureProject()
+        generatorTask = tasks.getByName('gradleTestGenerator')
+        compileTask = tasks.getByName('compileGradleTestGroovy')
+        generatorTask.execute()
+        compileTask.execute()
+
+        then: "Alpha generated source & compiles class is also deleted"
+        generatorTask.didWork
+        !alphaSource.exists()
+        betaSource.exists()
+        !alphaClass.exists()
+        betaClass.exists()
+    }
+
 }

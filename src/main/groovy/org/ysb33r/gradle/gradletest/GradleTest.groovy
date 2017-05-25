@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * (C) Copyright Schalk W. Cronje 2015 - 2016
+ * (C) Copyright Schalk W. Cronje 2015 - 2017
  *
  * This software is licensed under the Apache License 2.0
  * See http://www.apache.org/licenses/LICENSE-2.0 for license details
@@ -40,6 +40,11 @@ class GradleTest extends Test {
 
         if(project.gradle.startParameter.offline) {
             arguments+= '--offline'
+        }
+
+
+        if(project.gradle.startParameter.isRerunTasks()) {
+            arguments+= '--rerun-tasks'
         }
 
         setHtmlReportFolder()
@@ -147,7 +152,7 @@ class GradleTest extends Test {
      */
     @Input
     List<String> getGradleArguments() {
-        ([ '--init-script',winSafeCmdlineSafe(initScript) ] as List<String>) +
+        List<String> args = ([ '--init-script',winSafeCmdlineSafe(initScript) ] as List<String>) +
         CollectionUtils.stringize(this.arguments) as List<String>
     }
 

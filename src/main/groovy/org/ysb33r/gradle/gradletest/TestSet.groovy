@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * (C) Copyright Schalk W. Cronje 2015 - 2016
+ * (C) Copyright Schalk W. Cronje 2015 - 2017
  *
  * This software is licensed under the Apache License 2.0
  * See http://www.apache.org/licenses/LICENSE-2.0 for license details
@@ -175,7 +175,13 @@ class TestSet {
                     project.sourceSets.main.output
             }
 
-            project.tasks.getByName(compileTaskName).dependsOn(genTaskName)
+            project.tasks.getByName(compileTaskName).with {
+                dependsOn(genTaskName)
+                doFirst {
+                    destinationDir.deleteDir()
+                }
+
+            }
 
             project.tasks.getByName(testTaskName).configure {
                 testClassesDir = project.sourceSets.getByName(testSetBaseName).output.classesDir
@@ -222,7 +228,6 @@ class TestSet {
             dependsOn genTask, compileTaskName, manifestTaskName
             mustRunAfter 'test'
         }
-
 
         project.tasks.getByName('check').dependsOn testTaskName
     }

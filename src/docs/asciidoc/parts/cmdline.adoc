@@ -1,0 +1,6 @@
+== Command-line Awareness
+
+GradleTest is aware of certain command-line parameters and will pass them on to running tests.
+
+* `--rerun-tasks` - All tests will be re-run even if they were previsouly successful.
+* `--offline` - No dependency checks will be performed and if plugins implements any offline behaviour this will automatically be enabled.
