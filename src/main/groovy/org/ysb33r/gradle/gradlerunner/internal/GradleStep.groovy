@@ -13,11 +13,17 @@
  */
 package org.ysb33r.gradle.gradlerunner.internal
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
+import org.ysb33r.gradle.gradlerunner.GradleRunnerPlugin
 import org.ysb33r.gradle.gradlerunner.Step
 import org.ysb33r.gradle.gradlerunner.StepInfo
+
+import java.lang.reflect.Method
 
 /** Runs a Gradle execution.
  *
@@ -26,17 +32,19 @@ import org.ysb33r.gradle.gradlerunner.StepInfo
 @CompileStatic
 class GradleStep extends AbstractStep {
 
-    GradleStep(final String name, final List<String> args,boolean expectFailure) {
-        super(name)
-        this.args = args
-        this.expectFailure = expectFailure
-    }
+//    GradleStep(final Project project,final String name, final List<String> args,boolean expectFailure) {
+//        super(name)
+//        this.project = project
+//        this.args = args
+//        this.expectFailure = expectFailure
+//    }
 
-    GradleStep(final String name,final Iterable<String> args,boolean expectFailure) {
+    GradleStep(final GradleRunnerFactory factory,final String name,final Iterable<String> args,boolean expectFailure) {
         super(name)
         this.args = []
         this.args.addAll(args)
         this.expectFailure = expectFailure
+        this.factory = factory
     }
 
     @Override
@@ -63,9 +71,12 @@ class GradleStep extends AbstractStep {
         this.errorFile
     }
 
-    private BuildResult run(final File projDir, final File outFile,final  File errFile) {
-        BuildResult result
-        GradleRunner runner = GradleRunner.create().withArguments(this.args).withProjectDir(projDir)
+    @CompileDynamic
+    private def run(final File projDir, final File outFile,final  File errFile) {
+
+        def result
+        def runner = factory.createRunner()
+        runner.withArguments(this.args).withProjectDir(projDir)
         outFile.withPrintWriter { PrintWriter out ->
             errFile.withPrintWriter { PrintWriter err ->
                 runner.forwardStdError(err).forwardStdOutput(out)
@@ -79,6 +90,6 @@ class GradleStep extends AbstractStep {
     private File errorFile
 
     private final List<String> args
-    private boolean expectFailure
-
+    private final boolean expectFailure
+    private final GradleRunnerFactory factory
 }

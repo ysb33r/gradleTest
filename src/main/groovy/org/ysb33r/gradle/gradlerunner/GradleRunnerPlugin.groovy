@@ -13,10 +13,12 @@
  */
 package org.ysb33r.gradle.gradlerunner
 
+import groovy.transform.Undefined
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.util.GradleVersion
+import org.ysb33r.gradle.gradlerunner.internal.GradleRunnerFactory
 
 /** Adds a default task called {@code gradleRunner}
  *
@@ -24,6 +26,8 @@ import org.gradle.util.GradleVersion
  */
 class GradleRunnerPlugin implements Plugin<Project> {
     static final String DEFAULT_TASK = 'gradleRunner'
+    static final String CLASSPATH_CONFIGURATION = '$$gradleRunner$$classpath$$'
+    static final String CLASSPATH_EXTENSION = '$$gradleRunner$$extension$$'
 
     @Override
     void apply(Project project) {
@@ -31,7 +35,15 @@ class GradleRunnerPlugin implements Plugin<Project> {
         if (GradleVersion.current() < GradleVersion.version('2.14.1')) {
             throw new GradleException('This plugin requires a minimum version of 2.14.1')
         }
-        
+
+        project.configurations.create(CLASSPATH_CONFIGURATION).with {
+            visible = false
+        }
+
+        project.dependencies.add(CLASSPATH_CONFIGURATION,project.dependencies.gradleTestKit())
+
+        project.extensions.create(CLASSPATH_EXTENSION,GradleRunnerFactory,project)
+
         project.tasks.create DEFAULT_TASK, GradleRunnerSteps
     }
 }

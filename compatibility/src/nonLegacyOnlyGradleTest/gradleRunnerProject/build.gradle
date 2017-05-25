@@ -2,7 +2,7 @@
 // correct during compatibility testing.
 buildscript {
     dependencies {
-        classpath gradleTestKit()
+//        classpath gradleTestKit()
     }
 }
 
