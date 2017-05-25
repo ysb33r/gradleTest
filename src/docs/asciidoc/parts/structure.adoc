@@ -1,3 +1,5 @@
+= Testkit Mode (Gradle 2.13+)
+
 == Conventions
 
 === Filesystem

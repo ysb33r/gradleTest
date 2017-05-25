@@ -14,7 +14,7 @@ import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta8'
+version = '1.0-beta9-SNAPSHOT'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
@@ -66,6 +66,7 @@ dependencies {
 	compile gradleApi()
 	compile localGroovy()
 	compile depCommonsIO
+	compile gradleTestKit()
 
 	testCompile (depSpock) {
 		exclude module : 'groovy-all'

@@ -24,7 +24,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 
 /** Generates a manifest file that can be re-used by @link GradleTest tasks to set the correct classpath
- * for {@code GradleRunner}.
+ * for {@code GradleRunnerSteps}.
  *
  * @since 1.0
  */

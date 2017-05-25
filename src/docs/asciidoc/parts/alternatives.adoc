@@ -1,4 +1,4 @@
-= Alternative Approaches
+= Alternative Approaches to GradleTest
 
 == Gradle TestKit
 

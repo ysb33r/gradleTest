@@ -18,6 +18,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/52[#52] - Allow for expected failure cases
 * https://github.com/ysb33r/gradleTest/issues/54[#54] - Added base plugin `org.ysb33r.gradletest.base`.
 * https://github.com/ysb33r/gradleTest/issues/62[#62] - Propagate `--rerun-tasks` down to test instances.
+* https://github.com/ysb33r/gradleTest/issues/67[#67] - `org.ysb33r.gradlerunner` plugin provides `gradleRunner` task which can interleave different steps with independent Gradle executions.
 
 === Bugs
 
