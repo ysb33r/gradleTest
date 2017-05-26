@@ -27,7 +27,8 @@ class GradleRunnerSpec extends Specification {
 
     def 'Add basic steps and execute'() {
         when:
-        GradleRunnerSteps gradleRunner = project.tasks.create('gradleRunner',GradleRunnerSteps)
+        project.apply plugin : 'org.ysb33r.gradlerunner'
+        GradleRunnerSteps gradleRunner = project.tasks.getByName('gradleRunner')
 
         gradleRunner.step'closure', {
             StepInfo info -> println project.name

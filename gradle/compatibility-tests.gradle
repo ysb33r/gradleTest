@@ -4,8 +4,7 @@ task compatibilityTest( type : GradleBuild ) {
     dependsOn 'integrationTestRepo', 'jar'
     mustRunAfter 'test', 'integrationTest'
 
-//    tasks = ['gradleTest','nonLegacyOnlyGradleTest']
-    tasks = ['nonLegacyOnlyGradleTest']
+    tasks = ['gradleTest','nonLegacyOnlyGradleTest']
     dir = file("${projectDir}/compatibility")
     buildFile = 'compatibility/compatibility.gradle'
     startParameter.projectProperties.compatibilityVersion = version

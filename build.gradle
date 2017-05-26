@@ -4,7 +4,7 @@ plugins {
     id 'groovy'
     id 'maven'
     id 'org.ysb33r.bintray' version '1.5'
-    id 'com.gradle.plugin-publish' version '0.9.4'
+    id 'com.gradle.plugin-publish' version '0.9.7'
     id 'com.github.hierynomus.license' version '0.13.1'
 	id 'org.asciidoctor.convert' version '1.5.3'
 	id 'org.ysb33r.cloudci' version '1.0'
@@ -14,7 +14,7 @@ import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '1.0-beta10'
+version = '1.0-beta11'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'

@@ -22,6 +22,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.FileUtils
 import org.ysb33r.gradle.gradlerunner.internal.ActionStep
 import org.ysb33r.gradle.gradlerunner.internal.ClosureStep
+import org.ysb33r.gradle.gradlerunner.internal.GradleRunnerFactory
 import org.ysb33r.gradle.gradlerunner.internal.GradleStep
 
 /** Executes a set of staps including running Gradle with tasks and capturing the output
@@ -94,7 +95,9 @@ class GradleRunnerSteps extends DefaultTask {
      * @param gradleArgs Arguments to pass to Gradle
      */
     void step(final String name, Iterable<String> gradleArgs) {
-        this.steps.add new GradleStep(name,gradleArgs,false)
+        this.steps.add new GradleStep(
+                (GradleRunnerFactory)(project.extensions.getByName(GradleRunnerPlugin.CLASSPATH_EXTENSION)),
+                name,gradleArgs,false)
     }
 
     /** Execute a Gradle step in the directory specified by {@link #getWorkingDir()}.
@@ -116,7 +119,9 @@ class GradleRunnerSteps extends DefaultTask {
      * @param gradleArgs Arguments to pass to Gradle
      */
     void failingStep(final String name, Iterable<String> gradleArgs) {
-        this.steps.add new GradleStep(name,gradleArgs,true)
+        this.steps.add new GradleStep(
+                (GradleRunnerFactory)(project.extensions.getByName(GradleRunnerPlugin.CLASSPATH_EXTENSION)),
+                name,gradleArgs,true)
     }
 
     /** Execute a failing Gradle step in the directory specified by {@link #getWorkingDir()}.
