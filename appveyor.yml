@@ -14,6 +14,7 @@ test_script:
   - gradlew.bat test compatibilityTest --info --no-daemon -DgradleTest.versions=2.12,2.13,2.14.1 -DnonLegacyOnlyGradleTest.versions=3.1
   - gradlew.bat test compatibilityTest --info --no-daemon -DgradleTest.versions=3.0,3.1,3.2.1 -DnonLegacyOnlyGradleTest.versions=3.2.1
   - gradlew.bat test compatibilityTest --info --no-daemon -DgradleTest.versions=3.3,3.4.1,3.5 -DnonLegacyOnlyGradleTest.versions=3.3,3.4.1,3.5
+  - gradlew.bat test compatibilityTest --info --no-daemon -DgradleTest.versions=4.0 -DnonLegacyOnlyGradleTest.versions=4.0
 
 branches:
   only:
