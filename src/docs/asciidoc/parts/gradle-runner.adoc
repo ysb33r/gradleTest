@@ -9,7 +9,7 @@ Steps are added via the `step` keyword. Each step has a name which can later be 
 gradleRunner {
   step 'a simple closure', {  // <1>
     new File(workingDir,'build.gradle').text = '/* empty build file */'
-    new File(reportsDir,'foo.txt').txt = 'output to report directory'  // <2>
+    new File(reportsDir,'foo.txt').text = 'output to report directory'  // <2>
   }
 
   step 'running gradle', 'tasks', '--all' // <3>
