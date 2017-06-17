@@ -3,6 +3,7 @@
 :doctype: book
 :toc: right
 :icons: font
+:toc-collapsable:
 
 Test your plugin against different versions of Gradle as part of your build. This plugin extends the power that the new
 https://docs.gradle.org/2.13/userguide/test_kit.html[GradleTestKit] brings without having to actually author code. It rather allows plugins authors to write functional tests

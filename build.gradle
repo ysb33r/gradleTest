@@ -55,6 +55,10 @@ repositories {
 			artifact '[artifact]-[revision]-[classifier].zip'
 		}
 	}
+
+        maven {
+          url  "http://dl.bintray.com/puravida-software/repo"
+        }
 }
 
 ext {
@@ -84,7 +88,7 @@ dependencies {
     integrationTestDistros.each {
         add "integrationTestDistro${it.replaceAll(~/\./,'_')}", ":gradle:${it}:bin@zip"
     }
-
+    asciidoctor "com.puravida.asciidoctor:asciidoctor-extensions:1.2"
 }
 
 groovydoc {
