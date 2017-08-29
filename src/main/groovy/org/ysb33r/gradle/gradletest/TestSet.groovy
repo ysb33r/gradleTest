@@ -184,14 +184,21 @@ class TestSet {
             }
 
             project.tasks.getByName(testTaskName).configure {
-                testClassesDir = project.sourceSets.getByName(testSetBaseName).output.classesDir
+                if(GradleVersion.current() < GradleVersion.version('4.0') ) {
+                    testClassesDir = project.sourceSets.getByName(testSetBaseName).output.classesDir
+
+                    if(GradleVersion.current() < GradleVersion.version('3.0') ) {
+                        inputs.source(project.sourceSets.getByName(testSetBaseName).output.classesDir)
+                    } else {
+                        inputs.dir (project.sourceSets.getByName(testSetBaseName).output.classesDir).skipWhenEmpty
+                    }
+                } else {
+                    testClassesDirs = project.sourceSets.getByName(testSetBaseName).output.classesDirs
+
+                    inputs.files (project.sourceSets.getByName(testSetBaseName).output.classesDirs).skipWhenEmpty
+                }
                 classpath = project.sourceSets.getByName(testSetBaseName).runtimeClasspath
 
-                if(GradleVersion.current() < GradleVersion.version('3.0') ) {
-                    inputs.source (project.sourceSets.getByName(testSetBaseName).output.classesDir)
-                } else {
-                    inputs.dir (project.sourceSets.getByName(testSetBaseName).output.classesDir).skipWhenEmpty
-                }
             }
         }
     }

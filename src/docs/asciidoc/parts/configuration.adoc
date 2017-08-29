@@ -55,3 +55,15 @@ NOTE: When the system property is set it will override all `distributionUri` set
 * If gradle is run with `--offline`, it will be passed to the Gradle.
 * `--full-stacktrace` is set and output is captured to test report.
 
+=== Deprecation Messages
+
+As Gradle evolves, certain functionality is marked as deprecated. When these messages are detected during testing, it will
+cause the compatibility test to fail. This behaviour can be turned on (default) or off via the `deprecatedMessagesAreFailures` setting.
+
+[source,groovy]
+----
+gradleTest {
+  deprecatedMessagesAreFailures false // <1>
+}
+----
+<1> Turns off default behaviour of failing on deprecated Gradle functionality.

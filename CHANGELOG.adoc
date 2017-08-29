@@ -19,6 +19,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/54[#54] - Added base plugin `org.ysb33r.gradletest.base`.
 * https://github.com/ysb33r/gradleTest/issues/62[#62] - Propagate `--rerun-tasks` down to test instances.
 * https://github.com/ysb33r/gradleTest/issues/67[#67] - `org.ysb33r.gradlerunner` plugin provides `gradleRunner` task which can interleave different steps with independent Gradle executions.
+* https://github.com/ysb33r/gradleTest/issues/79[#79] - Make Gradle deprecation messages fail tests.
 
 === Bugs
 
@@ -41,6 +42,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/53[#53] - Skip test generation if `src/gradleTest` does not exist.
 * https://github.com/ysb33r/gradleTest/issues/57[#57] - Transitive dependencies for pluginsare not injected into classpath.
 * https://github.com/ysb33r/gradleTest/issues/59[#59] - GradleTest does not detect new folders if previous task completed successfully
+* https://github.com/ysb33r/gradleTest/issues/78[#78] - Fix various deprecation messages with Gradle 4.x.
 
 === Other
 

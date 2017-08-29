@@ -85,6 +85,15 @@ class TestGenerator extends DefaultTask {
         linkedTask.defaultTask
     }
 
+    /** Whether to treat Gradle's deprecation messages as failures.
+     *
+     * @return {@code true} if deprecation messages should fail the tests.
+     */
+    @Input
+    boolean getDeprecationMessageAreFailures() {
+        linkedTask.getDeprecationMessagesAreFailures()
+    }
+
     /** The root directory where to find tests for this specific GradleTest grouping
      * The default root directory by convention is {@code src/gradleTest}. THe patterns for the
      * directory is {@code src/} + {@code gradleTestSetName}.
@@ -172,6 +181,7 @@ class TestGenerator extends DefaultTask {
         final File workDir = project.file("${project.buildDir}/${linkedTestTaskName}")
         final File repoDir = new File(workDir,'repo')
         final List<Pattern> testPatternsForFailures = getLinkedTask().getExpectedFailures()
+        final boolean deprecation = getDeprecationMessageAreFailures()
 
         Set<File> externalDependencies = []
         try {
@@ -201,7 +211,8 @@ class TestGenerator extends DefaultTask {
                 workDir,
                 testLocation,
                 gradleArguments,
-                expectFailure
+                expectFailure,
+                deprecation
             )
         }
 
@@ -273,6 +284,7 @@ class TestGenerator extends DefaultTask {
      * @param testProjectSrcDir Directory where test project is located
      * @param arguments Arguments that will be passed during a run.
      * @param willFail Set to {@code true} if the Gradle script under test is expected to fail.
+     * @param deprecationMessageMode Set to {@code true} to force Gradle's deprecation messages to fail the test.
      */
     @CompileDynamic
     private void copy(
@@ -283,7 +295,8 @@ class TestGenerator extends DefaultTask {
         final File workDir,
         final File testProjectSrcDir,
         final List<String> arguments,
-        final boolean willFail
+        final boolean willFail,
+        final boolean deprecationMessageMode
     ) {
 
         final def fromSource = templateFile
@@ -292,6 +305,7 @@ class TestGenerator extends DefaultTask {
         final String manifest = pathAsUriStr(manifestFile)
         final String work = pathAsUriStr(workDir)
         final String src = pathAsUriStr(testProjectSrcDir)
+        final String deprecation = deprecationMessageMode.toString()
 
         testName
         project.copy {
@@ -307,7 +321,8 @@ class TestGenerator extends DefaultTask {
                 DISTRIBUTION_URI : gradleDistributionUri ?: '',
                 WORKDIR : work,
                 SOURCEDIR : src,
-                FAILMODE : willFail
+                FAILMODE : willFail,
+                CHECK_WARNINGS : deprecation
         }
     }
 

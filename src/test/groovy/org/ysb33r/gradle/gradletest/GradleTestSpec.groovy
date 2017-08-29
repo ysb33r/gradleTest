@@ -127,5 +127,27 @@ class GradleTestSpec extends GradleTestSpecification {
         patterns[1].toString() == 'bar.+'
 
     }
+
+    void 'Deprecation messages as failures'() {
+        when: 'A GradleTest task is created'
+        project.with {
+            apply plugin: 'org.ysb33r.gradletest'
+        }
+        GradleTest defaultTestTask = project.tasks.getByName('gradleTest')
+
+        then: 'Deprecation messages are on by default'
+        defaultTestTask.deprecationMessagesAreFailures
+
+        when: 'It is explicitly turned off'
+        project.with {
+            gradleTest {
+                deprecationMessagesAreFailures false
+            }
+        }
+
+        then: 'Deprecation messages will be false'
+        !defaultTestTask.deprecationMessagesAreFailures
+
+    }
 }
 
