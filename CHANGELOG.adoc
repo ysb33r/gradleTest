@@ -42,7 +42,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/53[#53] - Skip test generation if `src/gradleTest` does not exist.
 * https://github.com/ysb33r/gradleTest/issues/57[#57] - Transitive dependencies for pluginsare not injected into classpath.
 * https://github.com/ysb33r/gradleTest/issues/59[#59] - GradleTest does not detect new folders if previous task completed successfully
-* https://github.com/ysb33r/gradleTest/issues/78[#78] - Fix various deprecation messages with Gradle 4.x.
+* https://github.com/ysb33r/gradleTest/issues/74[#74] - Plugin resolves configuration `$$gradleRunner$$classpath$$` at configuration time.
 
 === Other
 
@@ -61,6 +61,8 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/60[#60] - Mention alternative approaches to `GradleTest`.
 * https://github.com/ysb33r/gradleTest/issues/61[#61] - Validate support for Gradle 3.3.
 * https://github.com/ysb33r/gradleTest/issues/63[#63] - Documented `--offline` behaviour.
+* https://github.com/ysb33r/gradleTest/issues/65[#65] - Documented CodeNarc plugin behaviour.
+* https://github.com/ysb33r/gradleTest/issues/78[#78] - Fix various deprecation messages with Gradle 4.x.
 
 // end::changelog[]
 
