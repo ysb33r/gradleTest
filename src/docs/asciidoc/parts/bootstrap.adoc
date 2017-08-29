@@ -1,4 +1,4 @@
-= Bootstrap
+== Bootstrap
 
 GradleTest is available in the https://plugins.gradle.org/plugin/org.ysb33r.gradletest[Gradle Plugins] repository.
 To use it, add the appropriate plugin to the `plugins` block.

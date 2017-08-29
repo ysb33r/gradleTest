@@ -2,6 +2,8 @@
 
 The `org.ysb33r.gradlerunner` plugin adds a default task called `gradleRunner` which is of type `GradleRunnerSteps`. This task allows people to run specific Gradle steps interlevaed via other actions such as copying files. This is specifically useful for people who need to document development steps where Gradle is involved.
 
+== Steps
+
 Steps are added via the `step` keyword. Each step has a name which can later be used to extract information after execution.
 
 [source,groovy]
@@ -16,7 +18,6 @@ gradleRunner {
 
   failingStep 'this gradle will fail', 'non-existing-task' // <4>
 }
-
 ----
 <1> A step can be a closure or an `Action`.
 <2> Every step will have an unique directory for dropping files,
