@@ -175,6 +175,21 @@ class GradleTest extends Test {
         notSupported('useTestNG()')
     }
 
+    /** If Gradle issues a depcreation messages, treat this as a failure
+     *
+     * <P> {@code true} by default.
+     */
+    @Input
+    boolean deprecationMessagesAreFailures = true
+
+    /** Convenience method to allow for setting deprecation message mode.
+     *
+     * @param setting Deprecation mode.
+     */
+    void deprecationMessagesAreFailures(boolean setting) {
+        this.deprecationMessagesAreFailures = setting
+    }
+
     /** Returns path to initscript that will be used for tests
      *
      * @return Path to init.gradle script
@@ -210,10 +225,14 @@ class GradleTest extends Test {
 
     @CompileDynamic
     void setHtmlReportFolder() {
-        reports.html.destination = {
-            "${project.reporting.baseDir}/${owner.name}"
+        Closure getDir = {
+            project.file("${project.reporting.baseDir}/${owner.name}")
         }
-
+        if( GradleVersion.current() < GradleVersion.version('4.0')) {
+            reports.html.destination = getDir
+        } else {
+            reports.html.destination = project.provider(getDir)
+        }
     }
 
     private void notSupported(final String name) {
@@ -232,7 +251,6 @@ class GradleTest extends Test {
     private List<Object> versions = []
     private URI baseDistributionUri
     private List<Pattern> expectedFailures = []
-
 
     static final String BACKSLASH = '\\'
 

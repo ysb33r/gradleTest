@@ -180,6 +180,7 @@ class GradleRunnerSteps extends DefaultTask {
         }
 
         for (Step step : steps ) {
+            logger.info " -- ${step.getName()}"
             step.execute( work, new File(report,FileUtils.toSafeFileName(step.getName()) ) )
         }
     }

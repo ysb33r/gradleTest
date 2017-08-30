@@ -6,6 +6,8 @@ sudo: required
 before_script:
  - ./gradlew -S clean --console=plain
 
+install: true
+
 script:
  - ./gradlew -S -i --console=plain assemble
  - ./gradlew -S -i --console=plain test

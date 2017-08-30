@@ -1,5 +1,6 @@
 package ${TESTPACKAGE}
 
+import java.util.regex.Pattern
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.apache.commons.io.FileUtils
@@ -16,9 +17,15 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
     static final File SOURCEDIR = new File('${SOURCEDIR}'.toURI())
     static final File CP_MANIFEST = new File('${MANIFEST}'.toURI())
     static final File WORKDIR = new File('${WORKDIR}'.toURI())
+    static final boolean CHECK_WARNINGS = ${CHECK_WARNINGS}
 
     static final String DISTRIBUTION_URI = System.getProperty('org.ysb33r.gradletest.distribution.uri') ?: '${DISTRIBUTION_URI}'
     static final List<String> gradleArguments = [${ARGUMENTS}]
+    static final List<Pattern> warnings = [
+        ~/The .+ method has been deprecated and is scheduled to be removed in Gradle/,
+        ~/Gradle now uses separate output directories for each JVM language, but this build assumes a single directory for all classes from a source set/
+    ]
+
     static List<File> pluginClasspath
     static String buildscriptClasspath
 
@@ -98,12 +105,23 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
         } else {
             pre25_checkoutcome(${FAILMODE},result.output)
         }
+        no_deprecation_warnings(result.output)
 
         where:
         version << [${VERSIONS}]
     }
 
-    boolean pre25_checkoutcome(boolean is_failmode,def output) {
+    private boolean no_deprecation_warnings(final String output) {
+        if(!CHECK_WARNINGS) {
+            true
+        } else {
+            !warnings.any { pat ->
+                output =~ pat
+            }
+        }
+    }
+
+    private boolean pre25_checkoutcome(boolean is_failmode,def output) {
         if(is_failmode) {
             output.matches(':${DEFAULTTASK} FAILED')
         } else {
