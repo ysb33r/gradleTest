@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>GradleTest Gradle Plugin</title>
+<title>Changelog &amp; Release Notes 1.0-beta12</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -416,110 +416,170 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .hide-for-print{display:none!important}
 .show-for-print{display:inherit!important}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 </head>
 <body class="article">
 <div id="header">
-<h1>GradleTest Gradle Plugin</h1>
+<h1>Changelog &amp; Release Notes 1.0-beta12</h1>
 <div class="details">
 <span id="revnumber">version 1.0-beta12</span>
 </div>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>A plugin for testing the compatibility of a Gradle plugin against a list of Gradle releases.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">apply plugin : 'org.ysb33r.gradletest'
-
-gradleTest {
-    versions '4.0', '4.1'
-    versions '3.5', '3.4.1'
-    versions '3.3', '3.2.1', '3.1', '3.0'
-    versions '2.14.1'
-    versions '2.13'
-    versions '2.12' ,'2.11','2.10','2.9','2.8'
-    versions '2.7','2.6','2.5'
-    versions '2.4','2.3','2.2','2.1','2.0'
-
-    beforeTest {
-        println "  ${it.name}"
-    }
-
-}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Product version documentation</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><strong>1.0-beta12</strong></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0-beta12/docs/product-documentation.html">Docs</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0-beta12/api/index.html">Groovydoc</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0-beta12/docs/changelog.html">Changelog</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><strong>0.5.5</strong></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="0.5.5/docs/product-documentation.html">Docs</a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="0.5.5/docs/changelog.html">Changelog</a></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
 <div class="sect1">
-<h2 id="_other_links">Other links</h2>
+<h2 id="_features">Features</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://plugins.gradle.org/search?term=gradleTest">Gradle Plugin Portal</a></p>
+<p>From Gradle 2.13+ GradleTestKit is used to run compatibility tests</p>
 </li>
 <li>
-<p><a href="https://plugins.gradle.org/search?term=gradleTest">Bintray backup repository</a></p>
+<p>For Gradle 2.12 and earlier, legacy mode (from v0.5.5) is used for running tests.</p>
 </li>
 <li>
-<p><a href="https://github.com/ysb33r/gradleTest">Fork me on Github</a></p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/1">#1</a> - Graceful failure when tests have not passed</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/2">#2</a> - HTML test report</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/3">#3</a> - Running counter of tests being executed</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/4">#4</a> - Capture test output and add to test report</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/5">#5</a> - Allow tests to be executed in parallel</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/52">#52</a> - Allow for expected failure cases</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/54">#54</a> - Added base plugin <code>org.ysb33r.gradletest.base</code>.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/62">#62</a> - Propagate <code>--rerun-tasks</code> down to test instances.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/67">#67</a> - <code>org.ysb33r.gradlerunner</code> plugin provides <code>gradleRunner</code> task which can interleave different steps with independent Gradle executions.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/79">#79</a> - Make Gradle deprecation messages fail tests.</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_contributors">Contributors</h2>
+<h2 id="_bugs">Bugs</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>A special thank you goes to:</p>
-</div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/dcendents">Daniel Beland</a> - Gradle 2.5 fixes.</p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/26">#26</a> - Unable to build gradleTest project with Gradle 2.1+.</p>
 </li>
 <li>
-<p><a href="https://github.com/szpak">Marcin Zajączkowski</a> - Fix for Zip errors</p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/34">#34</a> - Distribution URI fails with File paths under Windows.</p>
 </li>
 <li>
-<p><a href="https://github.com/matthiasbalke">Matthias Balke</a> - Documentation</p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/35">#35</a> - TestGenerator is not correctly substituting paths in
+initscript under Windows.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/38">#38</a> - TestGenerator is not correctly substituting paths in
+generated test source code under Windows.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/41">#41</a> - <code>gradleTest</code> configuration is broken.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/42">#42</a> - <code>GradleTest</code> HTML reports should not overwrite over Test
+task reports.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/45">#45</a> - When there is no <code>src/gradleTest</code> the build fails.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/46">#46</a> - When folders below <code>src/gradleTest</code> contain non-word characters,
+compilation of test classes fails.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/47">#47</a> - Classpath not correctly resolved under test.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/48">#48</a> - When copying gradleTest folders maintain same permissions</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/49">#49</a> - When folders below <code>gradleTest</code> are removed, generated code
+should be removed too.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/53">#53</a> - Skip test generation if <code>src/gradleTest</code> does not exist.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/57">#57</a> - Transitive dependencies for pluginsare not injected into classpath.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/59">#59</a> - GradleTest does not detect new folders if previous task completed successfully</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/74">#74</a> - Plugin resolves configuration <code>gradleRunnerclasspath$$</code> at configuration time.</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>If you would liek to contribute, please see <a href="https://github.com/ysb33r/gradleTest/blob/master/HACKING.adoc">HACKING.adoc</a></p>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_other">Other</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/12">#12</a> - Fixed Javadoc errors.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/36">#36</a> - Integration test for <code>GradleTest</code> failure under M$ Windows.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/37">#37</a> - Integration test for <code>legacy20.GradleTest</code> failure under
+M$ Windows.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/40">#40</a> - Added <code>gh-pages</code>-based .</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/44">#44</a> - If license plugin is applied, exclude GradleTest sourcesets
+from check.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/50">#50</a> - Removed the use of deprecated <code>TaskInputs.source(Object)</code>
+when running under Gradle 3.0+.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/51">#51</a> - Compatibility test for multi-project scenarios.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/55">#55</a> - Memory: Split compatiblity tests into smaller runs on Appveyor.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/55">#56</a> - Memory: Use virtual image rather than container on TravisCI.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/60">#60</a> - Mention alternative approaches to <code>GradleTest</code>.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/61">#61</a> - Validate support for Gradle 3.3.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/63">#63</a> - Documented <code>--offline</code> behaviour.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/65">#65</a> - Documented CodeNarc plugin behaviour.</p>
+</li>
+<li>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/78">#78</a> - Fix various deprecation messages with Gradle 4.x.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
