@@ -20,6 +20,7 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/62[#62] - Propagate `--rerun-tasks` down to test instances.
 * https://github.com/ysb33r/gradleTest/issues/67[#67] - `org.ysb33r.gradlerunner` plugin provides `gradleRunner` task which can interleave different steps with independent Gradle executions.
 * https://github.com/ysb33r/gradleTest/issues/79[#79] - Make Gradle deprecation messages fail tests.
+* https://github.com/ysb33r/gradleTest/issues/82[#82] - Test Kotlin-based scripts if Gradle is 4.0+
 
 === Bugs
 
