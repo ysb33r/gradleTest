@@ -68,14 +68,14 @@ task sanityCheck {
 }
 
 
-// *IMPORTANT* If you update this list also update .travil.yml & appveyor.yml
+// *IMPORTANT* If you update this list also update .travis.yml & appveyor.yml
 // tag::applyplugin2[]
 gradleTest {
 // end::applyplugin2[]
     dependsOn sanityCheck
     systemProperties = [:]
 // tag::applyplugin2[]
-    versions '4.0', '4.1'
+    versions '4.0', '4.1', '4.2'
     versions '3.5', '3.4.1'
     versions '3.3', '3.2.1', '3.1', '3.0'
     versions '2.14.1'
@@ -121,8 +121,8 @@ if(GradleVersion.current() >= GradleVersion.version('2.13')) {
     additionalGradleTestSet 'nonLegacyOnly' // <1>
 
     nonLegacyOnlyGradleTest { // <2>
-        versions '4.0', '4.1'
-	versions '3.5', '3.4.1', '3.3'
+        versions '4.0', '4.1', '4.2'
+	    versions '3.5', '3.4.1', '3.3'
         versions '3.2', '3.1', '3.0' // <3>
         versions '2.14.1'
     }
@@ -133,6 +133,30 @@ if(GradleVersion.current() >= GradleVersion.version('2.13')) {
     // end::addTestSets[]
 
     nonLegacyOnlyGradleTest {
+        dependsOn sanityCheck
+        systemProperties = [:]
+
+        beforeTest {
+            println "  ${it.name}"
+        }
+    }
+}
+
+// *IMPORTANT* If you update this list also update .travis.yml & appveyor.yml
+if(GradleVersion.current() >= GradleVersion.version('2.13')) {
+    // tag::addTestSets[]
+    additionalGradleTestSet 'kotlin'
+
+    kotlinGradleTest {
+        versions '4.0', '4.1', '4.2'
+    }
+
+    kotlinGradleTestGenerator {
+        pluginJarDirectory = gradleTestGenerator.pluginJarDirectory
+    }
+    // end::addTestSets[]
+
+    kotlinGradleTest {
         dependsOn sanityCheck
         systemProperties = [:]
 
