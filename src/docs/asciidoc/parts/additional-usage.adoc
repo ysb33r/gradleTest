@@ -52,4 +52,17 @@ gradleTest{
 ----
 <1> Print the name of the current compatibility test that is runnign
 
+== Kotlin DSL
+
+With the growing use of Kotlin-based build scripts, it is also important to test compatibility of a plugin for this context. Turn Kotlin-testing on by setting the following:
+
+[source,groovy]
+----
+gradleTest {
+  kotlinDsl = true
+}
+----
+
+Now drop a `build.gradle.kts` file alongside your `build.gradle` build script. If the gradle version under test is 4.0 or later, GradleTest will also run a test using the Kotlin build script.
+
 

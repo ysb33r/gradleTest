@@ -15,7 +15,7 @@ include::parts/bootstrap.adoc[]
 
 include::parts/structure.adoc[]
 
-include::parts/usage.adoc[]
+include::parts/additional-usage.adoc[]
 
 include::parts/cmdline.adoc[]
 
