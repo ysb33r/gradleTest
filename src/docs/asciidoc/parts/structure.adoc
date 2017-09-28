@@ -1,5 +1,25 @@
 = Testkit Mode (Gradle 2.13+)
 
+== Getting Started
+
+In `build.gradle` define the versions of Gradle that needs to be tested:
+
+[source,groovy]
+----
+gradleTest {
+   versions '2.9', '3.4', '4.1'
+}
+----
+
+Create a folder called `src/gradleTest`. Beneath that add a folder - call it 'myExample` for now. Within that create a normal Gradle project i.e. drop a `build.gradle` file and fill it out with the kind of syntax that a person will use to run your plugin. Finally add a custom task called `runGradleTest` and make it depend on some task that your plugin provides.
+
+For example here is one example from GradleTest's test suite of how itself is being tested.
+
+[source,groovy]
+----
+include::{compatdir}/src/nonLegacyOnlyGradleTest/negativeTest/build.gradle[]
+----
+
 == Conventions
 
 === Filesystem
