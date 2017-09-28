@@ -44,6 +44,11 @@ import java.util.regex.Pattern
 @CompileStatic
 class TestGenerator extends DefaultTask {
 
+    final static String GROOVY_BUILD_SCRIPT = 'build.gradle'
+    final static String KOTLIN_BUILD_SCRIPT = 'build.gradle.kts'
+    final static String GROOVY_TEST_POSTFIX = 'GroovyDSL'
+    final static String KOTLIN_TEST_POSTFIX = 'KotlinDSL'
+
     TestGenerator() {
         onlyIf { getTestRootDirectory().exists() }
     }
@@ -94,6 +99,15 @@ class TestGenerator extends DefaultTask {
         linkedTask.getDeprecationMessagesAreFailures()
     }
 
+    /** Whether to add tests for Kotlin scripts if they are available.
+     *
+     * @return {@code true} if Kotlin scripts should be tested.
+     */
+    @Input
+    boolean getKotlinDsl() {
+        linkedTask.kotlinDsl
+    }
+
     /** The root directory where to find tests for this specific GradleTest grouping
      * The default root directory by convention is {@code src/gradleTest}. THe patterns for the
      * directory is {@code src/} + {@code gradleTestSetName}.
@@ -107,8 +121,9 @@ class TestGenerator extends DefaultTask {
 
     /** A map of the tests found in the appropriate GradleTest directory.
      * The default root directory by convention. See @link #getTestRootDirectory().
-     * Locates all fodler below the root which contains a {@code build.gradle} file -
-     * other folders are ignored.
+     * Locates all folder below the root which contains a {@code build.gradle} file -
+     * other folders are ignored. If {@code getKotlinDsl()} returns {@code true}, then
+     * folders containing {@code build.gradle.kts} will also be included
      *
      * @return A map of consisting of {@code <TestName,PathToTest>}.
      */
@@ -118,8 +133,11 @@ class TestGenerator extends DefaultTask {
         final File root = getTestRootDirectory()
         if(root.exists()) {
             root.eachFile( FileType.DIRECTORIES) { File dir ->
-                if(project.file("${dir}/build.gradle").exists()) {
-                    derivedTestNames[dir.name] = dir.canonicalFile
+                if(project.file("${dir}/${GROOVY_BUILD_SCRIPT}").exists()) {
+                    derivedTestNames["${dir.name}${GROOVY_TEST_POSTFIX}".toString()] = dir.canonicalFile
+                }
+                if(getKotlinDsl() && project.file("${dir}/${KOTLIN_BUILD_SCRIPT}").exists()) {
+                    derivedTestNames["${dir.name}${KOTLIN_TEST_POSTFIX}".toString()] = dir.canonicalFile
                 }
             }
         }
@@ -162,7 +180,7 @@ class TestGenerator extends DefaultTask {
         linkedTask.gradleDistributionUri
     }
 
-    /** Task action will generate as per testnames returned by @Link #etTestMap().
+    /** Task action will generate testsas per the testnames returned by @Link #etTestMap().
      *
      */
     @TaskAction
@@ -235,7 +253,7 @@ class TestGenerator extends DefaultTask {
     /** Creates a init script to be used for running tests
      *
      * @param targetDir Where the init script is copied to
-     * @param jarDir THe path where the plugin JAR will be found
+     * @param jarDir The path where the plugin JAR will be found
      * @param repoDir The path to where the local repo will be created
      * @param externalDependencies A list of external dependencies (JARs).
      */
@@ -280,7 +298,7 @@ class TestGenerator extends DefaultTask {
      * @param testName Name of the test
      * @param defaultTask Default task to execute
      * @param manifestFile Where to locate the classpath manifest
-     * @param workDir Directory where run artifats will be written to
+     * @param workDir Directory where run artifacts will be written to
      * @param testProjectSrcDir Directory where test project is located
      * @param arguments Arguments that will be passed during a run.
      * @param willFail Set to {@code true} if the Gradle script under test is expected to fail.
@@ -299,15 +317,22 @@ class TestGenerator extends DefaultTask {
         final boolean deprecationMessageMode
     ) {
 
+        final boolean isKotlinTest = testName.endsWith(KOTLIN_TEST_POSTFIX)
+
         final def fromSource = templateFile
-        final String verText = quoteAndJoin(versions)
+        final String verText = quoteAndJoin(isKotlinTest ? kotlinDslSafeVersions() : versions)
         final String argsText = quoteAndJoin([defaultTask] + arguments)
         final String manifest = pathAsUriStr(manifestFile)
         final String work = pathAsUriStr(workDir)
         final String src = pathAsUriStr(testProjectSrcDir)
         final String deprecation = deprecationMessageMode.toString()
+        final String deleteScript = isKotlinTest ? GROOVY_BUILD_SCRIPT : KOTLIN_BUILD_SCRIPT
 
-        testName
+        if(verText.empty) {
+            logger.warn("Kotlin DSL testing has been enabled, but none of the specified Gradle versions are 4.0 or later.")
+            return
+        }
+
         project.copy {
             from fromSource
             into targetDir
@@ -322,7 +347,8 @@ class TestGenerator extends DefaultTask {
                 WORKDIR : work,
                 SOURCEDIR : src,
                 FAILMODE : willFail,
-                CHECK_WARNINGS : deprecation
+                CHECK_WARNINGS : deprecation,
+                DELETE_SCRIPT : deleteScript
         }
     }
 
@@ -334,6 +360,16 @@ class TestGenerator extends DefaultTask {
     @CompileDynamic
     private String quoteAndJoin(Iterable c) {
         c.collect { "'${it}'" }.join(',')
+    }
+
+    /** Returns versions which are safe for Kotlin testing
+     *
+     * @return versions for which Kotlin DSL can be tested.
+     */
+    private Iterable<String> kotlinDslSafeVersions() {
+        versions.findAll {
+            !it.startsWith( '2.') && !it.startsWith( '3.' )
+        }
     }
 
     /** Ensures that files are represented as URIs.

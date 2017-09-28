@@ -175,7 +175,21 @@ class GradleTest extends Test {
         notSupported('useTestNG()')
     }
 
-    /** If Gradle issues a depcreation messages, treat this as a failure
+    /** Also test Kotlin build scripts if found.
+     *
+     * <P> {@code false} by default.
+     */
+    boolean kotlinDsl = false
+
+    /** Convenience method to allow for setting Kotlin test mode.
+     *
+     * @param setting Deprecation mode.
+     */
+    void setKotlinDsl(boolean val) {
+        this.kotlinDsl = val
+    }
+
+    /** If Gradle issues a deprecation messages, treat this as a failure
      *
      * <P> {@code true} by default.
      */

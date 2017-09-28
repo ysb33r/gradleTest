@@ -59,6 +59,10 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
         if(!settings.exists()) {
             settings.text = ''
         }
+
+        final File deleteNotUsedDslScript = new File(testProjectDir,'${DELETE_SCRIPT}')
+        deleteNotUsedDslScript.delete()
+
         gradleRunner = GradleRunner.create()
                        .withProjectDir(testProjectDir)
                        .forwardOutput()
@@ -84,7 +88,7 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
             gradleRunner.withPluginClasspath(pluginClasspath)
         } else {
             File buildScript = new File(testProjectDir,'build.gradle')
-                String newScript = buildscriptClasspath.replaceAll(/1.0-groovy-2.4/,'1.0-groovy-2.3') + buildScript.text
+            String newScript = buildscriptClasspath.replaceAll(/1.0-groovy-2.4/,'1.0-groovy-2.3') + buildScript.text
             buildScript.text = newScript
         }
     }
