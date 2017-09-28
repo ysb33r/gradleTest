@@ -182,7 +182,7 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
             .withPluginClasspath(readMetadataFile())
             .forwardOutput()
             .build()
-        println new File("${projectDir}/build/gradleTest/src/GammaCompatibilitySpec.groovy").text
+        println new File("${projectDir}/build/gradleTest/src/GammaGroovyDSLCompatibilitySpec.groovy").text
 
         then:
         result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
@@ -191,7 +191,7 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
 
     @Issue('https://github.com/ysb33r/gradleTest/issues/59')
     def "Adding folders will re-run test task"() {
-        setup: "A GradleTest structrue with three tests"
+        setup: "A GradleTest structure with three tests"
         def gradleRunner = GradleRunner.create()
             .withProjectDir(projectDir)
             .withArguments('gradleTest','-i')
