@@ -13,7 +13,6 @@ plugins {
 import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
-archivesBaseName = 'gradletest'
 version = '1.0'
 
 apply from : 'gradle/integration-tests.gradle'
@@ -213,12 +212,6 @@ pluginBundle {
 			displayName = 'Base plugin for compatibility testing of Gradle plugins providing only functionality, but not default testsets.'
 		}
 	}
-
-	mavenCoordinates {
-		groupId = project.group
-		artifactId = 'gradletest'
-	}
-
 }
 
 publishPlugins {
