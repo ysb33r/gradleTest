@@ -8,6 +8,8 @@ that can directly be used in documentation.
 
 NOTE: *If you are using a Gradle version < 2.13, it will run in legacy mode and behave like the 0.5.5 version of the plugin*.
 
+NOTE: If you used some of the 1.0-betaXYZ versions you might have encountered GradleRunner being shipped. It has been extracted before the final 1.0 release and now lives in its own https://gitlab.com/ysb33rOrg/gradle-runner-plugin[repository on GitLab]
+
 == Previous versions of this document
 
 * https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_5/README.adoc[0.5.5]
