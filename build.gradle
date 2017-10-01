@@ -7,7 +7,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.9.7'
     id 'com.github.hierynomus.license' version '0.13.1'
 	id 'org.asciidoctor.convert' version '1.5.3'
-	id 'org.ysb33r.cloudci' version '1.0'
+	id 'org.ysb33r.cloudci' version '2.2'
 }
 
 import org.asciidoctor.gradle.AsciidoctorTask

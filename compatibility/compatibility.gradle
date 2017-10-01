@@ -28,7 +28,7 @@ buildscript {
     }
     dependencies {
         classpath fileTree("${projectDir}/../build/libs") { include "gradletest-${compatibilityVersion}.jar"}
-        classpath "org.ysb33r.gradle:gradle-cloudci-plugin:1.0"
+        classpath "gradle.plugin.org.ysb33r.gradle:gradle-cloudci-plugin:2.2"
     }
 }
 
@@ -91,24 +91,26 @@ gradleTest {
 }
 // end::applyplugin2[]
 
-appveyor {
-    gradleTest {
-        if (JavaVersion.current().isJava7()) {
-            jvmArgs '-XX:+CMSClassUnloadingEnabled', '-XX:+CMSPermGenSweepingEnabled',
-                '-XX:+UseConcMarkSweepGC'
+cloudci {
+    appveyor {
+        gradleTest {
+            if (JavaVersion.current().isJava7()) {
+                jvmArgs '-XX:+CMSClassUnloadingEnabled', '-XX:+CMSPermGenSweepingEnabled',
+                    '-XX:+UseConcMarkSweepGC'
+            }
+
+            maxParallelForks = 2
+            minHeapSize = "256m"
+            maxHeapSize = "768m"
         }
-
-        maxParallelForks = 2
-        minHeapSize = "256m"
-        maxHeapSize = "768m"
     }
-}
 
-travisci {
-    gradleTest {
-        maxParallelForks = 2
-        minHeapSize = "256m"
-        maxHeapSize = "768m"
+    travisci {
+        gradleTest {
+            maxParallelForks = 2
+            minHeapSize = "256m"
+            maxHeapSize = "768m"
+        }
     }
 }
 
