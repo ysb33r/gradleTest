@@ -33,6 +33,7 @@ class GradleTestPlugin implements Plugin<Project> {
      */
     void apply(Project project) {
         if(GradleVersion.current() < GradleVersion.version('2.13')) {
+            project.logger.warn "GradleTest legacy mode will be removed in 2.0"
             project.apply plugin : LegacyGradleTestPlugin
         } else {
             applyTestKit(project)
