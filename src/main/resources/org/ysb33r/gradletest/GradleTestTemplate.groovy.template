@@ -1,9 +1,17 @@
 package ${TESTPACKAGE}
 
 import java.util.regex.Pattern
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.FileVisitResult
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.FileAlreadyExistsException
+import java.nio.file.attribute.BasicFileAttributes
+import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
+import static java.nio.file.FileVisitResult.CONTINUE
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import org.gradle.testkit.runner.TaskOutcome
@@ -54,7 +62,29 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
           testProjectDir.deleteDir()
         }
         testProjectDir.mkdirs()
-        FileUtils.copyDirectory(SOURCEDIR,testProjectDir)
+        Path source = SOURCEDIR.toPath()
+        Path target = testProjectDir.toPath()
+        Files.walkFileTree( source,new SimpleFileVisitor<Path>() {
+             @Override
+             FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+             {
+                 Path targetdir = target.resolve(source.relativize(dir))
+                 try {
+                     Files.copy(dir, targetdir,COPY_ATTRIBUTES,REPLACE_EXISTING)
+                 } catch (FileAlreadyExistsException e) {
+                      if (!Files.isDirectory(targetdir))
+                          throw e
+                 }
+                 CONTINUE
+             }
+             @Override
+             FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+             {
+                 Files.copy(file, target.resolve(source.relativize(file)),COPY_ATTRIBUTES,REPLACE_EXISTING)
+                 CONTINUE
+             }
+         })
+
         final File settings = new File(testProjectDir,'settings.gradle')
         if(!settings.exists()) {
             settings.text = ''
