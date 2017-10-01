@@ -55,10 +55,7 @@ class ClasspathManifestSpec extends GradleTestSpecification {
         and: "It will contain the Spock Framework jar path"
         text.contains("spock-core-${TestSet.SPOCK_VERSION}.jar")
 
-        and: "It will contain the Apache Commons IO jar path"
-        text.contains("commons-io-${TestSet.COMMONS_IO_VERSION}.jar")
-
-        and: "It will contain the JUNit jar path"
+        and: "It will contain the JUnit jar path"
         text.contains("junit-${TestSet.JUNIT_VERSION}.jar")
     }
 }

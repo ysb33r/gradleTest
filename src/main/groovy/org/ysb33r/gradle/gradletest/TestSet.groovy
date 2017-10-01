@@ -151,7 +151,6 @@ class TestSet {
             add configurationName,gradleTestKit()
             add configurationName,gradleApi()
             add configurationName,spockDependency(project)
-            add configurationName,"commons-io:commons-io:${COMMONS_IO_VERSION}"
             add configurationName,"junit:junit:${JUNIT_VERSION}"
             add configurationName,"org.hamcrest:hamcrest-core:${HAMCREST_VERSION}"
         }
@@ -253,7 +252,6 @@ class TestSet {
     }
 
     final static String SPOCK_VERSION      = "1.0-groovy-${GroovySystem.version.replaceAll(/\.\d+$/,'')}"
-    final static String COMMONS_IO_VERSION = '2.5'
     final static String JUNIT_VERSION      = '4.12'
     final static String HAMCREST_VERSION   = '1.3'
 }
