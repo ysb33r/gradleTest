@@ -11,6 +11,10 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 * https://github.com/ysb33r/gradleTest/issues/76[#76] - File attributes are lost during copy.
 // end::changelog[]
 
+== Breaking changes
+
+* Now requires a minimum JDK7 irrespective of version Gradle. This means that if you run this version in legacy mode with an old version of Gradle you are still going to require JDK7.
+
 == Roadmap 1.0
 
 === Features
