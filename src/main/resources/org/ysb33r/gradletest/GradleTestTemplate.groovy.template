@@ -130,7 +130,7 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
         setupForVersion(version)
 
         when:
-        println 'I am about to run the test project with Gradle ' + version + ' and I am ' + GradleVersion.current()
+        println 'The build is using Gradle ' + GradleVersion.current() + ' and this test project will now use Gradle ' + version
         def result = gradleRunner.${FAILMODE?'buildAndFail':'build'}()
 
         then:
