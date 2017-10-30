@@ -58,9 +58,9 @@ class GradleTest extends Test {
     Set<String> getVersions() {
         String override = System.getProperty("${name}.versions")
         if(override?.size()) {
-            return override.split(',') as Set<String>
+            return removeUnsupportedVersions(override.split(',') as Set<String>)
         }
-        CollectionUtils.stringize(this.versions) as Set<String>
+        removeUnsupportedVersions(CollectionUtils.stringize(this.versions) as Set<String>)
     }
 
     /** Add Gradle versions to be tested against.
@@ -259,6 +259,21 @@ class GradleTest extends Test {
         } else {
             path
         }
+    }
+
+    private Set<String> removeUnsupportedVersions(final Set<String> vers) {
+        GradleVersion min = GradleVersion.version(
+            GradleVersion.current() >= GradleVersion.version('5.0') ? '3.0' : '2.0'
+        )
+        Collection<String> removeThese = vers.findAll { String v ->
+            GradleVersion.version(v) < min
+        }
+        
+        if(!removeThese.empty) {
+            logger.warn( "Gradle versions '${removeThese.join(',')}' are not supported by this version of GradleTest-Gradle combination and will be removed from the test set")
+            vers.removeAll(removeThese)
+        }
+        return vers
     }
 
     private List<Object> arguments = [/*'--no-daemon',*/ '--full-stacktrace', '--info'] as List<Object>
