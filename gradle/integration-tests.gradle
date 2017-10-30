@@ -2,7 +2,7 @@
 // https://raw.githubusercontent.com/robfletcher/gradle-compass/master/gradle/integration-tests.gradle
 
 ext {
-    integrationTestDistros = [ '2.1', '2.5', '2.8', '2.9', '2.13', '3.2']
+    integrationTestDistros = ['3.0', '3.1', '3.5', '4.0.2', '4.3.1']
 }
 
 configurations {
@@ -12,7 +12,7 @@ configurations {
     integrationTestRuntime {
         extendsFrom integrationTestCompile, testRuntime
     }
-    integrationTestDistros.each { create("integrationTestDistro${it.replaceAll(~/\./,'_')}") }
+    integrationTestDistros.each { create("integrationTestDistro${it.replaceAll(~/\./, '_')}") }
     integrationTestRepo
 }
 
@@ -21,15 +21,21 @@ sourceSets {
         java.srcDir file("src/integrationTest/java")
         groovy.srcDir file("src/integrationTest/groovy")
         resources.srcDir file("src/integrationTest/resources")
-        compileClasspath = sourceSets.main.output +  configurations.integrationTestCompile
+        compileClasspath = sourceSets.main.output + configurations.integrationTestCompile
         runtimeClasspath = output + compileClasspath + configurations.integrationTestRuntime
     }
 }
 
 task integrationTest(type: Test, dependsOn: jar) {
-    testClassesDir = sourceSets.integrationTest.output.classesDir
+    // TODO: Remove condition before releasing 2.0. It's only here so that cross-checks between 3.x & 4.x could be done manually during development.
+    if (GradleVersion.current() >= GradleVersion.version('4.0')) {
+        testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    } else {
+        testClassesDir = sourceSets.integrationTest.output.classesDir
+    }
     classpath = sourceSets.integrationTest.runtimeClasspath
     mustRunAfter test
+    systemProperties 'org.gradle.console': 'plain'
 }
 
 check.dependsOn integrationTest

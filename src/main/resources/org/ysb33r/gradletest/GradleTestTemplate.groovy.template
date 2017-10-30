@@ -109,18 +109,12 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
 
     List<String> getArguments(final GradleVersion gradleVersionUnderTest,final String version) {
         List<String> args = gradleArguments + []
-        args.add( (gradleVersionUnderTest > GradleVersion.version('2.2')) ? '--console=plain' : '--no-color')
+        args.add( '--console=plain' )
         args
     }
 
     void addClasspath(final GradleVersion gradleVersionUnderTest,final String version) {
-        if( gradleVersionUnderTest >= GradleVersion.version('2.8') ) {
-            gradleRunner.withPluginClasspath(pluginClasspath)
-        } else {
-            File buildScript = new File(testProjectDir,'build.gradle')
-            String newScript = buildscriptClasspath.replaceAll(/1.0-groovy-2.4/,'1.0-groovy-2.3') + buildScript.text
-            buildScript.text = newScript
-        }
+        gradleRunner.withPluginClasspath(pluginClasspath)
     }
 
     @Unroll
@@ -134,11 +128,7 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
         def result = gradleRunner.${FAILMODE?'buildAndFail':'build'}()
 
         then:
-        if(gradleVersionUnderTest >= GradleVersion.version('2.5')) {
-            result.task(':${DEFAULTTASK}')?.outcome == TaskOutcome.${FAILMODE?'FAILED':'SUCCESS'}
-        } else {
-            pre25_checkoutcome(${FAILMODE},result.output)
-        }
+        result.task(':${DEFAULTTASK}')?.outcome == TaskOutcome.${FAILMODE?'FAILED':'SUCCESS'}
         no_deprecation_warnings(result.output)
 
         where:
@@ -152,14 +142,6 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
             !warnings.any { pat ->
                 output =~ pat
             }
-        }
-    }
-
-    private boolean pre25_checkoutcome(boolean is_failmode,def output) {
-        if(is_failmode) {
-            output.matches(':${DEFAULTTASK} FAILED')
-        } else {
-            !output.matches(':${DEFAULTTASK} (SKIPPED|UP-TO-DATE|FAILED)')
         }
     }
 }
