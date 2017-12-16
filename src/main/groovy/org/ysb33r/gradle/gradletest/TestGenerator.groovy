@@ -330,28 +330,51 @@ class TestGenerator extends DefaultTask {
             final boolean willFail,
             final boolean deprecationMessageMode
     ) {
-        for (File gfile in testDefinitions.groovyBuildFiles){
-            String testName = testBase + gfile.name.split("\\.")[0] + GROOVY_TEST_POSTFIX
-            List<String> workerArguments = arguments
-            workerArguments.addAll(["--build-file", gfile.name])
+        copySub(testDefinitions.groovyBuildFiles,
+                GROOVY_TEST_POSTFIX,
+                targetDir,
+                testBase,
+                defaultTask,
+                manifestFile,
+                workDir,
+                testDefinitions,
+                arguments,
+                willFail,
+                deprecationMessageMode
+        )
 
-            copyWorker(
-                    targetDir,
-                    testName,
-                    defaultTask,
-                    manifestFile,
-                    workDir,
-                    testDefinitions.testDir,
-                    workerArguments,
-                    willFail,
-                    deprecationMessageMode
-            )
-        }
+        copySub(testDefinitions.kotlinBuildFiles,
+                KOTLIN_TEST_POSTFIX,
+                targetDir,
+                testBase,
+                defaultTask,
+                manifestFile,
+                workDir,
+                testDefinitions,
+                arguments,
+                willFail,
+                deprecationMessageMode
+        )
 
-        for (File kFile in testDefinitions.kotlinBuildFiles){
-            String testName = testBase + kFile.name.split("\\.")[0] + KOTLIN_TEST_POSTFIX
+    }
+
+    private void copySub(
+            List<File> buildFiles,
+            final String postfix,
+        final File targetDir,
+        final String testBase,
+        final String defaultTask,
+        final File manifestFile,
+        final File workDir,
+        final TestDefinition testDefinitions,
+        final List<String> arguments,
+        final boolean willFail,
+        final boolean deprecationMessageMode
+    ){
+        for (File buildFile in buildFiles){
+            String testName = testBase + buildFile.name.split("\\.")[0] + postfix
             List<String> workerArguments = arguments
-            workerArguments.addAll(["--build-file", kFile.name])
+            workerArguments.addAll(["--build-file", buildFile.name])
 
             copyWorker(
                     targetDir,
