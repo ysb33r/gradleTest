@@ -19,21 +19,18 @@ import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.GradleException
-import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.UnknownConfigurationException
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.internal.os.OperatingSystem
+
 
 import java.util.regex.Pattern
 
@@ -48,6 +45,9 @@ class TestGenerator extends DefaultTask {
     final static String KOTLIN_BUILD_SCRIPT = 'build.gradle.kts'
     final static String GROOVY_TEST_POSTFIX = 'GroovyDSL'
     final static String KOTLIN_TEST_POSTFIX = 'KotlinDSL'
+
+    final static String GROOVY_BUILD_EXTENSION = "gradle"
+    final static String KOTLIN_BUILD_EXTENSION = "gradle.kts"
 
     TestGenerator() {
         onlyIf { getTestRootDirectory().exists() }
@@ -128,16 +128,30 @@ class TestGenerator extends DefaultTask {
      * @return A map of consisting of {@code <TestName,PathToTest>}.
      */
     @Input
-    TreeMap<String,File> getTestMap() {
-        TreeMap<String,File> derivedTestNames = [:] as TreeMap
+    TreeMap<String,TestDefinition> getTestMap() {
+        TreeMap<String,TestDefinition> derivedTestNames = [:] as TreeMap
         final File root = getTestRootDirectory()
         if(root.exists()) {
-            root.eachFile( FileType.DIRECTORIES) { File dir ->
-                if(project.file("${dir}/${GROOVY_BUILD_SCRIPT}").exists()) {
-                    derivedTestNames["${dir.name}${GROOVY_TEST_POSTFIX}".toString()] = dir.canonicalFile
+
+            // define the file name filter to find one or more build files
+            def groovyFilter = new FilenameFilter() {
+                boolean accept(File path, String filename) {
+                    return filename.endsWith(GROOVY_BUILD_EXTENSION)
                 }
-                if(getKotlinDsl() && project.file("${dir}/${KOTLIN_BUILD_SCRIPT}").exists()) {
-                    derivedTestNames["${dir.name}${KOTLIN_TEST_POSTFIX}".toString()] = dir.canonicalFile
+            }
+
+            def kotlinFilter = new FilenameFilter() {
+                boolean accept(File path, String filename) {
+                    return filename.endsWith(KOTLIN_BUILD_EXTENSION)
+                }
+            }
+
+            root.eachFile( FileType.DIRECTORIES) { File dir ->
+                List<File> groovyBuildFiles =  dir.listFiles(groovyFilter) as List
+                List<File> kotlinBuildFiles =  dir.listFiles(kotlinFilter) as List
+
+                if ((groovyBuildFiles.size() > 0) || (kotlinBuildFiles.size() > 0)) {
+                    derivedTestNames[dir.name] = new TestDefinition(dir.canonicalFile, groovyBuildFiles, kotlinBuildFiles)
                 }
             }
         }
@@ -215,7 +229,7 @@ class TestGenerator extends DefaultTask {
         // Before generation delete existing generated code
         outputDir.deleteDir()
 
-        testMap.each { String testName,File testLocation ->
+        testMap.each { String testName,TestDefinition testDef ->
 
             boolean expectFailure = testPatternsForFailures.find { pat ->
                 testName =~ pat
@@ -227,7 +241,7 @@ class TestGenerator extends DefaultTask {
                 defaultTask,
                 manifestFile,
                 workDir,
-                testLocation,
+                testDef,
                 gradleArguments,
                 expectFailure,
                 deprecation
@@ -292,7 +306,7 @@ class TestGenerator extends DefaultTask {
         (project.sourceSets as SourceSetContainer).getByName(linkedTestTaskName).getGroovy()
     }
 
-    /** Generates one source file
+    /** Processes the groovy and kotlin arrays to generate the spock files
      *
      * @param targetDir Directory to generate Spock file into.
      * @param testName Name of the test
@@ -306,6 +320,67 @@ class TestGenerator extends DefaultTask {
      */
     @CompileDynamic
     private void copy(
+            final File targetDir,
+            final String testBase,
+            final String defaultTask,
+            final File manifestFile,
+            final File workDir,
+            final TestDefinition testDefinitions,
+            final List<String> arguments,
+            final boolean willFail,
+            final boolean deprecationMessageMode
+    ) {
+        for (File gfile in testDefinitions.groovyBuildFiles){
+            String testName = testBase + gfile.name.split("\\.")[0] + GROOVY_TEST_POSTFIX
+            List<String> workerArguments = arguments
+            workerArguments.addAll(["--build-file", gfile.name])
+
+            copyWorker(
+                    targetDir,
+                    testName,
+                    defaultTask,
+                    manifestFile,
+                    workDir,
+                    testDefinitions.testDir,
+                    workerArguments,
+                    willFail,
+                    deprecationMessageMode
+            )
+        }
+
+        for (File kFile in testDefinitions.kotlinBuildFiles){
+            String testName = testBase + kFile.name.split("\\.")[0] + KOTLIN_TEST_POSTFIX
+            List<String> workerArguments = arguments
+            workerArguments.addAll(["--build-file", kFile.name])
+
+            copyWorker(
+                    targetDir,
+                    testName,
+                    defaultTask,
+                    manifestFile,
+                    workDir,
+                    testDefinitions.testDir,
+                    workerArguments,
+                    willFail,
+                    deprecationMessageMode
+            )
+        }
+    }
+
+    /** Generates one source file
+     *
+     * @param targetDir Directory to generate Spock file into.
+     * @param testName Name of the test
+     * @param defaultTask Default task to execute
+     * @param manifestFile Where to locate the classpath manifest
+     * @param workDir Directory where run artifacts will be written to
+     * @param testProjectSrcDir Directory where test project is located
+     * @param arguments Arguments that will be passed during a run.
+     * @param willFail Set to {@code true} if the Gradle script under test is expected to fail.
+     * @param deprecationMessageMode Set to {@code true} to force Gradle's deprecation messages to fail the test.
+     */
+    @CompileDynamic
+    private void copyWorker(
         final File targetDir,
         final String testName,
         final String defaultTask,
