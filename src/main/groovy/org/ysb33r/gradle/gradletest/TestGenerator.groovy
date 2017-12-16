@@ -132,17 +132,18 @@ class TestGenerator extends DefaultTask {
         TreeMap<String,TestDefinition> derivedTestNames = [:] as TreeMap
         final File root = getTestRootDirectory()
         if(root.exists()) {
-
+            def excludeFiles = ["settings.gradle", "settings.gradle.kts"]
             // define the file name filter to find one or more build files
             def groovyFilter = new FilenameFilter() {
                 boolean accept(File path, String filename) {
-                    return filename.endsWith(GROOVY_BUILD_EXTENSION)
+
+                    return (filename.endsWith(GROOVY_BUILD_EXTENSION) && !(filename in excludeFiles))
                 }
             }
 
             def kotlinFilter = new FilenameFilter() {
                 boolean accept(File path, String filename) {
-                    return filename.endsWith(KOTLIN_BUILD_EXTENSION)
+                    return (filename.endsWith(KOTLIN_BUILD_EXTENSION) && !(filename in excludeFiles))
                 }
             }
 
