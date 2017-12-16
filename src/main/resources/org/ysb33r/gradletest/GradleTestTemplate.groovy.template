@@ -100,7 +100,7 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
        if( DISTRIBUTION_URI.empty ) {
            gradleRunner.withGradleVersion(version)
        } else {
-           final String uri = DISTRIBUTION_URI + '/gradle-' + version + '-bin.zip'
+           final String uri = DISTRIBUTION_URI + getDistributionFilename(version)
            gradleRunner.withGradleDistribution(uri.toURI())
        }
        gradleRunner.withArguments(getArguments(gradleVersionUnderTest,version))
@@ -121,6 +121,17 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
             String newScript = buildscriptClasspath.replaceAll(/1.0-groovy-2.4/,'1.0-groovy-2.3') + buildScript.text
             buildScript.text = newScript
         }
+    }
+
+    def getDistributionFilename(String version){
+        String fname = '${DIST_FILENAME_PATTERN}'
+        fname = fname.replaceAll( '@version@', version)
+
+        if (!fname.startsWith("/")){
+            fname = "/" + fname
+        }
+
+        return fname
     }
 
     @Unroll

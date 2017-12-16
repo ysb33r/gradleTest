@@ -146,6 +146,19 @@ class GradleTest extends Test {
         baseDistributionUri
     }
 
+    String getGradleDistributionFilenamePattern() {
+        distributionFilenamePattern
+    }
+
+    /**
+     * Allows you to set the pattern for the filename used for the distribution.  This is for
+     * corporate users that may have a custom branded version of Gradle to test against.
+     * @param name
+     */
+    void setGradleDistributionFilenamePattern(String name) {
+        distributionFilenamePattern = name
+    }
+
     /** Returns the arguments that needs to be passed to the running GradleTest instance
      *
      * @return List of arguments in order
@@ -264,6 +277,7 @@ class GradleTest extends Test {
     private List<Object> arguments = [/*'--no-daemon',*/ '--full-stacktrace', '--info'] as List<Object>
     private List<Object> versions = []
     private URI baseDistributionUri
+    private String distributionFilenamePattern = '/gradle-@version@-bin.zip'
     private List<Pattern> expectedFailures = []
 
     static final String BACKSLASH = '\\'
