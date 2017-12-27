@@ -103,6 +103,7 @@ class InfrastructureIntegrationSpec extends Specification {
         exists gradleVersion
         exists "${gradleVersion}/simpleTest"
         exists "${gradleVersion}/simpleTest/build.gradle"
+        exists "${gradleVersion}/simpleTest/secondBuild.gradle"
         exists 'repo'
         exists 'repo/commons-cli-1.2.jar'
 

@@ -231,7 +231,6 @@ class TestGenerator extends DefaultTask {
         outputDir.deleteDir()
 
         testMap.each { String testName,TestDefinition testDef ->
-
             boolean expectFailure = testPatternsForFailures.find { pat ->
                 testName =~ pat
             }
@@ -339,7 +338,7 @@ class TestGenerator extends DefaultTask {
                 manifestFile,
                 workDir,
                 testDefinitions,
-                arguments,
+                cloneList(arguments),
                 willFail,
                 deprecationMessageMode
         )
@@ -352,11 +351,21 @@ class TestGenerator extends DefaultTask {
                 manifestFile,
                 workDir,
                 testDefinitions,
-                arguments,
+                cloneList(arguments),
                 willFail,
                 deprecationMessageMode
         )
 
+    }
+
+    static List<String> cloneList(List<String> list) {
+        List<String> clone = new ArrayList<String>(list.size())
+
+        for (String item : list) {
+            clone.add(item)
+        }
+
+        return clone
     }
 
     private void copySub(
@@ -373,8 +382,9 @@ class TestGenerator extends DefaultTask {
         final boolean deprecationMessageMode
     ){
         for (File buildFile in buildFiles){
-            String testName = testBase + buildFile.name.split("\\.")[0] + postfix
-            List<String> workerArguments = arguments
+            String testName = testBase + "_" + buildFile.name.split("\\.")[0].capitalize() + postfix
+
+            List<String> workerArguments = cloneList(arguments)
             workerArguments.addAll(["--build-file", buildFile.name])
 
             copyWorker(

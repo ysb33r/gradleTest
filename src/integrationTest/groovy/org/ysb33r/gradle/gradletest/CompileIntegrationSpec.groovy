@@ -82,7 +82,7 @@ class CompileIntegrationSpec extends Specification {
         generatorTask.didWork
 
         and: "Expected classes in output directory"
-        new File(classesDir,"gradleTest/tests/AlphabuildGroovyDSLCompatibilitySpec.class").exists()
+        new File(classesDir,"gradleTest/tests/Alpha_BuildGroovyDSLCompatibilitySpec.class").exists()
     }
 
     @Issue('https://github.com/ysb33r/gradleTest/issues/46')
@@ -118,8 +118,8 @@ class CompileIntegrationSpec extends Specification {
         generatorTask.didWork
 
         and: "Expected classes in output directory"
-        new File(classesDir,"gradleTest/tests/Contains_d_a_s_h_e_sbuildGroovyDSLCompatibilitySpec.class").exists()
-        new File(classesDir,"gradleTest/tests/Contains_s_p_a_c_e_sbuildGroovyDSLCompatibilitySpec.class").exists()
+        new File(classesDir,"gradleTest/tests/Contains_d_a_s_h_e_s_BuildGroovyDSLCompatibilitySpec.class").exists()
+        new File(classesDir,"gradleTest/tests/Contains_s_p_a_c_e_s_BuildGroovyDSLCompatibilitySpec.class").exists()
 
     }
 
@@ -151,10 +151,10 @@ class CompileIntegrationSpec extends Specification {
         Task generatorTask = tasks.getByName('gradleTestGenerator')
         Task compileTask = tasks.getByName('compileGradleTestGroovy')
         File classesDir = project.sourceSets.getByName('gradleTest').output.classesDir
-        File alphaSource = new File(buildDir,"gradleTest/src/AlphabuildGroovyDSLCompatibilitySpec.groovy")
-        File betaSource = new File(buildDir,"gradleTest/src/BetabuildGroovyDSLCompatibilitySpec.groovy")
-        File alphaClass = new File(classesDir,"gradleTest/tests/AlphabuildGroovyDSLCompatibilitySpec.class")
-        File betaClass = new File(classesDir,"gradleTest/tests/BetabuildGroovyDSLCompatibilitySpec.class")
+        File alphaSource = new File(buildDir,"gradleTest/src/Alpha_BuildGroovyDSLCompatibilitySpec.groovy")
+        File betaSource = new File(buildDir,"gradleTest/src/Beta_BuildGroovyDSLCompatibilitySpec.groovy")
+        File alphaClass = new File(classesDir,"gradleTest/tests/Alpha_BuildGroovyDSLCompatibilitySpec.class")
+        File betaClass = new File(classesDir,"gradleTest/tests/Beta_BuildGroovyDSLCompatibilitySpec.class")
         generatorTask.execute()
         compileTask.execute()
 

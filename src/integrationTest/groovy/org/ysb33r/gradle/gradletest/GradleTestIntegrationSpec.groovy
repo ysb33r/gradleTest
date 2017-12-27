@@ -182,7 +182,7 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
             .withPluginClasspath(readMetadataFile())
             .forwardOutput()
             .build()
-        println new File("${projectDir}/build/gradleTest/src/GammabuildGroovyDSLCompatibilitySpec.groovy").text
+        println new File("${projectDir}/build/gradleTest/src/Gamma_BuildGroovyDSLCompatibilitySpec.groovy").text
 
         then:
         result.task(":gradleTest").outcome == TaskOutcome.SUCCESS

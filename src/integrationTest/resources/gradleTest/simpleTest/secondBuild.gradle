@@ -1,3 +1,4 @@
+package gradleTest.simpleTest
 /*
  * ============================================================================
  * (C) Copyright Schalk W. Cronje 2015 - 2017
@@ -11,13 +12,22 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest
+buildscript {
+    dependencies {
+        classpath 'org.ysb33r.doxygen:doxygen:0.2'
+    }
+}
 
-import groovy.transform.TupleConstructor
+apply plugin: 'groovy'
+apply plugin: 'org.ysb33r.doxygen'
 
-@TupleConstructor
-class TestDefinition implements Serializable {
-      File testDir
-      List<File> groovyBuildFiles
-      List<File> kotlinBuildFiles
+version = '0.1'
+
+dependencies {
+    compile localGroovy()
+    compile ':commons-cli:1.2'
+}
+
+task runGradleTest {
+    dependsOn jar
 }
