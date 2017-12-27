@@ -22,6 +22,8 @@ import spock.lang.Title
 @Title('${TESTNAME}')
 class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
 
+    static final String TESTBASENAME = '${TESTBASENAME}'
+
     static final File SOURCEDIR = new File('${SOURCEDIR}'.toURI())
     static final File CP_MANIFEST = new File('${MANIFEST}'.toURI())
     static final File WORKDIR = new File('${WORKDIR}'.toURI())
@@ -57,33 +59,37 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
 
     void setupForVersion(final String version) {
         final GradleVersion gradleVersionUnderTest = GradleVersion.version(version)
-        testProjectDir = new File(WORKDIR,'${TESTNAME}/' + version)
-        if(testProjectDir.exists()) {
-          testProjectDir.deleteDir()
-        }
+        testProjectDir = new File(WORKDIR,'${TESTBASENAME}/' + version)
+        boolean copyFiles = !testProjectDir.exists()
+       // if(testProjectDir.exists()) {
+       //   testProjectDir.deleteDir()
+       // }
         testProjectDir.mkdirs()
         Path source = SOURCEDIR.toPath()
         Path target = testProjectDir.toPath()
-        Files.walkFileTree( source,new SimpleFileVisitor<Path>() {
-             @Override
-             FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-             {
-                 Path targetdir = target.resolve(source.relativize(dir))
-                 try {
-                     Files.copy(dir, targetdir,COPY_ATTRIBUTES,REPLACE_EXISTING)
-                 } catch (FileAlreadyExistsException e) {
-                      if (!Files.isDirectory(targetdir))
-                          throw e
+
+        if (copyFiles) {
+            Files.walkFileTree( source,new SimpleFileVisitor<Path>() {
+                 @Override
+                 FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                 {
+                     Path targetdir = target.resolve(source.relativize(dir))
+                     try {
+                         Files.copy(dir, targetdir,COPY_ATTRIBUTES,REPLACE_EXISTING)
+                     } catch (FileAlreadyExistsException e) {
+                          if (!Files.isDirectory(targetdir))
+                              throw e
+                     }
+                     CONTINUE
                  }
-                 CONTINUE
-             }
-             @Override
-             FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-             {
-                 Files.copy(file, target.resolve(source.relativize(file)),COPY_ATTRIBUTES,REPLACE_EXISTING)
-                 CONTINUE
-             }
-         })
+                 @Override
+                 FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                 {
+                     Files.copy(file, target.resolve(source.relativize(file)),COPY_ATTRIBUTES,REPLACE_EXISTING)
+                     CONTINUE
+                 }
+             })
+        }
 
         final File settings = new File(testProjectDir,'settings.gradle')
         if(!settings.exists()) {

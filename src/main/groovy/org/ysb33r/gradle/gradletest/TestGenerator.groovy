@@ -389,6 +389,7 @@ class TestGenerator extends DefaultTask {
 
             copyWorker(
                     targetDir,
+                    testBase,
                     testName,
                     defaultTask,
                     manifestFile,
@@ -416,6 +417,7 @@ class TestGenerator extends DefaultTask {
     @CompileDynamic
     private void copyWorker(
         final File targetDir,
+        final String testBase,
         final String testName,
         final String defaultTask,
         final File manifestFile,
@@ -448,6 +450,7 @@ class TestGenerator extends DefaultTask {
             rename ~/.+/,"${testName.capitalize()}CompatibilitySpec.groovy"
             expand TESTPACKAGE : testPackageName,
                 TESTNAME : testName.capitalize(),
+                TESTBASENAME: testBase,
                 MANIFEST : manifest,
                 ARGUMENTS : argsText,
                 DEFAULTTASK : defaultTask,
