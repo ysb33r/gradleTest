@@ -60,35 +60,18 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
     void setupForVersion(final String version) {
         final GradleVersion gradleVersionUnderTest = GradleVersion.version(version)
         testProjectDir = new File(WORKDIR,'${TESTBASENAME}/' + version)
-        boolean copyFiles = !testProjectDir.exists()
-       // if(testProjectDir.exists()) {
-       //   testProjectDir.deleteDir()
-       // }
+
         testProjectDir.mkdirs()
         Path source = SOURCEDIR.toPath()
         Path target = testProjectDir.toPath()
 
-        if (copyFiles) {
-            Files.walkFileTree( source,new SimpleFileVisitor<Path>() {
-                 @Override
-                 FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-                 {
-                     Path targetdir = target.resolve(source.relativize(dir))
-                     try {
-                         Files.copy(dir, targetdir,COPY_ATTRIBUTES,REPLACE_EXISTING)
-                     } catch (FileAlreadyExistsException e) {
-                          if (!Files.isDirectory(targetdir))
-                              throw e
-                     }
-                     CONTINUE
-                 }
-                 @Override
-                 FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                 {
-                     Files.copy(file, target.resolve(source.relativize(file)),COPY_ATTRIBUTES,REPLACE_EXISTING)
-                     CONTINUE
-                 }
-             })
+        def ant = new AntBuilder()
+        ant.sequential {
+            copy(todir: target) {
+                fileset(dir: source) {
+                    include(name: "**/*.*")
+                }
+            }
         }
 
         final File settings = new File(testProjectDir,'settings.gradle')
