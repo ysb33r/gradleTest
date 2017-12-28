@@ -31,7 +31,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
 
-
+import java.nio.file.Paths
 import java.util.regex.Pattern
 
 /** Generates test files that will be compiled against GradleTestKit.
@@ -136,14 +136,15 @@ class TestGenerator extends DefaultTask {
             // define the file name filter to find one or more build files
             def groovyFilter = new FilenameFilter() {
                 boolean accept(File path, String filename) {
-
-                    return (filename.endsWith(GROOVY_BUILD_EXTENSION) && !(filename in excludeFiles))
+                    boolean isFile = Paths.get(path.absolutePath, filename).toFile().isFile()
+                    return (filename.endsWith(GROOVY_BUILD_EXTENSION) && !(filename in excludeFiles) && isFile)
                 }
             }
 
             def kotlinFilter = new FilenameFilter() {
                 boolean accept(File path, String filename) {
-                    return (filename.endsWith(KOTLIN_BUILD_EXTENSION) && !(filename in excludeFiles))
+                    boolean isFile = Paths.get(path.absolutePath, filename).toFile().isFile()
+                    return (filename.endsWith(KOTLIN_BUILD_EXTENSION) && !(filename in excludeFiles) && isFile)
                 }
             }
 
