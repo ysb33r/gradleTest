@@ -41,8 +41,9 @@ class TestGeneratorSpec extends GradleTestSpecification {
             apply plugin : 'org.ysb33r.gradletest'
 
             gradleTest {
-                versions '1.999','1.998'
-                versions '1.997'
+                versions '2.999','2.998'
+                versions '2.997'
+                versions '4.0'
                 kotlinDsl = true
             }
             evaluate()
@@ -90,14 +91,7 @@ class TestGeneratorSpec extends GradleTestSpecification {
         source.contains "package ${genTask.testPackageName}"
         source.contains "result.task(':runGradleTest')" 
         source.contains "def \"Alpha_BuildGroovyDSL : #version\"()"
-        source.contains "version << ['1.999','1.998','1.997']"
-        source.contains "'--build-file','build.gradle'"
-
-        when: "The generated source file is inspected"
-        source = new File(genTask.outputDir,"Beta_TestTwoKotlinDSLCompatibilitySpec.groovy").text
-
-        then:
-        source.contains "'--build-file','testTwo.gradle.kts'"
+        source.contains "version << ['2.999','2.998','2.997','4.0']"
     }
 
     def "When there is no gradleTest folder, the task should not fail, just be skipped"() {
@@ -106,7 +100,7 @@ class TestGeneratorSpec extends GradleTestSpecification {
             apply plugin : 'org.ysb33r.gradletest'
 
             gradleTest {
-                versions '1.997'
+                versions '2.997'
             }
             evaluate()
         }

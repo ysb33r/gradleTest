@@ -23,6 +23,8 @@ import spock.lang.Title
 class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
 
     static final String TESTBASENAME = '${TESTBASENAME}'
+    static final String TESTFILENAME = '${TESTFILENAME}'
+    static final String language = '${LANGUAGE}'
 
     static final File SOURCEDIR = new File('${SOURCEDIR}'.toURI())
     static final File CP_MANIFEST = new File('${MANIFEST}'.toURI())
@@ -79,6 +81,8 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
             settings.text = ''
         }
 
+        setupBuildScriptFile(testProjectDir, TESTFILENAME, language)
+
         final File deleteNotUsedDslScript = new File(testProjectDir,'${DELETE_SCRIPT}')
         deleteNotUsedDslScript.delete()
 
@@ -94,6 +98,51 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
        }
        gradleRunner.withArguments(getArguments(gradleVersionUnderTest,version))
        addClasspath(gradleVersionUnderTest,version)
+    }
+
+
+    void setupBuildScriptFile(File testProjectDir, String testScriptName, String lang){
+        String buildFile
+        String stagedBuildFile
+
+        (buildFile, stagedBuildFile) = getScriptFilenames(lang)
+
+        if (testScriptName == buildFile) {
+            testScriptName = stagedBuildFile
+        }
+
+        File build = new File(testProjectDir, buildFile)
+        File staged = new File(testProjectDir, stagedBuildFile)
+
+        if (build.exists() && staged.exists()) {
+            // this means that this script has created a staged build file in the past
+            // therefore the data in the staged build is the actual build file and the
+            // build file is actually the thin wrapper
+            build.delete()
+        } else if (build.exists() && !staged.exists()) {
+            // here we can assume that this has never been run on the folder
+            // and the build script is the actual build script
+            build.renameTo(staged)
+        }
+
+        switch (lang) {
+            case 'LANGUAGE.GROOVY':
+                build.write("apply from: '" + testScriptName + "'")
+                break
+            case 'LANGUAGE.KOTLIN':
+                build.write("apply { from('" + testScriptName + "') }")
+                break
+        }
+
+    }
+
+    def getScriptFilenames(String lang) {
+        switch (lang) {
+        case 'LANGUAGE.GROOVY':
+            return ["build.gradle", "staged.build.gradle"]
+        case 'LANGUAGE.KOTLIN':
+            return ["build.gradle.kts", "staged.build.gradle.kts"]
+        }
     }
 
     List<String> getArguments(final GradleVersion gradleVersionUnderTest,final String version) {

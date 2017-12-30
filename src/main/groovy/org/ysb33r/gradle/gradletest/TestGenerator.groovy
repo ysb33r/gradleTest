@@ -34,13 +34,16 @@ import org.gradle.api.tasks.bundling.Jar
 import java.nio.file.Paths
 import java.util.regex.Pattern
 
+enum LANGUAGE {
+    GROOVY, KOTLIN
+}
+
 /** Generates test files that will be compiled against GradleTestKit.
  *
  * @since 1.0
  */
 @CompileStatic
 class TestGenerator extends DefaultTask {
-
     final static String GROOVY_BUILD_SCRIPT = 'build.gradle'
     final static String KOTLIN_BUILD_SCRIPT = 'build.gradle.kts'
     final static String GROOVY_TEST_POSTFIX = 'GroovyDSL'
@@ -333,6 +336,7 @@ class TestGenerator extends DefaultTask {
     ) {
         copySub(testDefinitions.groovyBuildFiles,
                 GROOVY_TEST_POSTFIX,
+                LANGUAGE.GROOVY,
                 targetDir,
                 testBase,
                 defaultTask,
@@ -346,6 +350,7 @@ class TestGenerator extends DefaultTask {
 
         copySub(testDefinitions.kotlinBuildFiles,
                 KOTLIN_TEST_POSTFIX,
+                LANGUAGE.KOTLIN,
                 targetDir,
                 testBase,
                 defaultTask,
@@ -372,6 +377,7 @@ class TestGenerator extends DefaultTask {
     private void copySub(
             List<File> buildFiles,
             final String postfix,
+            final LANGUAGE language,
         final File targetDir,
         final String testBase,
         final String defaultTask,
@@ -385,18 +391,17 @@ class TestGenerator extends DefaultTask {
         for (File buildFile in buildFiles){
             String testName = testBase + "_" + buildFile.name.split("\\.")[0].capitalize() + postfix
 
-            List<String> workerArguments = cloneList(arguments)
-            workerArguments.addAll(["--build-file", buildFile.name])
-
             copyWorker(
                     targetDir,
                     testBase,
                     testName,
+                    buildFile.name,
+                    language,
                     defaultTask,
                     manifestFile,
                     workDir,
                     testDefinitions.testDir,
-                    workerArguments,
+                    arguments,
                     willFail,
                     deprecationMessageMode
             )
@@ -420,6 +425,8 @@ class TestGenerator extends DefaultTask {
         final File targetDir,
         final String testBase,
         final String testName,
+        final String testScript,
+        final LANGUAGE language,
         final String defaultTask,
         final File manifestFile,
         final File workDir,
@@ -445,6 +452,17 @@ class TestGenerator extends DefaultTask {
             return
         }
 
+        String langValue
+
+        switch (language) {
+            case LANGUAGE.GROOVY:
+                langValue = "LANGUAGE.GROOVY"
+                break
+            case LANGUAGE.KOTLIN:
+                langValue = "LANGUAGE.KOTLIN"
+                break
+        }
+
         project.copy {
             from fromSource
             into targetDir
@@ -452,6 +470,8 @@ class TestGenerator extends DefaultTask {
             expand TESTPACKAGE : testPackageName,
                 TESTNAME : testName.capitalize(),
                 TESTBASENAME: testBase,
+                TESTFILENAME: testScript,
+                LANGUAGE: langValue,
                 MANIFEST : manifest,
                 ARGUMENTS : argsText,
                 DEFAULTTASK : defaultTask,
