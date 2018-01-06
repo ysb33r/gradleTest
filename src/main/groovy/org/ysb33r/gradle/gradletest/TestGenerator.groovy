@@ -34,9 +34,6 @@ import org.gradle.api.tasks.bundling.Jar
 import java.nio.file.Paths
 import java.util.regex.Pattern
 
-enum LANGUAGE {
-    GROOVY, KOTLIN
-}
 
 /** Generates test files that will be compiled against GradleTestKit.
  *
@@ -336,7 +333,7 @@ class TestGenerator extends DefaultTask {
     ) {
         copySub(testDefinitions.groovyBuildFiles,
                 GROOVY_TEST_POSTFIX,
-                LANGUAGE.GROOVY,
+                GradleScriptLanguage.GROOVY,
                 targetDir,
                 testBase,
                 defaultTask,
@@ -350,7 +347,7 @@ class TestGenerator extends DefaultTask {
 
         copySub(testDefinitions.kotlinBuildFiles,
                 KOTLIN_TEST_POSTFIX,
-                LANGUAGE.KOTLIN,
+                GradleScriptLanguage.KOTLIN,
                 targetDir,
                 testBase,
                 defaultTask,
@@ -377,16 +374,16 @@ class TestGenerator extends DefaultTask {
     private void copySub(
             List<File> buildFiles,
             final String postfix,
-            final LANGUAGE language,
-        final File targetDir,
-        final String testBase,
-        final String defaultTask,
-        final File manifestFile,
-        final File workDir,
-        final TestDefinition testDefinitions,
-        final List<String> arguments,
-        final boolean willFail,
-        final boolean deprecationMessageMode
+            final GradleScriptLanguage language,
+            final File targetDir,
+            final String testBase,
+            final String defaultTask,
+            final File manifestFile,
+            final File workDir,
+            final TestDefinition testDefinitions,
+            final List<String> arguments,
+            final boolean willFail,
+            final boolean deprecationMessageMode
     ){
         for (File buildFile in buildFiles){
             String testName = testBase + "_" + buildFile.name.split("\\.")[0].capitalize() + postfix
@@ -422,18 +419,18 @@ class TestGenerator extends DefaultTask {
      */
     @CompileDynamic
     private void copyWorker(
-        final File targetDir,
-        final String testBase,
-        final String testName,
-        final String testScript,
-        final LANGUAGE language,
-        final String defaultTask,
-        final File manifestFile,
-        final File workDir,
-        final File testProjectSrcDir,
-        final List<String> arguments,
-        final boolean willFail,
-        final boolean deprecationMessageMode
+            final File targetDir,
+            final String testBase,
+            final String testName,
+            final String testScript,
+            final GradleScriptLanguage language,
+            final String defaultTask,
+            final File manifestFile,
+            final File workDir,
+            final File testProjectSrcDir,
+            final List<String> arguments,
+            final boolean willFail,
+            final boolean deprecationMessageMode
     ) {
 
         final boolean isKotlinTest = testName.endsWith(KOTLIN_TEST_POSTFIX)
@@ -455,10 +452,10 @@ class TestGenerator extends DefaultTask {
         String langValue
 
         switch (language) {
-            case LANGUAGE.GROOVY:
+            case GradleScriptLanguage.GROOVY:
                 langValue = "LANGUAGE.GROOVY"
                 break
-            case LANGUAGE.KOTLIN:
+            case GradleScriptLanguage.KOTLIN:
                 langValue = "LANGUAGE.KOTLIN"
                 break
         }
