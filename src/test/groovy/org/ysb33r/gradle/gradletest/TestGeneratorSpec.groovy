@@ -89,7 +89,7 @@ class TestGeneratorSpec extends GradleTestSpecification {
         then:
         source.contains "package ${genTask.testPackageName}"
         source.contains "result.task(':runGradleTest')" 
-        source.contains "def \"AlphaGroovyDSL : #version\"()"
+        source.contains "def \"Alpha_BuildGroovyDSL : #version\"()"
         source.contains "version << ['3.999','3.998','4.997']"
     }
 

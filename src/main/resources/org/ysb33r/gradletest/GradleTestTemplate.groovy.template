@@ -38,9 +38,7 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
         ~/Gradle now uses separate output directories for each JVM language, but this build assumes a single directory for all classes from a source set/
     ]
 
-    static final String legacyStartsWith = 'buildscript { dependencies { classpath files('
     static List<File> pluginClasspath
-    static String buildscriptClasspath
 
     File testProjectDir
     File buildFile
@@ -54,10 +52,6 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
         pluginClasspath = CP_MANIFEST.readLines().collect {
             new File(it)
         }
-
-        buildscriptClasspath = legacyStartsWith +
-            pluginClasspath.collect { "'" + it.absoluteFile.toURI().toString() + "'.toURI()" }.join(',') +
-            ') } }' + "\\n\\n"
     }
 
     void setupForVersion(final String version) {

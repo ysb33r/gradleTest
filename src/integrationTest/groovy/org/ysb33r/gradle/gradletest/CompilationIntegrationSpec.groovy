@@ -55,7 +55,7 @@ class CompilationIntegrationSpec extends GradleTestIntegrationSpecification {
         result.task(':gradleTestGenerator').outcome == SUCCESS
         result.task(':compileGradleTestGroovy').outcome == SUCCESS
         result.task(':gradleTestClasses').outcome == SUCCESS
-        new File(project.buildDir,"classes${classesLang}/gradleTest/gradleTest/tests/AlphaGroovyDSLCompatibilitySpec.class").exists()
+        new File(project.buildDir,"classes${classesLang}/gradleTest/gradleTest/tests/Alpha_BuildGroovyDSLCompatibilitySpec.class").exists()
         result.task(':gradleTest').outcome == SUCCESS
 
         where:
