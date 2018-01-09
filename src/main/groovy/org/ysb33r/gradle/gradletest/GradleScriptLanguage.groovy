@@ -11,22 +11,8 @@
  *
  * ============================================================================
  */
-// This is the default init script to be used.
+package org.ysb33r.gradle.gradletest
 
-allprojects {
-    buildscript {
-        repositories {
-            flatDir {
-                dirs "\${project.rootProject.projectDir}/../../repo"
-            }
-        }
-        dependencies {
-            classpath fileTree('${PLUGINDIR}'.toURI()) { include "*.jar"}
-        }
-    }
-    repositories {
-        flatDir {
-            dirs "\${project.rootProject.projectDir}/../../repo"
-        }
-    }
+enum GradleScriptLanguage {
+    GROOVY, KOTLIN
 }

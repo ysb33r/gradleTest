@@ -1,0 +1,14 @@
+
+apply plugin : 'org.ysb33r.gradletest'
+
+repositories {
+    jcenter()
+}
+
+gradleTest {
+    versions '3.0','4.1'
+    expectFailure ~/expectedBuildFailure/
+}
+
+task runGradleTest( dependsOn : ['gradleTest'] ) {
+}

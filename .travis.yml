@@ -9,15 +9,13 @@ before_script:
 install: true
 
 script:
- - ./gradlew -S -i --console=plain assemble
- - ./gradlew -S -i --console=plain test
- - ./gradlew -S -i --console=plain integrationTest compatibilityTest
+ - ./gradlew -S -i --no-build-cache --console=plain assemble
+ - ./gradlew -i --no-build-cache --console=plain test
+ - ./gradlew -i --no-build-cache --console=plain integrationTest
+ - ./gradlew -i --no-build-cache --console=plain compatibilityTest
 
 jdk:
  - oraclejdk8
-# - oraclejdk7
-# - openjdk7
-# - openjdk6
 
 os:
  - linux
@@ -30,7 +28,6 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-#after_success: ./gradlew coveralls -PbintrayUser= -PbintrayApiKey
 
 branches:
   only:

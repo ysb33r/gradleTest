@@ -3,6 +3,11 @@
 This only documents the current in-progress changelog (or call it a roadmap if you wish). To see changelog
 for a specific release, please visit the http://ysb33r.github.io/gradleTest[plugin website].
 
+== Roadmap - 2.0
+
+* Legacy mode removed.
+* Only supports compatibility tests against Gradle 3.0 or later.
+
 == Roadmap - 1.1
 
 // tag::changelog[]
