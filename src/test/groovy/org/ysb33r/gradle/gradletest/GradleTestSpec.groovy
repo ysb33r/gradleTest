@@ -26,8 +26,10 @@ class GradleTestSpec extends GradleTestSpecification {
             apply plugin : 'org.ysb33r.gradletest'
 
             gradleTest {
-                versions '2.999','2.998'
-                versions '2.997'
+                versions '3.999','3.998'
+                versions '3.997'
+
+
             }
             evaluate()
         }
@@ -35,10 +37,10 @@ class GradleTestSpec extends GradleTestSpecification {
         def defaultGenTask     = project.tasks.getByName('gradleTestGenerator')
 
         then: "The test task will contain a list of these versions"
-        defaultTestTask.versions == ['2.999','2.998','2.997'] as Set<String>
+        defaultTestTask.versions == ['3.999','3.998','3.997'] as Set<String>
 
         and: "The generator task will contain a list of these versions"
-        defaultGenTask.versions == ['2.999','2.998','2.997'] as Set<String>
+        defaultGenTask.versions == ['3.999','3.998','3.997'] as Set<String>
 
         and: "Distribution URI will be null (indicating default behaviour)"
         defaultTestTask.gradleDistributionUri == null
@@ -56,7 +58,7 @@ class GradleTestSpec extends GradleTestSpecification {
             apply plugin : 'org.ysb33r.gradletest'
 
             gradleTest {
-                versions '1.997'
+                versions '3.997'
                 gradleArguments '--max-workers',4
             }
             evaluate()

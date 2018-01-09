@@ -20,12 +20,17 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.util.GradleVersion
 import org.ysb33r.gradle.gradletest.internal.GradleTestIntegrationSpecification
 import spock.lang.Issue
+import spock.lang.Unroll
+
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 
 class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
 
     static final List TESTNAMES = ['alpha','beta','gamma']
     static final File GRADLETESTREPO = new File(System.getProperty('GRADLETESTREPO') ?: 'build/integrationTest/repo').absoluteFile
+
     @Delegate Project project
     File srcDir
 
@@ -45,7 +50,7 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
           gradleTest 'org.ysb33r.gradle:doxygen:0.2'
         }
         gradleTest {
-            versions '3.2', '2.13', '2.9', '2.8', '2.5', '2.1'
+            versions '3.0', '3.1', '3.5', '4.0.2', '4.3.1'
             gradleDistributionUri '${GRADLETESTREPO.toURI()}'
 
             doFirst {
@@ -103,7 +108,7 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
         }
     }
 
-    def "Running with 2.13+ invokes new GradleTestKit"() {
+    def "Running with 3.0+ invokes new GradleTestKit"() {
 
         setup:
         genTestStructureForSuccess(srcDir)
@@ -118,13 +123,13 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
             .build()
 
         then:
-        result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
+        result.task(":gradleTest").outcome == SUCCESS
 
         and: "There is a file in the local repo"
         new File("${buildDir}/gradleTest/repo/doxygen-0.2.jar").exists()
     }
 
-    def "Setting up a second test set for Gradle 2.13+"() {
+    def "Setting up a second test set for Gradle 3.0+"() {
         setup:
         buildFile << """
         additionalGradleTestSet ('second')
@@ -157,14 +162,15 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
             .build()
 
         then:
-        result.task(":secondGradleTest").outcome == TaskOutcome.SUCCESS
+        result.task(":secondGradleTest").outcome == SUCCESS
 
         and: "There is a file in the local repo"
         new File("${buildDir}/secondGradleTest/repo/doxygen-0.2.jar").exists()
     }
 
     @Issue("https://github.com/ysb33r/gradleTest/issues/52")
-    def "Handle expected failure"() {
+    @Unroll
+    def "Handle expected failure (using Gradle Version #gradleVer)"() {
 
         setup:
         buildFile << """
@@ -181,11 +187,15 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
             .withArguments('gradleTest','-i')
             .withPluginClasspath(readMetadataFile())
             .forwardOutput()
+            .withGradleDistribution(new File(GRADLETESTREPO,"gradle-${gradleVer}-bin.zip").toURI())
             .build()
-        println new File("${projectDir}/build/gradleTest/src/Gamma_BuildGroovyDSLCompatibilitySpec.groovy").text
+//println new File("${projectDir}/build/gradleTest/src/groovy/GammaGroovyDSLCompatibilitySpec.groovy").text
 
         then:
-        result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
+        result.task(":gradleTest").outcome == SUCCESS
+
+        where:
+        gradleVer << [ '3.0', '4.0.2' ]
 
     }
 
@@ -204,14 +214,14 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
         def result = gradleRunner.build()
 
         then: 'The tests execute successfully'
-        result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
+        result.task(":gradleTest").outcome == SUCCESS
 
         when: 'It is executed again'
         println "I'm running this test chain again and I'm " + GradleVersion.current()
         result = gradleRunner.build()
 
         then: 'The task should be skipped'
-        result.task(":gradleTest").outcome == TaskOutcome.UP_TO_DATE
+        result.task(":gradleTest").outcome == UP_TO_DATE
 
         when: 'An additional test is added'
         File testDir = new File(srcDir, 'delta')
@@ -229,7 +239,7 @@ class GradleTestIntegrationSpec extends GradleTestIntegrationSpecification {
         result = gradleRunner.build()
 
         then: 'Then the task will be successfully executed'
-        result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
+        result.task(":gradleTest").outcome == SUCCESS
     }
 
 }

@@ -16,10 +16,10 @@ package org.ysb33r.gradle.gradletest
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.GradleRunner
-import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.util.GradleVersion
 import org.ysb33r.gradle.gradletest.internal.GradleTestIntegrationSpecification
-import spock.lang.Issue
+
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 
 class CommandLineIntegrationSpec extends GradleTestIntegrationSpecification {
@@ -45,7 +45,7 @@ class CommandLineIntegrationSpec extends GradleTestIntegrationSpecification {
           gradleTest 'org.ysb33r.gradle:doxygen:0.2'
         }
         gradleTest {
-            versions '3.2'
+            versions '${GradleTestIntegrationSpecification.AVAILABLE_GRADLE_VERSIONS[0]}'
             gradleDistributionUri '${GRADLETESTREPO.toURI()}'
 
             doFirst {
@@ -77,7 +77,7 @@ class CommandLineIntegrationSpec extends GradleTestIntegrationSpecification {
         }
     }
 
-    def "Running with 2.13+ honours --rerun-tasks"() {
+    def "Running with 3.0+ honours --rerun-tasks"() {
 
         setup:
         genTestStructureForSuccess(srcDir)
@@ -99,7 +99,7 @@ class CommandLineIntegrationSpec extends GradleTestIntegrationSpecification {
             .build()
 
         then:
-        result.task(":gradleTest").outcome == TaskOutcome.SUCCESS
+        result.task(":gradleTest").outcome == SUCCESS
 
     }
 

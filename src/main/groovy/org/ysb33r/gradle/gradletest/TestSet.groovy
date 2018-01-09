@@ -20,6 +20,9 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.gradle.util.GradleVersion
+import org.ysb33r.gradle.gradletest.internal.GradleVersions
+
+import static org.ysb33r.gradle.gradletest.internal.GradleVersions.GRADLE_4_0_OR_LATER
 
 /** Internal utility functions to add a new GradleTest test set.
  *
@@ -74,9 +77,9 @@ class TestSet {
      */
     @PackageScope
     static Closure getSourceDir(Project project,final String testSetBaseName) {
-        { Project p,String setname ->
-            "${p.buildDir}/${setname}/src"
-        } .curry(project,testSetBaseName)
+        { Project p, final String setname, final String postfix ->
+            "${p.buildDir}/${setname}/src${postfix}"
+        } .curry(project,testSetBaseName,GRADLE_4_0_OR_LATER ? '/groovy' : '')
     }
 
     /** Gets the directory where manifest file will be generated into.
@@ -164,7 +167,7 @@ class TestSet {
         final String compileTaskName = getCompileTaskName(testSetBaseName)
         final String testTaskName = getTestTaskName(testSetBaseName)
 
-        project.afterEvaluate {
+//        project.afterEvaluate {
             project.sourceSets.create testSetBaseName, {
                 groovy.srcDirs = [project.file(getSourceDir(project,testSetBaseName))]
                 resources.srcDirs = [project.file( getResourcesDir(project,testSetBaseName) )]
@@ -183,23 +186,20 @@ class TestSet {
             }
 
             project.tasks.getByName(testTaskName).configure {
-                if(GradleVersion.current() < GradleVersion.version('4.0') ) {
-                    testClassesDir = project.sourceSets.getByName(testSetBaseName).output.classesDir
-
-                    if(GradleVersion.current() < GradleVersion.version('3.0') ) {
-                        inputs.source(project.sourceSets.getByName(testSetBaseName).output.classesDir)
-                    } else {
-                        inputs.dir (project.sourceSets.getByName(testSetBaseName).output.classesDir).skipWhenEmpty
-                    }
-                } else {
+                if(GRADLE_4_0_OR_LATER) {
                     testClassesDirs = project.sourceSets.getByName(testSetBaseName).output.classesDirs
-
                     inputs.files (project.sourceSets.getByName(testSetBaseName).output.classesDirs).skipWhenEmpty
+
+                } else {
+                    testClassesDir = project.sourceSets.getByName(testSetBaseName).output.classesDir
+                    inputs.dir (project.sourceSets.getByName(testSetBaseName).output.classesDir).skipWhenEmpty
+final File ff = testClassesDir
+println "**** is using ${testClassesDir}"
                 }
                 classpath = project.sourceSets.getByName(testSetBaseName).runtimeClasspath
 
             }
-        }
+//        }
     }
 
     @PackageScope

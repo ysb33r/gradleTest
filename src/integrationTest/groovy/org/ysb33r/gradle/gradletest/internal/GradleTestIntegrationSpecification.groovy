@@ -23,8 +23,11 @@ import spock.lang.Specification
  */
 class GradleTestIntegrationSpecification extends Specification {
 
-    static final File PLUGIN_METADATA_FILE = new File( System.getProperty('PLUGIN_METADATA_FILE') ?: 'build/integrationTest/manifest/plugin-classpath.txt')
-    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
+    static final File PLUGIN_METADATA_FILE = new File(System.getProperty('PLUGIN_METADATA_FILE') ?: 'build/integrationTest/manifest/plugin-classpath.txt')
+    static final List AVAILABLE_GRADLE_VERSIONS = ['3.0', '3.1', '3.5', '4.0.2', '4.3.1']
+
+    @Rule
+    final TemporaryFolder testProjectDir = new TemporaryFolder()
     File buildFile
 
     void setup() {
@@ -33,29 +36,11 @@ class GradleTestIntegrationSpecification extends Specification {
     }
 
     void writeBuildScriptHeader(final String version) {
-        GradleVersion current = GradleVersion.version(version)
-        if (current < GradleVersion.version('2.8')) {
-            String uriList = readMetadataFile().collect {
-                "'${it.absoluteFile.toURI()}'.toURI()"
-            }.join(',')
-            buildFile << """
-            buildscript {
-                dependencies {
-                    classpath files(${uriList})
-                }
-            }
-
-            apply plugin : 'org.ysb33r.gradletest'
-"""
-        } else {
-            buildFile << """
+        buildFile << """
             plugins {
                 id 'org.ysb33r.gradletest'
             }
 """
-
-        }
-
     }
 
 

@@ -1,6 +1,6 @@
 
 plugins {
-	id 'com.gradle.build-scan' version '1.6'
+	id 'com.gradle.build-scan' version '1.8'
     id 'groovy'
     id 'maven'
     id 'org.ysb33r.bintray' version '1.5'
@@ -13,7 +13,7 @@ plugins {
 import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
-version = '1.2-SNAPSHOT'
+version = '2.0-SNAPSHOT'
 
 apply from : 'gradle/integration-tests.gradle'
 apply from : 'gradle/compatibility-tests.gradle'
@@ -153,7 +153,7 @@ integrationTest {
     dependsOn integrationTestRepo, createIntegrationTestClasspathManifest
 
     systemProperties TESTPROJECTSRCDIR : "${buildDir}/resources/integrationTest/gradleTest"
-    systemProperties GRADLETESTDIST : configurations.integrationTestDistro2_1.files[0]
+    systemProperties GRADLETESTDIST : configurations.integrationTestDistro3_0.files[0]
     systemProperties GRADLETESTREPO : file("${buildDir}/integrationTest/repo")
     systemProperties PLUGIN_METADATA_FILE : file("${createIntegrationTestClasspathManifest.outputDir}/plugin-classpath.txt")
 	systemProperties PROJECTROOT : projectDir

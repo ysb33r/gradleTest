@@ -21,8 +21,12 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.CollectionUtils
 import org.gradle.util.GradleVersion
+import org.ysb33r.gradle.gradletest.internal.GradleVersions
 
 import java.util.regex.Pattern
+
+import static org.ysb33r.gradle.gradletest.internal.GradleVersions.GRADLE_3_0
+import static org.ysb33r.gradle.gradletest.internal.GradleVersions.GRADLE_4_0_OR_LATER
 
 /**
  * Runs compatibility tests using special compiled GradleTestKit-based tests
@@ -31,13 +35,6 @@ import java.util.regex.Pattern
 class GradleTest extends Test {
 
     GradleTest() {
-        if(GradleVersion.current() < GradleVersion.version('2.13')) {
-            throw new GradleException("GradleTest is only compatible with Gradle 2.13+. " +
-                "If you are using an older version of Gradle, please use " +
-                "org.ysb33r.gradle.gradletest.legacy20.GradleTest instead."
-            )
-        }
-
         if(project.gradle.startParameter.offline) {
             arguments+= '--offline'
         }
@@ -45,6 +42,10 @@ class GradleTest extends Test {
 
         if(project.gradle.startParameter.isRerunTasks()) {
             arguments+= '--rerun-tasks'
+        }
+
+        if( GradleVersions.GRADLE_4_5_OR_LATER) {
+            arguments+= '--warning-mode=all'
         }
 
         setHtmlReportFolder()
@@ -242,10 +243,10 @@ class GradleTest extends Test {
         Closure getDir = {
             project.file("${project.reporting.baseDir}/${owner.name}")
         }
-        if( GradleVersion.current() < GradleVersion.version('4.0')) {
-            reports.html.destination = getDir
-        } else {
+        if( GRADLE_4_0_OR_LATER ) {
             reports.html.destination = project.provider(getDir)
+        } else {
+            reports.html.destination = getDir
         }
     }
 
@@ -262,9 +263,7 @@ class GradleTest extends Test {
     }
 
     private Set<String> removeUnsupportedVersions(final Set<String> vers) {
-        GradleVersion min = GradleVersion.version(
-            GradleVersion.current() >= GradleVersion.version('5.0') ? '3.0' : '2.0'
-        )
+        GradleVersion min = GRADLE_3_0
         Collection<String> removeThese = vers.findAll { String v ->
             GradleVersion.version(v) < min
         }

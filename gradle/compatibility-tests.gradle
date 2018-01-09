@@ -1,10 +1,10 @@
 task compatibilityTest( type : GradleBuild ) {
     group 'Compatibility'
-    description 'Runs the plugin against most Gradle 2.0+ releases'
+    description 'Runs the plugin against most Gradle 3.0+ releases'
     dependsOn 'integrationTestRepo', 'jar'
     mustRunAfter 'test', 'integrationTest'
 
-    tasks = ['gradleTest','nonLegacyOnlyGradleTest','kotlinGradleTest']
+    tasks = ['gradleTest','kotlinGradleTest']
     dir = file("${projectDir}/compatibility")
     buildFile = 'compatibility/compatibility.gradle'
     startParameter.projectProperties.compatibilityVersion = version
