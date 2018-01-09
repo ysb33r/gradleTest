@@ -120,15 +120,9 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
             build.renameTo(staged)
         }
 
-        switch (lang) {
-            case 'LANGUAGE.GROOVY':
-                build.write("apply from: '" + testScriptName + "'")
-                break
-            case 'LANGUAGE.KOTLIN':
-                build.write("apply { from('" + testScriptName + "') }")
-                break
-        }
+        File testScript = new File(testProjectDir, testScriptName)
 
+        build.write(testScript.text)
     }
 
     def getScriptFilenames(String lang) {
