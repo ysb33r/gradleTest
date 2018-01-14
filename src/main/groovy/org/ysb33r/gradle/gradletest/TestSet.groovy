@@ -167,7 +167,6 @@ class TestSet {
         final String compileTaskName = getCompileTaskName(testSetBaseName)
         final String testTaskName = getTestTaskName(testSetBaseName)
 
-//        project.afterEvaluate {
             project.sourceSets.create testSetBaseName, {
                 groovy.srcDirs = [project.file(getSourceDir(project,testSetBaseName))]
                 resources.srcDirs = [project.file( getResourcesDir(project,testSetBaseName) )]
@@ -193,13 +192,10 @@ class TestSet {
                 } else {
                     testClassesDir = project.sourceSets.getByName(testSetBaseName).output.classesDir
                     inputs.dir (project.sourceSets.getByName(testSetBaseName).output.classesDir).skipWhenEmpty
-final File ff = testClassesDir
-println "**** is using ${testClassesDir}"
                 }
                 classpath = project.sourceSets.getByName(testSetBaseName).runtimeClasspath
 
             }
-//        }
     }
 
     @PackageScope

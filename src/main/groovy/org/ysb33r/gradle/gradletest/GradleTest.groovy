@@ -35,17 +35,17 @@ import static org.ysb33r.gradle.gradletest.internal.GradleVersions.GRADLE_4_0_OR
 class GradleTest extends Test {
 
     GradleTest() {
-        if(project.gradle.startParameter.offline) {
-            arguments+= '--offline'
+        if (project.gradle.startParameter.offline) {
+            arguments += '--offline'
         }
 
 
-        if(project.gradle.startParameter.isRerunTasks()) {
-            arguments+= '--rerun-tasks'
+        if (project.gradle.startParameter.isRerunTasks()) {
+            arguments += '--rerun-tasks'
         }
 
-        if( GradleVersions.GRADLE_4_5_OR_LATER) {
-            arguments+= '--warning-mode=all'
+        if (GradleVersions.GRADLE_4_5_OR_LATER) {
+            arguments += '--warning-mode=all'
         }
 
         setHtmlReportFolder()
@@ -58,7 +58,7 @@ class GradleTest extends Test {
     @Input
     Set<String> getVersions() {
         String override = System.getProperty("${name}.versions")
-        if(override?.size()) {
+        if (override?.size()) {
             return removeUnsupportedVersions(override.split(',') as Set<String>)
         }
         removeUnsupportedVersions(CollectionUtils.stringize(this.versions) as Set<String>)
@@ -84,7 +84,7 @@ class GradleTest extends Test {
      *
      * @param args Additional arguments
      */
-     void gradleArguments(Object... args ) {
+    void gradleArguments(Object... args) {
         arguments.addAll(args as List)
     }
 
@@ -92,7 +92,7 @@ class GradleTest extends Test {
      *
      * @param newArgs
      */
-    void setGradleArguments(final List<Object> newArgs ) {
+    void setGradleArguments(final List<Object> newArgs) {
         arguments.clear()
         arguments.addAll(newArgs)
     }
@@ -109,23 +109,23 @@ class GradleTest extends Test {
      * @param baseUri
      */
     void setGradleDistributionUri(Object baseUri) {
-        switch(baseUri) {
+        switch (baseUri) {
             case null:
                 baseDistributionUri = null
                 break
             case URI:
-                baseDistributionUri = (URI)baseUri
+                baseDistributionUri = (URI) baseUri
                 break
             case File:
-                baseDistributionUri= ((File)baseUri).absoluteFile.toURI()
+                baseDistributionUri = ((File) baseUri).absoluteFile.toURI()
                 break
             case String:
-                if( ((String)baseUri).empty ) {
+                if (((String) baseUri).empty) {
                     baseDistributionUri = null
                 } else {
-                    final tmpStr = (String)baseUri
+                    final tmpStr = (String) baseUri
                     URI tmpUri = tmpStr.toURI()
-                    if(tmpUri.scheme == null) {
+                    if (tmpUri.scheme == null) {
                         setGradleDistributionUri(project.file(tmpStr))
                     } else {
                         baseDistributionUri = tmpUri
@@ -133,7 +133,7 @@ class GradleTest extends Test {
                 }
                 break
             default:
-                setGradleDistributionUri( baseUri.toString() )
+                setGradleDistributionUri(baseUri.toString())
         }
     }
 
@@ -166,8 +166,8 @@ class GradleTest extends Test {
      */
     @Input
     List<String> getGradleArguments() {
-        List<String> args = ([ '--init-script',winSafeCmdlineSafe(initScript) ] as List<String>) +
-        CollectionUtils.stringize(this.arguments) as List<String>
+        List<String> args = (['--init-script', winSafeCmdlineSafe(initScript)] as List<String>) +
+            CollectionUtils.stringize(this.arguments) as List<String>
     }
 
     /** The name of the task that will be executed in the test project
@@ -256,7 +256,7 @@ class GradleTest extends Test {
         Closure getDir = {
             project.file("${project.reporting.baseDir}/${owner.name}")
         }
-        if( GRADLE_4_0_OR_LATER ) {
+        if (GRADLE_4_0_OR_LATER) {
             reports.html.destination = project.provider(getDir)
         } else {
             reports.html.destination = getDir
@@ -268,8 +268,8 @@ class GradleTest extends Test {
     }
 
     private String winSafeCmdlineSafe(final String path) {
-        if(OperatingSystem.current().isWindows()) {
-            path.replace(BACKSLASH,BACKSLASH.multiply(4))
+        if (OperatingSystem.current().isWindows()) {
+            path.replace(BACKSLASH, BACKSLASH.multiply(4))
         } else {
             path
         }
@@ -280,9 +280,9 @@ class GradleTest extends Test {
         Collection<String> removeThese = vers.findAll { String v ->
             GradleVersion.version(v) < min
         }
-        
-        if(!removeThese.empty) {
-            logger.warn( "Gradle versions '${removeThese.join(',')}' are not supported by this version of GradleTest-Gradle combination and will be removed from the test set")
+
+        if (!removeThese.empty) {
+            logger.warn("Gradle versions '${removeThese.join(',')}' are not supported by this version of GradleTest-Gradle combination and will be removed from the test set")
             vers.removeAll(removeThese)
         }
         return vers

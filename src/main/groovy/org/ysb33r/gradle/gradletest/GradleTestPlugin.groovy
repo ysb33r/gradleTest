@@ -17,13 +17,11 @@ import groovy.transform.CompileStatic
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.util.GradleVersion
-import org.ysb33r.gradle.gradletest.internal.GradleVersions
 
 import static org.ysb33r.gradle.gradletest.internal.GradleVersions.EARLIER_THAN_GRADLE_3_0
 
 /** Checks the current Gradle version and decides which real plugin to apply.
- * In case of GRadle 2.13+ it will also apply a legacy-compatible extension.
+ * In case of Gradle 2.13+ it will also apply a legacy-compatible extension.
  *
  */
 @CompileStatic
@@ -33,7 +31,7 @@ class GradleTestPlugin implements Plugin<Project> {
      * version.
      */
     void apply(Project project) {
-        if(EARLIER_THAN_GRADLE_3_0) {
+        if (EARLIER_THAN_GRADLE_3_0) {
             throw new GradleException('GradleTest 2.0 requires Gradle 3.0 or later')
         } else {
             applyTestKit(project)
@@ -46,9 +44,9 @@ class GradleTestPlugin implements Plugin<Project> {
      */
     private void applyTestKit(Project project) {
         project.with {
-            apply plugin : GradleTestBasePlugin
+            apply plugin: GradleTestBasePlugin
         }
-        TestSet.addTestSet(project,Names.DEFAULT_TASK)
+        TestSet.addTestSet(project, Names.DEFAULT_TASK)
     }
 
 }

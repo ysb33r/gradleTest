@@ -48,7 +48,6 @@ class CompilationIntegrationSpec extends GradleTestIntegrationSpecification {
             .withPluginClasspath(readMetadataFile())
             .withGradleDistribution(new File(GRADLETESTREPO,"gradle-${gradleVer}-bin.zip").toURI())
             .forwardOutput()
-.withDebug(true)
             .build()
 
         then:
