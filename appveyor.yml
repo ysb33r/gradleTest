@@ -8,10 +8,17 @@ build_script:
 
 test_script:
   - gradlew.bat test integrationTest --info --no-daemon
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.0,3.1,3.2.1
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.3,3.4.1,3.5
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.0.2,4.1,4.2.1 -DkotlinGradleTest=4.0.2,4.1,4.2.1
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.3.1,4.4.1 -DkotlinGradleTest=4.3.1,4.4.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.0
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.2.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.3
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.4.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.5
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.0.2 -DkotlinGradleTest=4.0.2
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.1 -DkotlinGradleTest=4.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.2.1 -DkotlinGradleTest=4.2.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.3.1 -DkotlinGradleTest=4.3.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.4.1 -DkotlinGradleTest=4.4.1
 
 branches:
   only:
