@@ -46,4 +46,14 @@ GradleTest uses Spock Framework, JUnit & Apache Commons IO underneath. If, for s
 versions of these dependencies it can be done in the `gradleTestCompile` configuration. If you created a new `GradleTest`
 task called `foobar` then the appropriate configuration will be called `foobarCompile`.
 
+=== Changing the Gradle distribution name
 
+Enterprise environments may have their own custom Gradle versions, which are not named in exactly the same way as the standard Gradle versions. In such cases it is possible to override the naming pattern by using `gradleDistributionFilenamePattern` DSL keyword.
+
+[source,groovy]
+----
+gradleTest {
+  gradleDistributionFilenamePattern '/acme-gradle-@version@-bin.zip' // <1>
+}
+----
+<1> Change file naming pattern. `@version@` will be substituted with the appropriate Gradle version at test time.
