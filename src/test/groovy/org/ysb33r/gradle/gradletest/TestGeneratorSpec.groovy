@@ -41,8 +41,8 @@ class TestGeneratorSpec extends GradleTestSpecification {
             apply plugin : 'org.ysb33r.gradletest'
 
             gradleTest {
-                versions '1.999','1.998'
-                versions '1.997'
+                versions '3.999','3.998'
+                versions '4.997'
                 kotlinDsl = true
             }
             evaluate()
@@ -50,9 +50,9 @@ class TestGeneratorSpec extends GradleTestSpecification {
         TestGenerator genTask = tasks.getByName('gradleTestGenerator')
 
         and: "The generator task is executed"
-        genTask.execute()
+        genTask.exec()
         Set testNames = genTask.testMap.keySet()
-        String initScriptContent = new File(genTask.outputDir.parentFile,'init.gradle').text
+        String initScriptContent = new File(genTask.outputDir.parentFile.parentFile,'init.gradle').text
 
         then: "The test names reflect the directories under gradleTest"
         testNames.containsAll(['alpha', 'beta', 'gamma', 'eta'])
@@ -67,12 +67,12 @@ class TestGeneratorSpec extends GradleTestSpecification {
 
         and: "Groovy+Spock test files are generated in the source set directory under the build directory"
         genTask.outputDir.exists()
-        new File(genTask.outputDir,"AlphabuildGroovyDSLCompatibilitySpec.groovy").exists()
-        new File(genTask.outputDir,"BetabuildGroovyDSLCompatibilitySpec.groovy").exists()
-        new File(genTask.outputDir,"BetatestTwoKotlinDSLCompatibilitySpec.groovy").exists()
-        new File(genTask.outputDir,"GammabuildGroovyDSLCompatibilitySpec.groovy").exists()
-        new File(genTask.outputDir,"EtabuildGroovyDSLCompatibilitySpec.groovy").exists()
-        new File(genTask.outputDir,"EtabuildKotlinDSLCompatibilitySpec.groovy").exists()
+        new File(genTask.outputDir,"Alpha_BuildGroovyDSLCompatibilitySpec.groovy").exists()
+        new File(genTask.outputDir,"Beta_BuildGroovyDSLCompatibilitySpec.groovy").exists()
+        new File(genTask.outputDir,"Beta_TestTwoKotlinDSLCompatibilitySpec.groovy").exists()
+        new File(genTask.outputDir,"Gamma_BuildGroovyDSLCompatibilitySpec.groovy").exists()
+        new File(genTask.outputDir,"Eta_BuildGroovyDSLCompatibilitySpec.groovy").exists()
+        new File(genTask.outputDir,"Eta_BuildKotlinDSLCompatibilitySpec.groovy").exists()
 //        new File(genTask.outputDir,"EtaGroovyDSLCompatibilitySpec.groovy").exists()
 
         and: "Subdirectories without a build.gradle file will not be included"
@@ -84,20 +84,13 @@ class TestGeneratorSpec extends GradleTestSpecification {
         initScriptContent.contains("dirs '${new File(buildDir,'gradleTest/repo').toURI()}'.toURI()")
 
         when: "The generated source file is inspected"
-        String source = new File(genTask.outputDir,"AlphabuildGroovyDSLCompatibilitySpec.groovy").text
+        String source = new File(genTask.outputDir,"Alpha_BuildGroovyDSLCompatibilitySpec.groovy").text
 
         then:
         source.contains "package ${genTask.testPackageName}"
         source.contains "result.task(':runGradleTest')" 
-        source.contains "def \"AlphabuildGroovyDSL : #version\"()"
-        source.contains "version << ['1.999','1.998','1.997']"
-        source.contains "'--build-file','build.gradle'"
-
-        when: "The generated source file is inspected"
-        source = new File(genTask.outputDir,"BetatestTwoKotlinDSLCompatibilitySpec.groovy").text
-
-        then:
-        source.contains "'--build-file','testTwo.gradle.kts'"
+        source.contains "def \"Alpha_BuildGroovyDSL : #version\"()"
+        source.contains "version << ['3.999','3.998','4.997']"
     }
 
     def "When there is no gradleTest folder, the task should not fail, just be skipped"() {
@@ -106,7 +99,7 @@ class TestGeneratorSpec extends GradleTestSpecification {
             apply plugin : 'org.ysb33r.gradletest'
 
             gradleTest {
-                versions '1.997'
+                versions '3.997'
             }
             evaluate()
         }

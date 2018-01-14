@@ -31,8 +31,9 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
 
-
+import java.nio.file.Paths
 import java.util.regex.Pattern
+
 
 /** Generates test files that will be compiled against GradleTestKit.
  *
@@ -40,7 +41,6 @@ import java.util.regex.Pattern
  */
 @CompileStatic
 class TestGenerator extends DefaultTask {
-
     final static String GROOVY_BUILD_SCRIPT = 'build.gradle'
     final static String KOTLIN_BUILD_SCRIPT = 'build.gradle.kts'
     final static String GROOVY_TEST_POSTFIX = 'GroovyDSL'
@@ -136,14 +136,15 @@ class TestGenerator extends DefaultTask {
             // define the file name filter to find one or more build files
             def groovyFilter = new FilenameFilter() {
                 boolean accept(File path, String filename) {
-
-                    return (filename.endsWith(GROOVY_BUILD_EXTENSION) && !(filename in excludeFiles))
+                    boolean isFile = Paths.get(path.absolutePath, filename).toFile().isFile()
+                    return (filename.endsWith(GROOVY_BUILD_EXTENSION) && !(filename in excludeFiles) && isFile)
                 }
             }
 
             def kotlinFilter = new FilenameFilter() {
                 boolean accept(File path, String filename) {
-                    return (filename.endsWith(KOTLIN_BUILD_EXTENSION) && !(filename in excludeFiles))
+                    boolean isFile = Paths.get(path.absolutePath, filename).toFile().isFile()
+                    return (filename.endsWith(KOTLIN_BUILD_EXTENSION) && !(filename in excludeFiles) && isFile)
                 }
             }
 
@@ -236,7 +237,6 @@ class TestGenerator extends DefaultTask {
         outputDir.deleteDir()
 
         testMap.each { String testName,TestDefinition testDef ->
-
             boolean expectFailure = testPatternsForFailures.find { pat ->
                 testName =~ pat
             }
@@ -338,58 +338,72 @@ class TestGenerator extends DefaultTask {
     ) {
         copySub(testDefinitions.groovyBuildFiles,
                 GROOVY_TEST_POSTFIX,
+                GradleScriptLanguage.GROOVY,
                 targetDir,
                 testBase,
                 defaultTask,
                 manifestFile,
                 workDir,
                 testDefinitions,
-                arguments,
+                cloneList(arguments),
                 willFail,
                 deprecationMessageMode
         )
 
         copySub(testDefinitions.kotlinBuildFiles,
                 KOTLIN_TEST_POSTFIX,
+                GradleScriptLanguage.KOTLIN,
                 targetDir,
                 testBase,
                 defaultTask,
                 manifestFile,
                 workDir,
                 testDefinitions,
-                arguments,
+                cloneList(arguments),
                 willFail,
                 deprecationMessageMode
         )
 
     }
 
+    static List<String> cloneList(List<String> list) {
+        List<String> clone = new ArrayList<String>(list.size())
+
+        for (String item : list) {
+            clone.add(item)
+        }
+
+        return clone
+    }
+
     private void copySub(
             List<File> buildFiles,
             final String postfix,
-        final File targetDir,
-        final String testBase,
-        final String defaultTask,
-        final File manifestFile,
-        final File workDir,
-        final TestDefinition testDefinitions,
-        final List<String> arguments,
-        final boolean willFail,
-        final boolean deprecationMessageMode
+            final GradleScriptLanguage language,
+            final File targetDir,
+            final String testBase,
+            final String defaultTask,
+            final File manifestFile,
+            final File workDir,
+            final TestDefinition testDefinitions,
+            final List<String> arguments,
+            final boolean willFail,
+            final boolean deprecationMessageMode
     ){
         for (File buildFile in buildFiles){
-            String testName = testBase + buildFile.name.split("\\.")[0] + postfix
-            List<String> workerArguments = arguments
-            workerArguments.addAll(["--build-file", buildFile.name])
+            String testName = testBase + "_" + buildFile.name.split("\\.")[0].capitalize() + postfix
 
             copyWorker(
                     targetDir,
+                    testBase,
                     testName,
+                    buildFile.name,
+                    language,
                     defaultTask,
                     manifestFile,
                     workDir,
                     testDefinitions.testDir,
-                    workerArguments,
+                    arguments,
                     willFail,
                     deprecationMessageMode
             )
@@ -410,15 +424,18 @@ class TestGenerator extends DefaultTask {
      */
     @CompileDynamic
     private void copyWorker(
-        final File targetDir,
-        final String testName,
-        final String defaultTask,
-        final File manifestFile,
-        final File workDir,
-        final File testProjectSrcDir,
-        final List<String> arguments,
-        final boolean willFail,
-        final boolean deprecationMessageMode
+            final File targetDir,
+            final String testBase,
+            final String testName,
+            final String testScript,
+            final GradleScriptLanguage language,
+            final String defaultTask,
+            final File manifestFile,
+            final File workDir,
+            final File testProjectSrcDir,
+            final List<String> arguments,
+            final boolean willFail,
+            final boolean deprecationMessageMode
     ) {
 
         final boolean isKotlinTest = testName.endsWith(KOTLIN_TEST_POSTFIX)
@@ -437,12 +454,26 @@ class TestGenerator extends DefaultTask {
             return
         }
 
+        String langValue
+
+        switch (language) {
+            case GradleScriptLanguage.GROOVY:
+                langValue = "LANGUAGE.GROOVY"
+                break
+            case GradleScriptLanguage.KOTLIN:
+                langValue = "LANGUAGE.KOTLIN"
+                break
+        }
+
         project.copy {
             from fromSource
             into targetDir
             rename ~/.+/,"${testName.capitalize()}CompatibilitySpec.groovy"
             expand TESTPACKAGE : testPackageName,
                 TESTNAME : testName.capitalize(),
+                TESTBASENAME: testBase,
+                TESTFILENAME: testScript,
+                LANGUAGE: langValue,
                 MANIFEST : manifest,
                 ARGUMENTS : argsText,
                 DEFAULTTASK : defaultTask,

@@ -9,7 +9,7 @@ https://docs.gradle.org/2.13/userguide/test_kit.html[GradleTestKit] brings witho
 that looks like normal Gradle projects (multi-project is supported). This also makes it easier to create sample projects
 that can directly be used in documentation.
 
-NOTE: *If you are using a Gradle version < 2.13, it will run in legacy mode and behave like the 0.5.5 version of the plugin*.
+NOTE: *If you are using a Gradle version < 3.0, you will need to use a version of thisplugin before 2.0*.
 
 include::parts/bootstrap.adoc[]
 
@@ -30,8 +30,6 @@ include::parts/upgrading.adoc[]
 include::parts/other-plugins.adoc[]
 
 include::parts/alternatives.adoc[]
-
-include::parts/legacy-mode.adoc[]
 
 include::parts/gradle-runner.adoc[]
 

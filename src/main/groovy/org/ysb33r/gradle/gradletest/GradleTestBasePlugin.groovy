@@ -19,6 +19,9 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.util.GradleVersion
+import org.ysb33r.gradle.gradletest.internal.GradleVersions
+
+import static org.ysb33r.gradle.gradletest.internal.GradleVersions.EARLIER_THAN_GRADLE_3_0
 
 /** A base plugin for GradleTest. It provides only the ability to add new test sets,
  * but does not create any.
@@ -29,8 +32,8 @@ class GradleTestBasePlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        if(GradleVersion.current() < GradleVersion.version('2.13')) {
-            throw new GradleException('This plugin is only compatible with Gradle 2.13+')
+        if(EARLIER_THAN_GRADLE_3_0) {
+            throw new GradleException('This plugin is only compatible with Gradle 3.0+')
         }
         project.apply plugin : 'groovy'
         addTestKitTriggers(project)
