@@ -5,18 +5,21 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 
 == Roadmap - 2.0
 
-* Legacy mode removed.
-* Only supports compatibility tests against Gradle 3.0 or later.
-* Allow for more than one build file per project
-* Allow for assigning a name pattern for the gradle distribution download
-
-== Roadmap - 1.1
-
 // tag::changelog[]
+=== Features
+* https://github.com/ysb33r/gradleTest/issues/85[#85] -  Allow for more than one build file per test project
+* https://github.com/ysb33r/gradleTest/issues/89[#89] - Allow for assigning a name pattern for the gradle distribution download
+
+== Breaking changes
+
+* https://github.com/ysb33r/gradleTest/issues/1[#1] - *Legacy mode removed*: This release will only support compatibility tests against Gradle 3.0 or later.
+// end::changelog[]
+
+== 1.1
+
 === Bugs
 
 * https://github.com/ysb33r/gradleTest/issues/76[#76] - File attributes are lost during copy.
-// end::changelog[]
 
 == Breaking changes
 

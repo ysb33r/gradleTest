@@ -1,6 +1,6 @@
-= Alternative Approaches to GradleTest
+== Alternative Approaches to GradleTest
 
-== Gradle TestKit
+=== Gradle TestKit
 
 `GradleTestKit` is the core API that ships with Gradle since Gradle 2.6. which is meant for plugin developers to test compatibility across Gradle versions. Easrly versions could only tests against the same version of Gradle that was running, but it has been enhanced over different Gradle releases. Today it is powereful allowing multiple versions to be tested and a number of different environments to be set up.
 
@@ -14,7 +14,7 @@ In this regard `GradleTest` steps in as it allow tests to be written as if a nor
 
 Overall the approach should be to write integration tests with `GradleTestKit` using a limited or even just one Gradle version. This is then complimented by some `GradleTest` scripts to test a wider range of Gradle versions.
 
-== Stutter
+=== Stutter
 
 https://github.com/ajoberstar/gradle-stutter[Stutter] is another library by https://github.com/ajoberstar[Andy Oberstar] to aid with plugin development. It focuses on the cases where you might have to run the same tests against all supported versions, but don't want to deal with making each test loop over those versions (or `@Unroll` with a `where` block in Spock). `Stutter` generates one task per supported version for you and runs the full set of tests against it.
 

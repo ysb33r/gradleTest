@@ -1,5 +1,3 @@
-= Testkit Mode (Gradle 2.13+)
-
 == Getting Started
 
 In `build.gradle` define the versions of Gradle that needs to be tested:
@@ -7,7 +5,7 @@ In `build.gradle` define the versions of Gradle that needs to be tested:
 [source,groovy]
 ----
 gradleTest {
-   versions '2.9', '3.4', '4.1'
+   versions '3.0', '3.4', '4.1'
 }
 ----
 
@@ -17,7 +15,7 @@ For example here is one example from GradleTest's test suite of how itself is be
 
 [source,groovy]
 ----
-include::{compatdir}/src/nonLegacyOnlyGradleTest/negativeTest/build.gradle[]
+include::{compatdir}/src/gradleTest/negativeTest/build.gradle[]
 ----
 
 == Conventions
@@ -146,3 +144,13 @@ A `GradleTest` task called `gradleTest` will have the following associated entit
   transitive dependencies
 
 |===
+
+=== Task dependencies
+
+`gradleTest` is linked into the `check` lifecycle task.
+
+=== HTML reports
+
+HTML reports will appear as folder named after the `GradleTest` instance below the `${reporting.baseDir}` folder.
+ Practically in most cases this will be `build/reports/gradleTest`.
+

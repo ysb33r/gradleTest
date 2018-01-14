@@ -1,27 +1,40 @@
+== Beyond the Basics
 
-== Temporarily overriding Gradle versions
+=== Base plugin
 
-It is very convenient to sometimes to runs the test with a subset of the versions specified in the configuration. This is
-achievable by passing a system property to Gradle
+If the convention of adding a `gradleTest` with it's default settings are not suitable for your
+environment, then the base plugin can be considered. This will only add the
+`additionalGradleTestSet` method.
+The GradleTest Base Plugin is available in the https://plugins.gradle.org/plugin/org.ysb33r.gradletest.base[Gradle Plugins] repository.
+To use it, add the following snippet into your build script.
 
-[source,bash]
+[source,groovy,subs="attributes"]
 ----
--DgradleTest.versions=2.2,2.3 <1> <2>
+plugins {
+  id 'org.ysb33r.gradletest.base' version '{revnumber}'
+}
 ----
-<1> If more than one GradleTest task is defined, replace `gradleTest` with the name of the appropriate GradleTest task.
-<2> List the versions in a commma-separated list. No validation is done on the string. If it leads to invalid Gradle
-  versions the build will fail.
 
-== Task dependencies
+When your setup is more complex and the plugins block does not work use the following instead
 
-`gradleTest` is linked into the `check` lifecycle task.
+[source,groovy,subs="attributes"]
+----
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
 
-== HTML Reports
+  dependencies {
+    classpath 'org.ysb33r.gradle:gradletest:{revnumber}'
+  }
+}
 
-HTML reports will appear as folder named after the `GradleTest` instance below the `${reporting.baseDir}` folder.
- Practically in most cases this will be `build/reports/gradleTest`.
+apply plugin: 'org.ysb33r.gradletest.base'
+----
 
-== Add additional compatibility test sets
+=== Add additional compatibility test sets
 
 Use the `additionalGradleTestSet` project extension. Specify the basename and all of
 the appropriate configurations and tasks will be added.
@@ -37,7 +50,7 @@ include::{compatdir}/compatibility.gradle[tags=addTestSets]
 <4> Other tasks in the groups are all named using the same convention and can also
   just be configured as per normal.
 
-== More feedback
+=== Provide more feedback during test execution
 
 Running lots of compatibility tests can take some time. If you need more visual feedback
 regarding progress try adding something like this to the `gradleTest` configuration.
@@ -52,7 +65,7 @@ gradleTest{
 ----
 <1> Print the name of the current compatibility test that is runnign
 
-== Kotlin DSL
+=== Kotlin DSL
 
 With the growing use of Kotlin-based build scripts, it is also important to test compatibility of a plugin for this context. Turn Kotlin-testing on by setting the following:
 
@@ -63,6 +76,6 @@ gradleTest {
 }
 ----
 
-Now drop a `build.gradle.kts` file alongside your `build.gradle` build script. If the gradle version under test is 4.0 or later, GradleTest will also run a test using the Kotlin build script.
+Now drop a `build.gradle.kts` file alongside your `build.gradle` build script. If the Gradle version under test is 4.0 or later, GradleTest will also run a test using the Kotlin build script.
 
 

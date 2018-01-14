@@ -9,21 +9,17 @@ https://docs.gradle.org/2.13/userguide/test_kit.html[GradleTestKit] brings witho
 that looks like normal Gradle projects (multi-project is supported). This also makes it easier to create sample projects
 that can directly be used in documentation.
 
-NOTE: *If you are using a Gradle version < 3.0, you will need to use a version of thisplugin before 2.0*.
+NOTE: *If you are using a Gradle version < 3.0, you will need to use a version 1.1 of this plugin*.
 
 include::parts/bootstrap.adoc[]
 
 include::parts/structure.adoc[]
 
-include::parts/additional-usage.adoc[]
-
 include::parts/cmdline.adoc[]
 
+include::parts/additional-usage.adoc[]
+
 include::parts/advanced.adoc[]
-
-include::parts/base-plugin.adoc[]
-
-include::parts/known-limitations.adoc[]
 
 include::parts/upgrading.adoc[]
 
@@ -31,5 +27,6 @@ include::parts/other-plugins.adoc[]
 
 include::parts/alternatives.adoc[]
 
-include::parts/gradle-runner.adoc[]
+include::parts/other.adoc[]
+
 
