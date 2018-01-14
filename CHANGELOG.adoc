@@ -7,6 +7,8 @@ for a specific release, please visit the http://ysb33r.github.io/gradleTest[plug
 
 * Legacy mode removed.
 * Only supports compatibility tests against Gradle 3.0 or later.
+* Allow for more than one build file per project
+* Allow for assigning a name pattern for the gradle distribution download
 
 == Roadmap - 1.1
 

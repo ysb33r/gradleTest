@@ -26,6 +26,7 @@ Please visit the http://ysb33r.github.io/gradleTest[documentation website] for t
 * https://github.com/dcendents[Daniel Beland] - Gradle 2.5 fixes.
 * https://github.com/szpak[Marcin Zajączkowski] - Fix for Zip errors
 * https://github.com/matthiasbalke[Matthias Balke] - Documentation
+* https://github.com/scphantm[Willie Slepecki] - New corp friendly features
 
 If you would like to contribute fixes, please see `HACKING.adoc`.
 

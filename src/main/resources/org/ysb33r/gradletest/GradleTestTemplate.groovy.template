@@ -144,6 +144,17 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
         gradleRunner.withPluginClasspath(pluginClasspath)
     }
 
+    def getDistributionFilename(String version){
+        String fname = '${DIST_FILENAME_PATTERN}'
+        fname = fname.replaceAll( '@version@', version)
+
+        if (!fname.startsWith("/")){
+            fname = "/" + fname
+        }
+
+        return fname
+    }
+
     @Unroll
     def "${TESTNAME} : #version"() {
         setup:

@@ -196,6 +196,11 @@ class TestGenerator extends DefaultTask {
         linkedTask.gradleDistributionUri
     }
 
+    @Input
+    String getGradleFilenamePattern() {
+        linkedTask.gradleDistributionFilenamePattern
+    }
+
     /** Task action will generate testsas per the testnames returned by @Link #etTestMap().
      *
      */
@@ -478,7 +483,8 @@ class TestGenerator extends DefaultTask {
                 SOURCEDIR : src,
                 FAILMODE : willFail,
                 CHECK_WARNINGS : deprecation,
-                DELETE_SCRIPT : deleteScript
+                DELETE_SCRIPT : deleteScript,
+                DIST_FILENAME_PATTERN : gradleFilenamePattern
         }
     }
 
