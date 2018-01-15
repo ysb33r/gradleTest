@@ -50,6 +50,26 @@ gradleTest {
 
 NOTE: When the system property is set it will override all `distributionUri` settings in task configurations
 
+=== Setting new Distribution Filename Pattern
+
+Some corporations repackage custom distributions of Gradle for inside their corporations.  With these
+distributions, its common to brand them with a different filename.  GradleTest is capable of pulling these
+distributions as well.
+
+[source,groovy]
+----
+gradleTest {
+    distributionUri 'https://mycompany.com/dist/gradle' // <1>
+    gradleDistributionFilenamePattern "mycompany_gradle-@version@-bin.zip"
+}
+----
+
+If you do not set the `distributionUri` along with the filename pattern, GradleTest will attempt to download
+your corporate release from the primary Gradle site, resulting in an error.
+
+The `@version@` of the above filename is a replacement token.  When GradleTest is run, it will replace
+this token with the requested gradle version.
+
 === Start Parameters
 
 * If gradle is run with `--offline`, it will be passed to the Gradle.

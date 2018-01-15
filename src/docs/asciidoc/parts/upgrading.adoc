@@ -1,12 +1,12 @@
-== Upgrading from v0.5.x
+== Upgrading From Older Releases
+
+=== v0.5.x
 
 `%%.VERSION%%` is no longer supported when building with Gradle 2.13+ and builds will fail with
-`Could not find foo:bar:%%VERSION%%`` error if encountered.
-It will still be supported if using Gradle 2.12 or earlier as legacy mode will be invoked.
-Even under legacy mode it's use is no longer required. Simply remove the classpath, and if
+`Could not find foo:bar:%%VERSION%%`` error if encountered. Simply remove the classpath, and if
 you don't anything extra in the `buildscript` block, the whole of the `buildscript` block.
 
-For instance the following block can be complety removed:
+For instance the following block can be completely removed:
 
 [source,groovy]
 ----
@@ -16,3 +16,8 @@ buildscript {
     }
 }
 ----
+
+=== v1.x
+
+Any version of Gradle 2.x listed in `gradleTest.versions` will be ignored during testing. A warning message will be printed in this case.
+

@@ -15,18 +15,13 @@ dependencies {
 }
 
 gradleTest {
-    versions '2.13','3.0'
-}
+    versions '4.0.2','3.0'
 
-// This is nice for debugging, but can only be done on later versions
-if(GradleVersion.current() > GradleVersion.version('2.13')) {
-    gradleTest {
-        beforeTest {
-            println '-'.multiply(60)
-            println "| [${project.name}] ${it.name}"
-            println "| ${configurations.gradleTestCompile.asPath}"
-            println '-'.multiply(60)
-        }
+    beforeTest {
+        println '-'.multiply(60)
+        println "| [${project.name}] ${it.name}"
+        println "| ${configurations.gradleTestCompile.asPath}"
+        println '-'.multiply(60)
     }
 }
 

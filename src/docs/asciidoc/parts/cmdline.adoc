@@ -1,6 +1,22 @@
 == Command-line Awareness
 
+=== Gradle standard options
+
 GradleTest is aware of certain command-line parameters and will pass them on to running tests.
 
 * `--rerun-tasks` - All tests will be re-run even if they were previsouly successful.
 * `--offline` - No dependency checks will be performed and if plugins implements any offline behaviour this will automatically be enabled.
+
+=== Temporarily overriding Gradle versions
+
+It is very convenient to sometimes to runs the test with a subset of the versions specified in the configuration. This is
+achievable by passing a system property to Gradle
+
+[source,bash]
+----
+-DgradleTest.versions=3.5,4.4.1 <1> <2>
+----
+<1> If more than one GradleTest task is defined, replace `gradleTest` with the name of the appropriate GradleTest task.
+<2> List the versions in a commma-separated list. No validation is done on the string. If it leads to invalid Gradle
+  versions the build will fail.
+

@@ -11,12 +11,13 @@
  *
  * ============================================================================
  */
-package org.ysb33r.gradle.gradletest.legacy20
+package org.ysb33r.gradle.gradletest
 
-/** Interface for handling distributions in legacy mode.
- *
- */
-interface Distribution extends Comparable {
-    String getVersion()
-    File getLocation()
+import groovy.transform.TupleConstructor
+
+@TupleConstructor
+class TestDefinition implements Serializable {
+      File testDir
+      List<File> groovyBuildFiles
+      List<File> kotlinBuildFiles
 }

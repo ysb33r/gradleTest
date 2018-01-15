@@ -13,15 +13,10 @@
  */
 package org.ysb33r.gradle.gradletest
 
-import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.GroovyCompile
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import org.ysb33r.gradle.gradletest.legacy20.DeprecatingGradleTestExtension
 import org.ysb33r.gradle.gradletest.internal.GradleTestSpecification
-import spock.lang.Specification
 
 
 class GradleTestPluginSpec extends GradleTestSpecification {
@@ -52,9 +47,6 @@ class GradleTestPluginSpec extends GradleTestSpecification {
         and: "A runtime configuration is added"
         configurations.findByName('gradleTestRuntime') != null
 
-        and: "A (deprecated) extension is added"
-        extensions.getByName(Names.EXTENSION) instanceof DeprecatingGradleTestExtension
-
         and: "Appropriate configurations & tasks are added for the additional test sets"
         tasks.getByName('fooGradleTest') instanceof GradleTest
         tasks.getByName('fooGradleTestGenerator') instanceof TestGenerator
@@ -67,7 +59,7 @@ class GradleTestPluginSpec extends GradleTestSpecification {
 
         then: "A test sourceset containing a single source directory is created"
         sourceDirSet.srcDirs.size() == 1
-        sourceDirSet.srcDirs[0].canonicalPath == file("${buildDir}/gradleTest/src").canonicalPath
+        sourceDirSet.srcDirs[0].canonicalPath == file("${buildDir}/gradleTest/src/groovy").canonicalPath
 
     }
 

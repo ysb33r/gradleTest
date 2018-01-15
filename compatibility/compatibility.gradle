@@ -75,19 +75,13 @@ gradleTest {
     dependsOn sanityCheck
     systemProperties = [:]
 // tag::applyplugin2[]
-    versions '4.0', '4.1', '4.2'
+    versions '4.0.2', '4.1', '4.2.1', '4.3.1', '4.4.1'
     versions '3.5', '3.4.1'
     versions '3.3', '3.2.1', '3.1', '3.0'
-    versions '2.14.1'
-    versions '2.13'
-    versions '2.12' ,'2.11','2.10','2.9','2.8'
-    versions '2.7','2.6','2.5'
-    versions '2.4','2.3','2.2','2.1','2.0'
 
     beforeTest {
         println "  ${it.name}"
     }
-
 }
 // end::applyplugin2[]
 
@@ -118,53 +112,25 @@ cloudci {
 test.enabled = false
 
 // *IMPORTANT* If you update this list also update .travis.yml & appveyor.yml
-if(GradleVersion.current() >= GradleVersion.version('2.13')) {
-    // tag::addTestSets[]
-    additionalGradleTestSet 'nonLegacyOnly' // <1>
+// tag::addTestSets[]
+additionalGradleTestSet 'kotlin' // <1>
 
-    nonLegacyOnlyGradleTest { // <2>
-        versions '4.0', '4.1', '4.2'
-	    versions '3.5', '3.4.1', '3.3'
-        versions '3.2', '3.1', '3.0' // <3>
-        versions '2.14.1'
-    }
-
-    nonLegacyOnlyGradleTestGenerator { // <4>
-        pluginJarDirectory = gradleTestGenerator.pluginJarDirectory
-    }
-    // end::addTestSets[]
-
-    nonLegacyOnlyGradleTest {
-        dependsOn sanityCheck
-        systemProperties = [:]
-
-        beforeTest {
-            println "  ${it.name}"
-        }
-    }
+kotlinGradleTest { // <2>
+    versions '4.0.2', '4.1', '4.2.1' // <3>
+    versions '4.3.1', '4.4.1'
 }
 
-// *IMPORTANT* If you update this list also update .travis.yml & appveyor.yml
-if(GradleVersion.current() >= GradleVersion.version('2.13')) {
-    // tag::addTestSets[]
-    additionalGradleTestSet 'kotlin'
+kotlinGradleTestGenerator { // <4>
+    pluginJarDirectory = gradleTestGenerator.pluginJarDirectory
+}
 
-    kotlinGradleTest {
-        versions '4.0', '4.1', '4.2'
-    }
+kotlinGradleTest {
+    dependsOn sanityCheck
+    systemProperties = [:]
 
-    kotlinGradleTestGenerator {
-        pluginJarDirectory = gradleTestGenerator.pluginJarDirectory
-    }
-    // end::addTestSets[]
-
-    kotlinGradleTest {
-        dependsOn sanityCheck
-        systemProperties = [:]
-
-        beforeTest {
-            println "  ${it.name}"
-        }
+    beforeTest {
+        println "  ${it.name}"
     }
 }
+// end::addTestSets[]
 

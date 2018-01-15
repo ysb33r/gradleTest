@@ -8,13 +8,17 @@ build_script:
 
 test_script:
   - gradlew.bat test integrationTest --info --no-daemon
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=2.0,2.1,2.2,2.3
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=2.4,2.5,2.6,2.7 -DnonLegacyOnlyGradleTest.versions=2.14.1
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=2.8,2.9,2.10,2.11 -DnonLegacyOnlyGradleTest.versions=3.0
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=2.12,2.13,2.14.1 -DnonLegacyOnlyGradleTest.versions=3.1
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.0,3.1,3.2.1 -DnonLegacyOnlyGradleTest.versions=3.2.1
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.3,3.4.1,3.5 -DnonLegacyOnlyGradleTest.versions=3.3,3.4.1,3.5
-  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.0,4.1,4.2 -DnonLegacyOnlyGradleTest.versions=4.0,4.1,4.2 -DkotlinGradleTest=4.0,4.1,4.2
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.0
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.2.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.3
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.4.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=3.5
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.0.2 -DkotlinGradleTest=4.0.2
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.1 -DkotlinGradleTest=4.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.2.1 -DkotlinGradleTest=4.2.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.3.1 -DkotlinGradleTest=4.3.1
+  - gradlew.bat compatibilityTest --info --no-daemon -DgradleTest.versions=4.4.1 -DkotlinGradleTest=4.4.1
 
 branches:
   only:

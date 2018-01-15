@@ -1,3 +1,4 @@
+package gradleTest.simpleTest
 /*
  * ============================================================================
  * (C) Copyright Schalk W. Cronje 2015 - 2017
@@ -11,22 +12,22 @@
  *
  * ============================================================================
  */
-// This is the default init script to be used.
+buildscript {
+    dependencies {
+        classpath 'org.ysb33r.doxygen:doxygen:0.2'
+    }
+}
 
-allprojects {
-    buildscript {
-        repositories {
-            flatDir {
-                dirs "\${project.rootProject.projectDir}/../../repo"
-            }
-        }
-        dependencies {
-            classpath fileTree('${PLUGINDIR}'.toURI()) { include "*.jar"}
-        }
-    }
-    repositories {
-        flatDir {
-            dirs "\${project.rootProject.projectDir}/../../repo"
-        }
-    }
+apply plugin: 'groovy'
+apply plugin: 'org.ysb33r.doxygen'
+
+version = '0.1'
+
+dependencies {
+    compile localGroovy()
+    compile ':commons-cli:1.2'
+}
+
+task runGradleTest {
+    dependsOn jar
 }

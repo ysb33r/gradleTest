@@ -31,5 +31,8 @@ A special thank you goes to:
 * https://github.com/dcendents[Daniel Beland] - Gradle 2.5 fixes.
 * https://github.com/szpak[Marcin Zajączkowski] - Fix for Zip errors
 * https://github.com/matthiasbalke[Matthias Balke] - Documentation
+* https://github.com/scphantm[Willie Slepecki]:
+** Multiple build files in one test project folder.
+** Load distributions from enterprise repositories.
 
-If you would liek to contribute, please see https://github.com/ysb33r/gradleTest/blob/master/HACKING.adoc[HACKING.adoc]
+If you would like to contribute, please see https://github.com/ysb33r/gradleTest/blob/master/HACKING.adoc[HACKING.adoc]

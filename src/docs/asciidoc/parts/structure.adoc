@@ -1,5 +1,3 @@
-= Testkit Mode (Gradle 2.13+)
-
 == Getting Started
 
 In `build.gradle` define the versions of Gradle that needs to be tested:
@@ -7,7 +5,7 @@ In `build.gradle` define the versions of Gradle that needs to be tested:
 [source,groovy]
 ----
 gradleTest {
-   versions '2.9', '3.4', '4.1'
+   versions '3.0', '3.4', '4.1'
 }
 ----
 
@@ -17,7 +15,7 @@ For example here is one example from GradleTest's test suite of how itself is be
 
 [source,groovy]
 ----
-include::{compatdir}/src/nonLegacyOnlyGradleTest/negativeTest/build.gradle[]
+include::{compatdir}/src/gradleTest/negativeTest/build.gradle[]
 ----
 
 == Conventions
@@ -27,17 +25,35 @@ include::{compatdir}/src/nonLegacyOnlyGradleTest/negativeTest/build.gradle[]
 .Source directory layout
 ----
 ${projectDir} / src / gradleTest /  project1  / build.gradle
+                                              / testTwo.gradle
                                     project2  /
                                     project3  /
 ----
 
-Each directory below `gradleTest` becomes a test. Tests are executed in-folder
-and expects a `build.gradle` file. If the latter is not found the test will not be
-executed.
+Each directory below `gradleTest` becomes a test. Tests are executed in-folder.  The
+test folder can have more than one build file in it.  Each build file will be considered
+an individual test that is executed independently of the others.
+
+With multiple build files, its important to remember that GradleTest will reuse the existing
+`${buildDir}`.  So in the example above, if `build.gradle` happens to be executed first, then when
+`testTwo.gradle` is executed, it will reuse the build folder that was created by `build.gradle`.
+
+If this is not desired, then add the `clean` task to all your build execution scripts like this:
+
+.Cleaning before multi-test
+----
+apply plugin : 'my.project.id'
+
+task runGradleTest {
+  dependsOn 'clean', 'someTask'
+}
+----
 
 For testing, a folder is created for each gradle version to be tested and the
 projects are duplicated below the verson folder. Each version testsute is executed
 within a separate JVM.
+
+
 
 .Test directory layout
 ----
@@ -128,3 +144,13 @@ A `GradleTest` task called `gradleTest` will have the following associated entit
   transitive dependencies
 
 |===
+
+=== Task dependencies
+
+`gradleTest` is linked into the `check` lifecycle task.
+
+=== HTML reports
+
+HTML reports will appear as folder named after the `GradleTest` instance below the `${reporting.baseDir}` folder.
+ Practically in most cases this will be `build/reports/gradleTest`.
+

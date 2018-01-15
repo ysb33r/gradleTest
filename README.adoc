@@ -12,6 +12,8 @@ NOTE: If you used some of the 1.0-betaXYZ versions you might have encountered Gr
 
 == Previous versions of this document
 
+* https://github.com/ysb33r/gradleTest/blob/RELEASE_1_1/README.adoc[1.1]
+* https://github.com/ysb33r/gradleTest/blob/RELEASE_1_0/README.adoc[1.0]
 * https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_5/README.adoc[0.5.5]
 * https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_2/README.adoc[0.5.2]
 * https://github.com/ysb33r/gradleTest/blob/RELEASE_0_5_1/README.adoc[0.5.1]
@@ -24,8 +26,10 @@ Please visit the http://ysb33r.github.io/gradleTest[documentation website] for t
 == Contributions
 
 * https://github.com/dcendents[Daniel Beland] - Gradle 2.5 fixes.
-* https://github.com/szpak[Marcin Zajączkowski] - Fix for Zip errors
-* https://github.com/matthiasbalke[Matthias Balke] - Documentation
+* https://github.com/szpak[Marcin Zajączkowski] - Fix for Zip errors.
+* https://github.com/matthiasbalke[Matthias Balke] - Documentation.
+* https://github.com/scphantm[Willie Slepecki] - Multiple build files in one test project folder.
+* https://github.com/scphantm[Willie Slepecki] - Load distributions from enterprise repositories.
 
 If you would like to contribute fixes, please see `HACKING.adoc`.
 

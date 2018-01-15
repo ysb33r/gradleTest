@@ -21,8 +21,12 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.CollectionUtils
 import org.gradle.util.GradleVersion
+import org.ysb33r.gradle.gradletest.internal.GradleVersions
 
 import java.util.regex.Pattern
+
+import static org.ysb33r.gradle.gradletest.internal.GradleVersions.GRADLE_3_0
+import static org.ysb33r.gradle.gradletest.internal.GradleVersions.GRADLE_4_0_OR_LATER
 
 /**
  * Runs compatibility tests using special compiled GradleTestKit-based tests
@@ -31,20 +35,17 @@ import java.util.regex.Pattern
 class GradleTest extends Test {
 
     GradleTest() {
-        if(GradleVersion.current() < GradleVersion.version('2.13')) {
-            throw new GradleException("GradleTest is only compatible with Gradle 2.13+. " +
-                "If you are using an older version of Gradle, please use " +
-                "org.ysb33r.gradle.gradletest.legacy20.GradleTest instead."
-            )
-        }
-
-        if(project.gradle.startParameter.offline) {
-            arguments+= '--offline'
+        if (project.gradle.startParameter.offline) {
+            arguments += '--offline'
         }
 
 
-        if(project.gradle.startParameter.isRerunTasks()) {
-            arguments+= '--rerun-tasks'
+        if (project.gradle.startParameter.isRerunTasks()) {
+            arguments += '--rerun-tasks'
+        }
+
+        if (GradleVersions.GRADLE_4_5_OR_LATER) {
+            arguments += '--warning-mode=all'
         }
 
         setHtmlReportFolder()
@@ -57,10 +58,10 @@ class GradleTest extends Test {
     @Input
     Set<String> getVersions() {
         String override = System.getProperty("${name}.versions")
-        if(override?.size()) {
-            return override.split(',') as Set<String>
+        if (override?.size()) {
+            return removeUnsupportedVersions(override.split(',') as Set<String>)
         }
-        CollectionUtils.stringize(this.versions) as Set<String>
+        removeUnsupportedVersions(CollectionUtils.stringize(this.versions) as Set<String>)
     }
 
     /** Add Gradle versions to be tested against.
@@ -83,7 +84,7 @@ class GradleTest extends Test {
      *
      * @param args Additional arguments
      */
-     void gradleArguments(Object... args ) {
+    void gradleArguments(Object... args) {
         arguments.addAll(args as List)
     }
 
@@ -91,7 +92,7 @@ class GradleTest extends Test {
      *
      * @param newArgs
      */
-    void setGradleArguments(final List<Object> newArgs ) {
+    void setGradleArguments(final List<Object> newArgs) {
         arguments.clear()
         arguments.addAll(newArgs)
     }
@@ -108,23 +109,23 @@ class GradleTest extends Test {
      * @param baseUri
      */
     void setGradleDistributionUri(Object baseUri) {
-        switch(baseUri) {
+        switch (baseUri) {
             case null:
                 baseDistributionUri = null
                 break
             case URI:
-                baseDistributionUri = (URI)baseUri
+                baseDistributionUri = (URI) baseUri
                 break
             case File:
-                baseDistributionUri= ((File)baseUri).absoluteFile.toURI()
+                baseDistributionUri = ((File) baseUri).absoluteFile.toURI()
                 break
             case String:
-                if( ((String)baseUri).empty ) {
+                if (((String) baseUri).empty) {
                     baseDistributionUri = null
                 } else {
-                    final tmpStr = (String)baseUri
+                    final tmpStr = (String) baseUri
                     URI tmpUri = tmpStr.toURI()
-                    if(tmpUri.scheme == null) {
+                    if (tmpUri.scheme == null) {
                         setGradleDistributionUri(project.file(tmpStr))
                     } else {
                         baseDistributionUri = tmpUri
@@ -132,7 +133,7 @@ class GradleTest extends Test {
                 }
                 break
             default:
-                setGradleDistributionUri( baseUri.toString() )
+                setGradleDistributionUri(baseUri.toString())
         }
     }
 
@@ -146,14 +147,27 @@ class GradleTest extends Test {
         baseDistributionUri
     }
 
+    String getGradleDistributionFilenamePattern() {
+        distributionFilenamePattern
+    }
+
+    /**
+     * Allows you to set the pattern for the filename used for the distribution.  This is for
+     * corporate users that may have a custom branded version of Gradle to test against.
+     * @param name
+     */
+    void setGradleDistributionFilenamePattern(String name) {
+        distributionFilenamePattern = name
+    }
+
     /** Returns the arguments that needs to be passed to the running GradleTest instance
      *
      * @return List of arguments in order
      */
     @Input
     List<String> getGradleArguments() {
-        List<String> args = ([ '--init-script',winSafeCmdlineSafe(initScript) ] as List<String>) +
-        CollectionUtils.stringize(this.arguments) as List<String>
+        List<String> args = (['--init-script', winSafeCmdlineSafe(initScript)] as List<String>) +
+            CollectionUtils.stringize(this.arguments) as List<String>
     }
 
     /** The name of the task that will be executed in the test project
@@ -242,10 +256,10 @@ class GradleTest extends Test {
         Closure getDir = {
             project.file("${project.reporting.baseDir}/${owner.name}")
         }
-        if( GradleVersion.current() < GradleVersion.version('4.0')) {
-            reports.html.destination = getDir
-        } else {
+        if (GRADLE_4_0_OR_LATER) {
             reports.html.destination = project.provider(getDir)
+        } else {
+            reports.html.destination = getDir
         }
     }
 
@@ -254,16 +268,30 @@ class GradleTest extends Test {
     }
 
     private String winSafeCmdlineSafe(final String path) {
-        if(OperatingSystem.current().isWindows()) {
-            path.replace(BACKSLASH,BACKSLASH.multiply(4))
+        if (OperatingSystem.current().isWindows()) {
+            path.replace(BACKSLASH, BACKSLASH.multiply(4))
         } else {
             path
         }
     }
 
+    private Set<String> removeUnsupportedVersions(final Set<String> vers) {
+        GradleVersion min = GRADLE_3_0
+        Collection<String> removeThese = vers.findAll { String v ->
+            GradleVersion.version(v) < min
+        }
+
+        if (!removeThese.empty) {
+            logger.warn("Gradle versions '${removeThese.join(',')}' are not supported by this version of GradleTest-Gradle combination and will be removed from the test set")
+            vers.removeAll(removeThese)
+        }
+        return vers
+    }
+
     private List<Object> arguments = [/*'--no-daemon',*/ '--full-stacktrace', '--info'] as List<Object>
     private List<Object> versions = []
     private URI baseDistributionUri
+    private String distributionFilenamePattern = '/gradle-@version@-bin.zip'
     private List<Pattern> expectedFailures = []
 
     static final String BACKSLASH = '\\'
