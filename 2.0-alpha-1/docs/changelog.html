@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.3">
-<title>GradleTest Gradle Plugin</title>
+<title>Changelog &amp; Release Notes 2.0-alpha-1</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -416,141 +416,43 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .hide-for-print{display:none!important}
 .show-for-print{display:inherit!important}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 </head>
 <body class="article">
 <div id="header">
-<h1>GradleTest Gradle Plugin</h1>
+<h1>Changelog &amp; Release Notes 2.0-alpha-1</h1>
 <div class="details">
 <span id="revnumber">version 2.0-alpha-1</span>
 </div>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>A plugin for testing the compatibility of a Gradle plugin against a list of Gradle releases.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">apply plugin : 'org.ysb33r.gradletest'
-
-gradleTest {
-    versions '4.0.2', '4.1', '4.2.1', '4.3.1', '4.4.1'
-    versions '3.5', '3.4.1'
-    versions '3.3', '3.2.1', '3.1', '3.0'
-
-    beforeTest {
-        println "  ${it.name}"
-    }
-}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Product version documentation</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><strong>2.0-alpha-1</strong></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="2.0-alpha-1/docs/product-documentation.html">Docs</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="2.0-alpha-1/api/index.html">Groovydoc</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="2.0-alpha-1/docs/changelog.html">Changelog</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><strong>1.1</strong></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.1/docs/product-documentation.html">Docs</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.1/api/index.html">Groovydoc</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.1/docs/changelog.html">Changelog</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><strong>1.0</strong></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0/docs/product-documentation.html">Docs</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0/api/index.html">Groovydoc</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="1.0/docs/changelog.html">Changelog</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><strong>0.5.5</strong></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="0.5.5/docs/product-documentation.html">Docs</a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="0.5.5/docs/changelog.html">Changelog</a></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
 <div class="sect1">
-<h2 id="_other_links">Other links</h2>
+<h2 id="_features">Features</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://plugins.gradle.org/search?term=gradleTest">Gradle Plugin Portal</a></p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/85">#85</a> -  Allow for more than one build file per test project</p>
 </li>
 <li>
-<p><a href="https://plugins.gradle.org/search?term=gradleTest">Bintray backup repository</a></p>
-</li>
-<li>
-<p><a href="https://github.com/ysb33r/gradleTest">Fork me on Github</a></p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/89">#89</a> - Allow for assigning a name pattern for the gradle distribution download</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_contributors">Contributors</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>A special thank you goes to:</p>
-</div>
+<h1 id="_breaking_changes" class="sect0">Breaking changes</h1>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/dcendents">Daniel Beland</a> - Gradle 2.5 fixes.</p>
-</li>
-<li>
-<p><a href="https://github.com/szpak">Marcin Zajączkowski</a> - Fix for Zip errors</p>
-</li>
-<li>
-<p><a href="https://github.com/matthiasbalke">Matthias Balke</a> - Documentation</p>
-</li>
-<li>
-<p><a href="https://github.com/scphantm">Willie Slepecki</a>:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Multiple build files in one test project folder.</p>
-</li>
-<li>
-<p>Load distributions from enterprise repositories.</p>
+<p><a href="https://github.com/ysb33r/gradleTest/issues/1">#1</a> - <strong>Legacy mode removed</strong>: This release will only support compatibility tests against Gradle 3.0 or later.</p>
 </li>
 </ul>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If you would like to contribute, please see <a href="https://github.com/ysb33r/gradleTest/blob/master/HACKING.adoc">HACKING.adoc</a></p>
-</div>
-</div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 2.0-alpha-1<br>
-Last updated 2018-01-14 21:49:56 +00:00
+Last updated 2018-01-06 13:22:01 +00:00
 </div>
 </div>
 </body>
