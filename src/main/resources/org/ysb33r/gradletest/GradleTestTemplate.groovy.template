@@ -88,7 +88,7 @@ class ${TESTNAME.replaceAll(/\W/,'_')}CompatibilitySpec extends Specification {
        if( DISTRIBUTION_URI.empty ) {
            gradleRunner.withGradleVersion(version)
        } else {
-           final String uri = DISTRIBUTION_URI + '/gradle-' + version + '-bin.zip'
+           final String uri = DISTRIBUTION_URI + getDistributionFilename(version)
            gradleRunner.withGradleDistribution(uri.toURI())
        }
        gradleRunner.withArguments(getArguments(gradleVersionUnderTest,version))
