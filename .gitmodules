@@ -1,4 +1,0 @@
-[submodule "website"]
-	path = website
-	url = https://github.com/ysb33r/gradleTest
-	branch = gh-pages
