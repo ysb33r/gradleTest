@@ -167,8 +167,28 @@ class TestSet {
         final String compileTaskName = getCompileTaskName(testSetBaseName)
         final String testTaskName = getTestTaskName(testSetBaseName)
 
+
+
             project.sourceSets.create testSetBaseName, {
-                groovy.srcDirs = [project.file(getSourceDir(project,testSetBaseName))]
+                groovy{
+                    srcDirs = [project.file(getSourceDir(project,testSetBaseName))]
+
+                    if (project.hasProperty("gradleTest.glob.include")){
+                        String globs = project.properties.get("gradleTest.glob.include")
+
+                        for (def glob in globs.split(';')){
+                            include glob
+                        }
+                    }
+
+                    if (project.hasProperty("gradleTest.glob.exclude")){
+                        String globs = project.properties.get("gradleTest.glob.exclude")
+
+                        for (def glob in globs.split(';')){
+                            exclude glob
+                        }
+                    }
+                }
                 resources.srcDirs = [project.file( getResourcesDir(project,testSetBaseName) )]
                 compileClasspath = project.configurations.getByName(configNames['compile'])
                 runtimeClasspath = output + compileClasspath +
