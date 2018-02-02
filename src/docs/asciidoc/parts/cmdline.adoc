@@ -22,12 +22,12 @@ achievable by passing a system property to Gradle
 
 === Selecting what tests to run
 
-There are 2 ways to select what tests GradleTest will run, but there is little bit of background needed.
+There are 2 ways to select what tests GradleTest will execute, but you need is little bit of background information to use them.
 First, understand that GradleTest is a code generator with the ability to run the generated code.  For
 each build file in your `src/gradleTest/{name}` folder, there is an associated Spock test class generated in
 the background.  Those generated files can be found in the `${buildDir}/gradleTest/src/groovy` folder.
 The content of those files are not important at the moment, but the file names are as that is what you will use to specify
-specifically what tests to run.
+ what tests to run.
 
 So take this folder structure:
 
@@ -39,7 +39,7 @@ src/gradleTest/theirtest
     build.gradle
 ----
 
-That gets fed thru the test generator code and generates this folder structure
+That gets fed into the test generator code and generates this folder structure:
 
 [source,bash]
 ----
@@ -48,8 +48,8 @@ ${buildDir}/gradleTest/src/groovy
     Theirtest_BuildGroovyDSLCompatibilitySpec.groovy
 ----
 
-It is the resulting files that you use to filter what tests you want to run.  The first
-way is to specify a single specific file
+It are these resulting files that you filter what tests you want to run.  The first
+way is to specify a single file
 
 [source,bash]
 ----
@@ -64,19 +64,20 @@ of how to write globs can be found here:
 https://ant.apache.org/manual/Types/patternset.html
 
 GradleTest allows you to specify either include globs or exclude globs, similar to Ant, using
-the following properties.
+the following system properties.
 
 [source,bash]
 ----
--PgradleTest.glob.include=*Build*.*
+-DgradleTest.include=*Build*.*
 ----
 
 [source,bash]
 ----
--PgradleTest.glob.exclude=Their*
+-DgradleTest.exclude=Their*
 ----
 
-These properties can be put into a `gradle.properties` or passed in as command line parameters like above.
+These properties can be put into a `gradle.properties` following the system parameter pattern, or passed in as
+command line parameters like above.
 
 Some notes about globs
 
@@ -85,7 +86,9 @@ Some notes about globs
 
 [source,bash]
 ----
--PgradleTest.glob.exclude=*Build*.*;Their*
+-DgradleTest.exclude=*Build*.*;Their*
 ----
 
-* the filter starts at the  `${buildDir}/gradleTest/src/groovy` folder so the preceding "**/" is not necessary
+* The filter starts at the  `${buildDir}/gradleTest/src/groovy` folder so the preceding "**/" is not necessary
+* `gradleTest` is variable.  If you changed the task name using other configuration settings, then the parameter would change,
+  for example `myGradleTest.include`
