@@ -12,7 +12,7 @@ plugins {
 import org.asciidoctor.gradle.AsciidoctorTask
 
 group = 'org.ysb33r.gradle'
-version = '2.0-alpha-3-SNAPSHOT'
+version = '2.0-alpha-3'
 
 apply from: 'gradle/integration-tests.gradle'
 apply from: 'gradle/compatibility-tests.gradle'
