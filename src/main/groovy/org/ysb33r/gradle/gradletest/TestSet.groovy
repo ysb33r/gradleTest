@@ -168,7 +168,25 @@ class TestSet {
         final String testTaskName = getTestTaskName(testSetBaseName)
 
             project.sourceSets.create testSetBaseName, {
-                groovy.srcDirs = [project.file(getSourceDir(project,testSetBaseName))]
+                groovy{
+                    srcDirs = [project.file(getSourceDir(project,testSetBaseName))]
+
+                    String globs = System.getProperty("${testSetBaseName}.include")
+
+                    if (globs?.length()){
+                        for (def glob in globs.split(';')){
+                            include glob
+                        }
+                    }
+
+                    globs = System.getProperty("${testSetBaseName}.exclude")
+
+                    if (globs?.length()){
+                        for (def glob in globs.split(';')){
+                            exclude glob
+                        }
+                    }
+                }
                 resources.srcDirs = [project.file( getResourcesDir(project,testSetBaseName) )]
                 compileClasspath = project.configurations.getByName(configNames['compile'])
                 runtimeClasspath = output + compileClasspath +
