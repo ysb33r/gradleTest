@@ -424,7 +424,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>GradleTest : A Gradle Compatibility Testing Plugin</h1>
 <div class="details">
 <span id="author" class="author">Schalk W. Cronjé</span><br>
-<span id="revnumber">version 2.0-alpha-2</span>
+<span id="revnumber">version 2.0-alpha-3</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -443,6 +443,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_gradle_standard_options">Gradle standard options</a></li>
 <li><a href="#_temporarily_overriding_gradle_versions">Temporarily overriding Gradle versions</a></li>
+<li><a href="#_selecting_what_tests_to_run">Selecting what tests to run</a></li>
 </ul>
 </li>
 <li><a href="#_beyond_the_basics">Beyond the Basics</a>
@@ -515,8 +516,8 @@ To use it, add the appropriate plugin to the <code>plugins</code> block.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">plugins {
-  id 'org.ysb33r.gradletest' version '2.0-alpha-2' <i class="conum" data-value="1"></i><b>(1)</b>
-  id 'org.ysb33r.gradletest.base' version '2.0-alpha-2' <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+  id 'org.ysb33r.gradletest' version '2.0-alpha-3' <i class="conum" data-value="1"></i><b>(1)</b>
+  id 'org.ysb33r.gradletest.base' version '2.0-alpha-3' <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -544,7 +545,7 @@ To use it, add the appropriate plugin to the <code>plugins</code> block.</p>
   }
 
   dependencies {
-    classpath 'org.ysb33r.gradle:gradletest:2.0-alpha-2'
+    classpath 'org.ysb33r.gradle:gradletest:2.0-alpha-3'
   }
 }
 
@@ -850,6 +851,104 @@ versions the build will fail.</td>
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_selecting_what_tests_to_run">Selecting what tests to run</h3>
+<div class="paragraph">
+<p>There are 2 ways to select what tests GradleTest will execute, but you need is little bit of background information to use them.
+First, understand that GradleTest is a code generator with the ability to run the generated code.  For
+each build file in your <code>src/gradleTest/{name}</code> folder, there is an associated Spock test class generated in
+the background.  Those generated files can be found in the <code>${buildDir}/gradleTest/src/groovy</code> folder.
+The content of those files are not important at the moment, but the file names are as that is what you will use to specify
+ what tests to run.</p>
+</div>
+<div class="paragraph">
+<p>So take this folder structure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">src/gradleTest/mytest
+    build.gradle
+src/gradleTest/theirtest
+    build.gradle</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That gets fed into the test generator code and generates this folder structure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">${buildDir}/gradleTest/src/groovy
+    Mytest_BuildGroovyDSLCompatibilitySpec.groovy
+    Theirtest_BuildGroovyDSLCompatibilitySpec.groovy</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It are these resulting files that you filter what tests you want to run.  The first
+way is to specify a single file</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">-DgradleTest.single=Mytest_BuildGroovyDSLCompatibilitySpec</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That will run that one and only that one test</p>
+</div>
+<div class="paragraph">
+<p>The second technique is to use an Ant file pattern, or more commonly referred as a glob.  Examples
+of how to write globs can be found here:</p>
+</div>
+<div class="paragraph">
+<p><a href="https://ant.apache.org/manual/Types/patternset.html" class="bare">https://ant.apache.org/manual/Types/patternset.html</a></p>
+</div>
+<div class="paragraph">
+<p>GradleTest allows you to specify either include globs or exclude globs, similar to Ant, using
+the following system properties.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">-DgradleTest.include=*Build*.*</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">-DgradleTest.exclude=Their*</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These properties can be put into a <code>gradle.properties</code> following the system parameter pattern, or passed in as
+command line parameters like above.</p>
+</div>
+<div class="paragraph">
+<p>Some notes about globs</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>globs are case sensitive.</p>
+</li>
+<li>
+<p>For both include and exclude, you can specify multiple globs by delimiting them with a semicolon</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">-DgradleTest.exclude=*Build*.*;Their*</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The filter starts at the  <code>${buildDir}/gradleTest/src/groovy</code> folder so the preceding "**/" is not necessary</p>
+</li>
+<li>
+<p><code>gradleTest</code> is variable.  If you changed the task name using other configuration settings, then the parameter would change,
+for example <code>myGradleTest.include</code></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -867,7 +966,7 @@ To use it, add the following snippet into your build script.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">plugins {
-  id 'org.ysb33r.gradletest.base' version '2.0-alpha-2'
+  id 'org.ysb33r.gradletest.base' version '2.0-alpha-3'
 }</code></pre>
 </div>
 </div>
@@ -884,7 +983,7 @@ To use it, add the following snippet into your build script.</p>
   }
 
   dependencies {
-    classpath 'org.ysb33r.gradle:gradletest:2.0-alpha-2'
+    classpath 'org.ysb33r.gradle:gradletest:2.0-alpha-3'
   }
 }
 
@@ -1217,8 +1316,8 @@ an old codebase.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 2.0-alpha-2<br>
-Last updated 2018-01-15 08:13:46 +01:00
+Version 2.0-alpha-3<br>
+Last updated 2018-01-15 07:13:46 +00:00
 </div>
 </div>
 </body>
